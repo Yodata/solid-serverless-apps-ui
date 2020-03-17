@@ -6,9 +6,13 @@ import { Group } from './Group';
 configure({ adapter: new Adapter });
 
 describe("Group Component", () => {
-    it("should render the group classification", () => {
+    let wrapper;
+    beforeEach(() => {
         const mockSetTabIndex = jest.fn();
-        const wrapper = shallow(<Group classes={{}} setTabIndex={mockSetTabIndex}/>);
+        wrapper = shallow(<Group classes={{}} setTabIndex={mockSetTabIndex}/>)
+    });
+    
+    it("should render the group classification", () => {
         expect(wrapper).toMatchSnapshot();
     });
 });

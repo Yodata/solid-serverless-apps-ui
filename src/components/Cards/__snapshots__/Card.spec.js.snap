@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Card Component renders correctly 1`] = `
+<WithStyles(ForwardRef(Card))>
+  <WithStyles(ForwardRef(CardMedia))
+    image="/static/img/red-logo.jpg"
+    title="RDesk"
+  />
+  <WithStyles(ForwardRef(CardContent))>
+    <WithStyles(ForwardRef(Typography))
+      component="h2"
+      gutterBottom={true}
+      variant="h5"
+    >
+      RDesk
+    </WithStyles(ForwardRef(Typography))>
+    <WithStyles(ForwardRef(Typography))
+      variant="body2"
+    >
+      CRM from Real Estate Digital
+    </WithStyles(ForwardRef(Typography))>
+  </WithStyles(ForwardRef(CardContent))>
+  <WithStyles(ForwardRef(Grid))
+    alignItems="center"
+    container={true}
+    spacing={5}
+  >
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      lg={4}
+      md={6}
+      sm={12}
+    >
+      <WithStyles(ForwardRef(CardActions))>
+        <WithStyles(ForwardRef(Switch))
+          checked={false}
+          onClick={[Function]}
+        />
+        <WithStyles(ForwardRef(Typography)) />
+      </WithStyles(ForwardRef(CardActions))>
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      lg={4}
+      md={6}
+      sm={12}
+    >
+      <WithStyles(ForwardRef(CardActions))>
+        <WithStyles(ForwardRef(IconButton))
+          aria-expanded={false}
+          aria-label="Show permissions"
+          className=""
+          onClick={[Function]}
+          style={
+            Object {
+              "display": "none",
+            }
+          }
+        >
+          <ExpandMoreIcon />
+        </WithStyles(ForwardRef(IconButton))>
+      </WithStyles(ForwardRef(CardActions))>
+    </WithStyles(ForwardRef(Grid))>
+  </WithStyles(ForwardRef(Grid))>
+  <WithStyles(ForwardRef(Collapse))
+    in={false}
+    timeout="auto"
+    unmountOnExit={true}
+  >
+    <CheckList
+      permissions={
+        Array [
+          Object {
+            "description": "create and update your leads",
+            "id": "lead_write",
+          },
+        ]
+      }
+    />
+  </WithStyles(ForwardRef(Collapse))>
+</WithStyles(ForwardRef(Card))>
+`;

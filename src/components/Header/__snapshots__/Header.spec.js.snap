@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header Component renders correctly 1`] = `
+<WithStyles(ForwardRef(Grid))
+  container={true}
+  spacing={0}
+>
+  <WithStyles(ForwardRef(Grid))
+    item={true}
+    xs={2}
+  >
+    <WithStyles(ForwardRef(Card))>
+      <WithStyles(ForwardRef(CardMedia))
+        image="No Image"
+      />
+    </WithStyles(ForwardRef(Card))>
+  </WithStyles(ForwardRef(Grid))>
+  <WithStyles(ForwardRef(Grid))
+    item={true}
+    xs={10}
+  >
+    <div>
+      <div>
+        <WithStyles(ForwardRef(Typography))
+          align="center"
+          color="inherit"
+          component="h1"
+          gutterBottom={true}
+          variant="h2"
+        />
+        <WithStyles(ForwardRef(Typography))
+          align="center"
+          color="inherit"
+          paragraph={true}
+          variant="h5"
+        />
+      </div>
+    </div>
+  </WithStyles(ForwardRef(Grid))>
+</WithStyles(ForwardRef(Grid))>
+`;

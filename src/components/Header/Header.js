@@ -45,41 +45,39 @@ const styles = theme => ({
     }
 });
 
-function Header(props) {
+export function Header(props) {
     const { classes, title, content, backgroundImage } = props;
     return (
-        <React.Fragment>
-            <Grid container className={classes.root} spacing={0}>
-                <Grid item xs={2}>
-                    <Card className={classes.card}>
-                        <CardMedia
-                            className={classes.cardMedia}
-                            image={backgroundImage ? backgroundImage : 'No Image'}
-                        />
-                    </Card>
-                </Grid>
-                <Grid item xs={10}>
-                    <div className={classes.heroBackGround}>
-                        <div className={classes.heroContent}>
-                            <Typography className={classes.title}
-                                component="h1"
-                                variant="h2"
-                                align="center"
-                                color="inherit"
-                                gutterBottom>
-                                {title}
-                            </Typography>
-                            <Typography align="center"
-                                color="inherit"
-                                paragraph
-                                variant="h5">
-                                {content}
-                            </Typography>
-                        </div>
-                    </div>
-                </Grid>
+        <Grid container className={classes.root} spacing={0}>
+            <Grid item xs={2}>
+                <Card className={classes.card}>
+                    <CardMedia
+                        className={classes.cardMedia}
+                        image={backgroundImage ? backgroundImage : 'No Image'}
+                    />
+                </Card>
             </Grid>
-        </React.Fragment>
+            <Grid item xs={10}>
+                <div className={classes.heroBackGround}>
+                    <div className={classes.heroContent}>
+                        <Typography className={classes.title}
+                            component="h1"
+                            variant="h2"
+                            align="center"
+                            color="inherit"
+                            gutterBottom>
+                            {title}
+                        </Typography>
+                        <Typography align="center"
+                            color="inherit"
+                            paragraph
+                            variant="h5">
+                            {content}
+                        </Typography>
+                    </div>
+                </div>
+            </Grid>
+        </Grid>
     )
 }
 

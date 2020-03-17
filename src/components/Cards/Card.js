@@ -49,17 +49,12 @@ const styles = theme => ({
 
 export function CardComponent(props) {
 
-  const { classes, application, enableService, expandeService, enabledID, expandedID } = props
+  const { classes, application, enableService, expandService, enabledID, expandedID } = props
   const handleSwitchToggle = async () => {
     enableService(application.id);
-    // try {
-    //   const response = await API.post('db')
-    // } catch (err) {
-    //   throw err;
-    // }
   };
   const handleExpandClick = () => {
-    expandeService(application.id);
+    expandService(application.id);
   };
 
   return (
@@ -116,7 +111,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     enableService: id => dispatch(serviceEnabled(id)),
-    expandeService: id => dispatch(serviceExpanded(id))
+    expandService: id => dispatch(serviceExpanded(id))
   };
 };
 
