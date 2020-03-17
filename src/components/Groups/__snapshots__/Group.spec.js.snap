@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Group Component should render the group classification 1`] = `
+<Fragment>
+  <WithStyles(ForwardRef(AppBar))
+    position="static"
+  >
+    <WithStyles(ForwardRef(Tabs))
+      centered={true}
+      onChange={[Function]}
+    >
+      <WithStyles(ForwardRef(Tab))
+        icon={<UNDEFINED />}
+        key="Featured"
+        label="Featured"
+        value="featured"
+      />
+      <WithStyles(ForwardRef(Tab))
+        icon={<UNDEFINED />}
+        key="CRM"
+        label="CRM"
+        value="crm"
+      />
+      <WithStyles(ForwardRef(Tab))
+        icon={<UNDEFINED />}
+        key="Marketing"
+        label="Marketing"
+        value="marketing"
+      />
+      <WithStyles(ForwardRef(Tab))
+        icon={<UNDEFINED />}
+        key="Paperless"
+        label="Paperless"
+        value="paperless"
+      />
+    </WithStyles(ForwardRef(Tabs))>
+  </WithStyles(ForwardRef(AppBar))>
+</Fragment>
+`;

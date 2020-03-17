@@ -1,21 +1,19 @@
-// @ts-nocheck
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Collapse from '@material-ui/core/Collapse'
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
-import IconButton from '@material-ui/core/IconButton'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import Switch from '@material-ui/core/Switch'
-import CardActions from '@material-ui/core/CardActions'
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import IconButton from '@material-ui/core/IconButton';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Switch from '@material-ui/core/Switch';
+import CardActions from '@material-ui/core/CardActions';
+import CheckList from '../Checklist';
+import API from '../../api/apiRequest';
 import { serviceEnabled, serviceExpanded } from '../../redux/slices/servicesSlice';
 
 /**
@@ -47,13 +45,18 @@ const styles = theme => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
-})
+});
 
-function AppCard(props) {
+export function CardComponent(props) {
 
-  const { classes, application, enableService, expandeService } = props
-  const handleSwitchToggle = () => {
+  const { classes, application, enableService, expandeService, enabledID, expandedID } = props
+  const handleSwitchToggle = async () => {
     enableService(application.id);
+    // try {
+    //   const response = await API.post('db')
+    // } catch (err) {
+    //   throw err;
+    // }
   };
   const handleExpandClick = () => {
     expandeService(application.id);
@@ -74,57 +77,47 @@ function AppCard(props) {
           {application.description}
         </Typography>
       </CardContent>
-      <CardActions className={classes.actions}>
-        <Switch checked={props.enabled} onClick={handleSwitchToggle} />
-        <Typography>{props.enabled && props.enabledID == application.id && 'CONNECTED'}</Typography>
-        <IconButton
-          className={classNames(classes.expand, {
-            [classes.expandOpen]: props.expanded && props.expandedID == application.id,
-          })}
-          onClick={handleExpandClick}
-          aria-expanded={props.expanded}
-          aria-label="Show permissions"
-        >
-          <ExpandMoreIcon />
-        </IconButton>
-      </CardActions>
-      <Collapse in={props.expanded && props.expandedID == application.id} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography variant='caption' >REQUESTS ACCESS TO:</Typography>
-          <List dense>
-            {application.permissions.map(permission => (
-              <ListItem key={permission.id} dense className={classes.ListItem}>
-                <FormControlLabel
-                  control={<Checkbox
-                    className={classes.checkbox}
-                    checked={permission.checked}
-                    tabIndex={-1}
-                    disableRipple
-                  />}
-                  label={permission.description}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </CardContent>
+      <Grid container spacing={5} alignItems="center">
+        <Grid item sm={12} md={6} lg={4}>
+          <CardActions className={classes.actions}>
+            <Switch checked={enabledID.includes(application.id)} onClick={handleSwitchToggle} />
+            <Typography>{enabledID.includes(application.id) && 'CONNECTED'}</Typography>
+          </CardActions>
+        </Grid>
+        <Grid item sm={12} md={6} lg={4}>
+          <CardActions>
+            <IconButton
+              style={{ display: 'none' }}
+              className={classNames(classes.expand, {
+                [classes.expandOpen]: expandedID.includes(application.id),
+              })}
+              onClick={handleExpandClick}
+              aria-expanded={expandedID.includes(application.id)}
+              aria-label="Show permissions"
+            >
+              <ExpandMoreIcon />
+            </IconButton>
+          </CardActions>
+        </Grid>
+      </Grid>
+      <Collapse in={expandedID.includes(application.id)} timeout="auto" unmountOnExit>
+        <CheckList permissions={application.permissions} />
       </Collapse>
     </Card >
   );
 }
 const mapStateToProps = state => {
   return {
-    expanded: state.services.expanded,
-    enabled: state.services.enabled,
     expandedID: state.services.expandedID,
     enabledID: state.services.enabledID
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return{
+  return {
     enableService: id => dispatch(serviceEnabled(id)),
     expandeService: id => dispatch(serviceExpanded(id))
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(AppCard));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(CardComponent));

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Header from '../../components/Header';
 import { withStyles } from '@material-ui/core';
+import { getCustomization } from '../../redux/actions/applicationActions';
 
 /**
  * @Component Hero
@@ -16,7 +17,11 @@ const styles = theme => ({
 
 function Hero(props) {
 
-    const { classes, userCustomization } = props;
+    const { classes, userCustomization, getCustomization } = props;
+
+    React.useEffect(() => {
+        getCustomization();
+    }, [getCustomization])
 
     return (
         <React.Fragment>
@@ -37,4 +42,10 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(Hero));
+const mapDispatchToProps = dispatch => {
+    return {
+        getCustomization: () => dispatch(getCustomization())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Hero));

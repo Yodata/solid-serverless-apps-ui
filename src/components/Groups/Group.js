@@ -21,7 +21,7 @@ const styles = theme => ({
     }
 });
 
-function Group(props) {
+export function Group(props) {
 
     const { classes, tabIndex, setTabIndex } = props;
     const groups = [{ 'Featured': <StarBorder /> }, { 'CRM': <Contacts /> }, { 'Marketing': <ContactMail /> }, { 'Paperless': <GroupWork /> }];

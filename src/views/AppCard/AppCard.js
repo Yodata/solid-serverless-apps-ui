@@ -15,7 +15,7 @@ function AppCard(props) {
 
     React.useEffect(() => {
       getApps();
-    }, []);
+    }, [getApps]);
 
     const getApplications = (group = 'featured') => {
         return applications ? applications.filter(function (app) {
