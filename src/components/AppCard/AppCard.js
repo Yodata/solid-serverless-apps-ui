@@ -33,9 +33,9 @@ function AppCard(props) {
 
     const addNewApplication = value => {
         value.group.push(tabIndex);
-        const idArray = applications ? applications.map(app => {
+        const idArray = applications.map(app => {
             return Number.parseInt(Object.values(app.identifier)[0]);
-        }) : [0];
+        });
         const maxId = Math.max(...idArray);
         const idName = value.name + "_id";
         Object.defineProperty(value.identifier, idName, {
@@ -78,7 +78,7 @@ function AppCard(props) {
 const mapStateToProps = state => {
     return {
         tabIndex: state.groups.tabIndex,
-        applications: state.apps.appList
+        applications: state.apps.appList && state.apps.appList.application
     }
 }
 
