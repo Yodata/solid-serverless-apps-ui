@@ -8,7 +8,9 @@ import StarBorder from '@material-ui/icons/StarBorder';
 import Contacts from '@material-ui/icons/Contacts';
 import ContactMail from '@material-ui/icons/ContactMail';
 import GroupWork from '@material-ui/icons/GroupWork';
+import Button from '@material-ui/core/Button';
 import { setGroup } from '../../redux/slices/groupsSlice';
+import { signoutUser } from '../../redux/actions/authenticationActions';
 
 /**
  * @Component Group
@@ -23,13 +25,17 @@ const styles = theme => ({
 
 export function Group(props) {
 
-    const { classes, tabIndex, setTabIndex } = props;
+    const { classes, tabIndex, setTabIndex, logoutUser } = props;
     const groups = [{ 'Featured': <StarBorder /> }, { 'CRM': <Contacts /> }, { 'Marketing': <ContactMail /> }, { 'Paperless': <GroupWork /> }];
     Object.freeze(groups);
 
+    const handleLogout = () => {
+        logoutUser();
+    }
+
     return (
         <React.Fragment>
-            <AppBar position='static' className={classes.appBar}>
+            <AppBar position='static' className={classes.appBar} flex='row'>
                 <Tabs
                     value={tabIndex}
                     centered
@@ -46,6 +52,9 @@ export function Group(props) {
                             value={(Object.keys(value)[0]).toLowerCase()} />
                     ))}
                 </Tabs>
+                <Button onClick={handleLogout} color="secondary">
+                    Logout
+                </Button>
             </AppBar>
         </React.Fragment>
     );
@@ -59,7 +68,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setTabIndex: value => dispatch(setGroup(value))
+        setTabIndex: value => dispatch(setGroup(value)),
+        logoutUser: () => dispatch(signoutUser())
     };
 };
 

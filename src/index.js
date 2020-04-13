@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import 'typeface-roboto';
-import App from './app';
+import App from './app/App';
 import store from './redux/store/initStore';
 import * as serviceWorker from './serviceWorker';
 

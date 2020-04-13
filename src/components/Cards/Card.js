@@ -13,7 +13,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Switch from '@material-ui/core/Switch';
 import CardActions from '@material-ui/core/CardActions';
 import CheckList from '../Checklist';
-import API from '../../api/apiRequest';
+import Button from '@material-ui/core/Button';
+
+import NewApp from '../NewApp';
 import { serviceEnabled, serviceExpanded } from '../../redux/slices/servicesSlice';
 
 /**
@@ -45,11 +47,23 @@ const styles = theme => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
+  editAppDetail: {
+    marginTop: 16
+  },
+  editImage: {
+    marginLeft: 16,
+    marginTop: 16
+  },
+  editAppTitle: {
+    marginbottom: 16
+  }
 });
 
 export function CardComponent(props) {
 
-  const { classes, application, enableService, expandService, enabledID, expandedID } = props
+  const [isEditable, setEditable] = React.useState(false);
+  const { classes, application, enableService, expandService,
+    enabledID, expandedID, isAdmin, updateApplication } = props
   const handleSwitchToggle = async () => {
     enableService(application.id);
   };
@@ -57,48 +71,79 @@ export function CardComponent(props) {
     expandService(application.id);
   };
 
+  const handleEdit = () => {
+    setEditable(true);
+  };
+
+  const editApplication = app => {
+    updateApplication(app);
+    setEditable(false);
+  };
+
   return (
-    <Card>
-      <CardMedia
-        className={classes.cardMedia}
-        image={application.logo.url}
-        title={application.name}
-      />
-      <CardContent className={classes.cardContent}>
-        <Typography gutterBottom variant="h5" component="h2">
-          {application.name}
-        </Typography>
-        <Typography variant="body2">
-          {application.description}
-        </Typography>
-      </CardContent>
-      <Grid container spacing={5} alignItems="center">
-        <Grid item sm={12} md={6} lg={4}>
-          <CardActions className={classes.actions}>
-            <Switch checked={enabledID.includes(application.id)} onClick={handleSwitchToggle} />
-            <Typography>{enabledID.includes(application.id) && 'CONNECTED'}</Typography>
-          </CardActions>
-        </Grid>
-        <Grid item sm={12} md={6} lg={4}>
-          <CardActions>
-            <IconButton
-              style={{ display: 'none' }}
-              className={classNames(classes.expand, {
-                [classes.expandOpen]: expandedID.includes(application.id),
-              })}
-              onClick={handleExpandClick}
-              aria-expanded={expandedID.includes(application.id)}
-              aria-label="Show permissions"
-            >
-              <ExpandMoreIcon />
-            </IconButton>
-          </CardActions>
-        </Grid>
-      </Grid>
-      <Collapse in={expandedID.includes(application.id)} timeout="auto" unmountOnExit>
-        <CheckList permissions={application.permissions} />
-      </Collapse>
-    </Card >
+    <React.Fragment>
+      {
+        isEditable ?
+          (
+            <NewApp isEditMode={isEditable}
+              application={application}
+              editApplication={editApplication} />
+          ) : (
+            <React.Fragment>
+              <Card>
+                <CardMedia
+                  className={classes.cardMedia}
+                  image={application.logo.url}
+                  title={application.name}
+                />
+                <CardContent className={classes.cardContent}>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    {application.name}
+                  </Typography>
+                  <Typography variant="body2">
+                    {application.description}
+                  </Typography>
+                </CardContent>
+                <Grid container spacing={5} alignItems="center">
+                  <Grid item sm={12} md={6} lg={4}>
+                    <CardActions className={classes.actions}>
+                      <Switch checked={enabledID.includes(application.id)} onClick={handleSwitchToggle} />
+                      <Typography>{enabledID.includes(application.id) && 'CONNECTED'}</Typography>
+                    </CardActions>
+                  </Grid>
+                  <Grid item sm={12} md={6} lg={4}>
+                    <CardActions>
+                      <IconButton
+                        style={{ display: 'none' }}
+                        className={classNames(classes.expand, {
+                          [classes.expandOpen]: expandedID.includes(application.id),
+                        })}
+                        onClick={handleExpandClick}
+                        aria-expanded={expandedID.includes(application.id)}
+                        aria-label="Show permissions"
+                      >
+                        <ExpandMoreIcon />
+                      </IconButton>
+                    </CardActions>
+                  </Grid>
+                </Grid>
+                <Collapse in={expandedID.includes(application.id)} timeout="auto" unmountOnExit>
+                  <CheckList permissions={application.permissions} />
+                </Collapse>
+              </Card>
+              {isAdmin &&
+                <Button className={classes.button}
+                  variant="outlined"
+                  color="secondary"
+                  onClick={handleEdit}
+                  fullWidth >
+                  Edit App
+              </Button>
+              }
+            </React.Fragment>
+          )
+      }
+    </React.Fragment>
   );
 }
 const mapStateToProps = state => {
