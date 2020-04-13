@@ -28,9 +28,10 @@ const applicationReducer = (state = {}, action) => {
             newAppList.splice(indexOfAppToEdit, 1, newApp);
             return {
                 ...state,
-                appList: [
+                appList: {
+                    application: [
                     ...newAppList
-                ]
+                ]}
             };
         default:
             return state;

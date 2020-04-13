@@ -7,7 +7,6 @@ import { history } from '../../components/Authentication/history';
 */
 
 export const GET_USER = 'GET_USER';
-// export const LOGIN_USER = 'LOGIN_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
 
 
@@ -18,10 +17,6 @@ export const LOGOUT_USER = 'LOGOUT_USER';
 const getUser = payload => {
     return ({ type: GET_USER, authentication: payload });
 };
-
-// const loginUser = () => {
-//     return ({ type: LOGIN_USER });
-// };
 
 const logoutUser = () => {
     return ({ type: LOGOUT_USER });
