@@ -7,7 +7,6 @@ const API = axios.create({
         "x-api-key": 'yvqUgOn4IZotIF8B0FXFyolCpPlvLTni3mZ67Yk6TX',
         "Content-Type": "application/ld+json"
     }
-    
 });
 
 const APIAuth = axios.create({

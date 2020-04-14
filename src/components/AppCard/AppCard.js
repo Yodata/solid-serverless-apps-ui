@@ -4,8 +4,6 @@ import Grid from '@material-ui/core/Grid';
 import Card from '../../components/Cards';
 import { getAllApps, addNewApp } from '../../redux/actions/applicationActions';
 import NewApp from '../NewApp';
-import API from '../../api/apiRequest';
-import endpoint from '../../api/endpoints';
 import { updateApp } from '../../redux/actions/applicationActions';
 
 /**
@@ -25,7 +23,7 @@ function AppCard(props) {
         return applications ? applications.filter(function (app) {
             let result = false
             if (app && app.group) {
-                result = app.group.includes(group)
+                result = app.group.includes(group) && app.isVisible
             }
             return result
         }) : [];
@@ -38,9 +36,7 @@ function AppCard(props) {
         });
         const maxId = Math.max(...idArray);
         const idName = value.name + "_id";
-        Object.defineProperty(value.identifier, idName, {
-            value: maxId + 1
-        })
+        value.identifier[idName] = maxId + 1;
         addApp(value);
     }
 

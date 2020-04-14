@@ -1,4 +1,4 @@
-import { GET_USER, LOGIN_USER, LOGOUT_USER } from '../actions/authenticationActions';
+import { GET_USER, LOGOUT_USER } from '../actions/authenticationActions';
 
 const defaultState = {
     isLoggedIn: false

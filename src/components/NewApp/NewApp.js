@@ -53,7 +53,7 @@ const permissions = [
 function NewApp(props) {
 
     const { classes, isEditMode, tabIndex,
-        application: { logo: { url = '' } = {}, name = '', description = '', id = '' },
+        application: { logo: { url = '' } = {}, name = '', description = '', id = '', isVisible = true },
         application = {}, editApplication, addNewApp } = props
     const [state, setState] = React.useState({
         isAddNew: false,
@@ -79,7 +79,7 @@ function NewApp(props) {
 
     const handleNewApp = () => {
         setState({ ...state, isAddNew: true });
-    }; 
+    };
 
     const handleAppIdChange = event => {
         const id = event.currentTarget.value;
@@ -101,12 +101,13 @@ function NewApp(props) {
         setState({ ...state, newDescription: description })
     };
 
-    const handleDone = () => {
+    const handleDone = value => {
         const editedApplication = JSON.parse(JSON.stringify(application));
         editedApplication.id = state.newId;
         editedApplication.name = state.newTitle;
         editedApplication.description = state.newDescription;
         editedApplication.logo.url = state.newLogo;
+        editedApplication.isVisible = value === "hide" ? false : isVisible
         editApplication(editedApplication);
     }
 
@@ -122,7 +123,8 @@ function NewApp(props) {
                 url: ''
             },
             group: [],
-            permissions: []
+            permissions: [],
+            isVisible: true
         };
         editedApplication.id = state.newId;
         editedApplication.name = state.newTitle;
@@ -130,6 +132,10 @@ function NewApp(props) {
         editedApplication.logo.url = state.newLogo;
         addNewApp(editedApplication);
         setState({ ...state, isAddNew: false });
+    }
+
+    const handleHide = () => {
+        handleDone("hide");
     }
 
     return (
@@ -166,9 +172,10 @@ function NewApp(props) {
                         <CardContent className={classes.cardContent}>
                             <TextField
                                 className={classes.editID}
-                                id="app-id"
+                                id="profie-id"
+                                label="Enter Profile Id"
                                 defaultValue={id}
-                                placeholder="App Id"
+                                placeholder="https://yodata.io/profile/card#me"
                                 variant="outlined"
                                 color="secondary"
                                 fullWidth
@@ -199,20 +206,25 @@ function NewApp(props) {
                         </CardContent>
                         <CardActions>
                             <Button className={classes.doneButton}
-                                size="large"
                                 color="secondary"
-                                fullWidth
                                 onClick={handlePermission}
                             >
                                 Permissions
                             </Button>
-                            <Popper id={popperId} open={open} anchorEl={anchorEl} placement='top-start'>
-                                <CheckList permissions={permissions}/>
+                            <Button className={classes.doneButton}
+                                color="secondary"
+                                onClick={handleHide}
+                            >
+                                Hide
+                            </Button>
+                            <Popper id={popperId}
+                                open={open}
+                                anchorEl={anchorEl}
+                                placement='top-start'>
+                                <CheckList permissions={permissions} />
                             </Popper>
                             <Button className={classes.doneButton}
-                                size="large"
                                 color="secondary"
-                                fullWidth
                                 onClick={state.isAddNew ? handleAddNew : handleDone}
                             >
                                 Done
