@@ -53,7 +53,7 @@ const permissions = [
 function NewApp(props) {
 
     const { classes, isEditMode, tabIndex,
-        application: { logo: { url = '' } = {}, name = '', description = '', id = '', isVisible = true },
+        application: { logo: { url = '' } = {}, name = '', description = '', id = ''},
         application = {}, editApplication, addNewApp } = props
     const [state, setState] = React.useState({
         isAddNew: false,
@@ -107,7 +107,6 @@ function NewApp(props) {
         editedApplication.name = state.newTitle;
         editedApplication.description = state.newDescription;
         editedApplication.logo.url = state.newLogo;
-        editedApplication.isVisible = value === "hide" ? false : isVisible
         editApplication(editedApplication);
     }
 
@@ -208,14 +207,9 @@ function NewApp(props) {
                             <Button className={classes.doneButton}
                                 color="secondary"
                                 onClick={handlePermission}
+                                fullWidth
                             >
                                 Permissions
-                            </Button>
-                            <Button className={classes.doneButton}
-                                color="secondary"
-                                onClick={handleHide}
-                            >
-                                Hide
                             </Button>
                             <Popper id={popperId}
                                 open={open}
@@ -225,6 +219,7 @@ function NewApp(props) {
                             </Popper>
                             <Button className={classes.doneButton}
                                 color="secondary"
+                                fullWidth
                                 onClick={state.isAddNew ? handleAddNew : handleDone}
                             >
                                 Done

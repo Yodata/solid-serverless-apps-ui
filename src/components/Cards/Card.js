@@ -10,6 +10,8 @@ import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Switch from '@material-ui/core/Switch';
 import CardActions from '@material-ui/core/CardActions';
 import CheckList from '../Checklist';
@@ -24,6 +26,10 @@ import { serviceEnabled, serviceExpanded } from '../../redux/slices/servicesSlic
  */
 
 const styles = theme => ({
+  root: {
+    position: 'relative',
+    opacity: props => (props.application.isVisible ? 1 : 0.5)
+  },
   cardMedia: {
     paddingTop: '56.25%',
     backgroundSize: '56.25%',
@@ -56,6 +62,11 @@ const styles = theme => ({
   },
   editAppTitle: {
     marginbottom: 16
+  },
+  hideButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0
   }
 });
 
@@ -75,6 +86,12 @@ export function CardComponent(props) {
     setEditable(true);
   };
 
+  const handleVisibility = () => {
+    const editedApplication = JSON.parse(JSON.stringify(application));
+    editedApplication.isVisible = !application.isVisible;
+    editApplication(editedApplication);
+  }
+
   const editApplication = app => {
     updateApplication(app);
     setEditable(false);
@@ -90,12 +107,22 @@ export function CardComponent(props) {
               editApplication={editApplication} />
           ) : (
             <React.Fragment>
-              <Card>
+              <Card className={classes.root}>
                 <CardMedia
                   className={classes.cardMedia}
                   image={application.logo.url}
                   title={application.name}
                 />
+                {isAdmin &&
+                  <IconButton
+                    className={classes.hideButton}
+                    onClick={handleVisibility}>
+                    {application.isVisible ?
+                      <Visibility />
+                      :
+                      <VisibilityOff />}
+                  </IconButton>
+                }
                 <CardContent className={classes.cardContent}>
                   <Typography gutterBottom variant="h5" component="h2">
                     {application.name}

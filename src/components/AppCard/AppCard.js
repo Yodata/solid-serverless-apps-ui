@@ -23,7 +23,10 @@ function AppCard(props) {
         return applications ? applications.filter(function (app) {
             let result = false
             if (app && app.group) {
-                result = app.group.includes(group) && app.isVisible
+                result = app.group.includes(group);
+                if(!admin){
+                    result = app.group.includes(group) && app.isVisible 
+                }
             }
             return result
         }) : [];
