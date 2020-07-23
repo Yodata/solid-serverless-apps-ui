@@ -5,32 +5,44 @@ import Card from '../../components/Cards';
 import { getAllApps, addNewApp } from '../../redux/actions/applicationActions';
 import NewApp from '../NewApp';
 import { updateApp } from '../../redux/actions/applicationActions';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Container from '@material-ui/core/Container';
 
 /**
  * @Component AppCard
  * @Description This component will load all the application
  */
 
+const styles = theme => ({
+    app: {
+        padding: 8
+    },
+    // appGrid: {
+    //     paddingLeft: 40,
+    //     paddingRight: 40
+    // }
+});
+
 function AppCard(props) {
 
-    const { tabIndex, applications, getApps, admin, addApp, editApp} = props;
+    const { classes, tabIndex, applications = [], getApps, isAdmin, addApp, editApp } = props;
 
     React.useEffect(() => {
         getApps();
     }, [getApps]);
 
-    const getApplications = (group = 'featured') => {
-        return applications ? applications.filter(function (app) {
-            let result = false
-            if (app && app.group) {
-                result = app.group.includes(group);
-                if(!admin){
-                    result = app.group.includes(group) && app.isVisible 
-                }
-            }
-            return result
-        }) : [];
-    };
+    // const getApplications = (group = 'featured') => {
+    //     return applications ? applications.filter(function (app) {
+    //         let result = false
+    //         if (app && app.group) {
+    //             result = app.group.includes(group);
+    //             if(!admin){
+    //                 result = app.group.includes(group) && app.isVisible 
+    //             }
+    //         }
+    //         return result
+    //     }) : [];
+    // };
 
     const addNewApplication = value => {
         value.group.push(tabIndex);
@@ -49,26 +61,35 @@ function AppCard(props) {
 
     return (
         <React.Fragment>
-            <Grid container justify='space-around'>
-                <Grid item xs={12} style={{ maxWidth: '960px' }}>
-                    <Grid container spacing={5} alignItems="center">
-                        {getApplications(tabIndex).map(application => (
-                            <Grid item key={application.name} sm={12} md={6} lg={4}>
+            <Grid item container direction='row' alignItems='center' justify='space-around'>
+                {applications.map(application => (
+                    <>
+                        {application.isVisible ?
+                            (<Grid className={classes.app} item key={application.name}>
                                 <Card application={application}
-                                    isAdmin={admin} 
-                                    updateApplication={updateApplication}/>
+                                    isAdmin={isAdmin}
+                                    updateApplication={updateApplication} />
                             </Grid>
-                        ))}
-                        {admin &&
+                            ) : (
+                                isAdmin &&
+                                (<Grid className={classes.app} item key={application.name}>
+                                    <Card application={application}
+                                        isAdmin={isAdmin}
+                                        updateApplication={updateApplication} />
+                                </Grid>
+                                )
+                            )
+                        }
+                    </>
+                ))}
+                {/* {isAdmin &&
                             <Grid item sm={12} md={6} lg={4}>
                                 <NewApp
                                     tabIndex={tabIndex}
                                     application={{}}
                                     addNewApp={addNewApplication} />
                             </Grid>
-                        }
-                    </Grid>
-                </Grid>
+                        } */}
             </Grid>
         </React.Fragment >
     );
@@ -77,7 +98,7 @@ function AppCard(props) {
 const mapStateToProps = state => {
     return {
         tabIndex: state.groups.tabIndex,
-        applications: state.apps.appList && state.apps.appList.application
+        applications: state.apps.storeData && state.apps.storeData.application
     }
 }
 
@@ -89,4 +110,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppCard);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(AppCard));

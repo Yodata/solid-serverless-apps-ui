@@ -9,7 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 function LoginDialog(props) {
 
     const handleLogin = () => {
-        window.location.href = "https://dev.env.yodata.io/reflex/auth/saml/login";
+        //window.location.href = "https://dev.env.yodata.io/reflex/auth/saml/login";
     };
 
     return (

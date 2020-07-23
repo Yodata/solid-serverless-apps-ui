@@ -1,22 +1,28 @@
 import { createMuiTheme } from '@material-ui/core';
-import green from '@material-ui/core/colors/green';
-import grey from '@material-ui/core/colors/grey';
 
 // A theme with custom primary and secondary color.
 // It's optional.
 
 const theme = createMuiTheme({
   palette: {
-    primary: {
-      light: grey[100],
-      main: grey[200],
-      dark: grey[700],
+    error: {
+      main: '#d32f2f'
     },
-    secondary: {
-      light: green[300],
-      main: green[500],
-      dark: green[700],
+    update: {
+      main: '#1976d2'
     },
+    success: {
+      main: '#4caf50'
+    },
+    new: {
+      main: '#ffe499'
+    },
+    adminButtons: {
+      main: '#b6d7a7'
+    },
+    invisible: {
+      main: '#b6b6b6'
+    }
   }
 });
 

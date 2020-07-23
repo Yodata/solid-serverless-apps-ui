@@ -33,7 +33,7 @@ function Hero(props) {
 
 const mapStateToProps = state => {
     return {
-        userCustomization: state.apps.appList && state.apps.appList.userCustomization
+        userCustomization: state.apps.storeData && state.apps.storeData.userCustomization
     };
 };
 

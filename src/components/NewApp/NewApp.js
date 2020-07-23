@@ -4,57 +4,39 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
-import InsertPhotoRoundedIcon from '@material-ui/icons/InsertPhotoRounded';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import Button from '@material-ui/core/Button';
-import Popper from '@material-ui/core/Popper';
-import CheckList from '../Checklist';
+import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
-
-    editAppDetail: {
-        marginTop: 8,
-        marginbottom: 8
+    root: {
+        position: 'relative',
+        minWidth: 300,
+        maxWidth: 300,
+        maxHeight: 350
     },
-    editImage: {
-        marginLeft: 16,
-        marginTop: 8,
-        marginRight: 16
+    padding: {
+        paddingTop: 8,
+        fontSize: 10
     },
-    editAppTitle: {
-        marginbottom: 8,
-        marginTop: 8
+    resize: {
+        fontSize: 16
+    },
+    adminButtons: {
+        paddingRight: 17.5,
+        paddingLeft: 17.5,
+        backgroundColor: theme.palette.adminButtons.main,
+        textTransform: 'none'
+    },
+    cardContent: {
+        padding: 8
     }
 });
-
-const permissions = [
-    {
-        "description": "create and update your leads",
-        "id": "lead_write"
-    },
-    {
-        "description": "view agent & office profiles",
-        "id": "profile_read"
-    },
-    {
-        "description": "see contact events",
-        "id": "contact_read"
-    },
-    {
-        "description": "modify your contact information",
-        "id": "contact_write"
-    },
-    {
-        "description": "see your leads",
-        "id": "lead_read"
-    },
-]
 
 function NewApp(props) {
 
     const { classes, isEditMode, tabIndex,
-        application: { logo: { url = '' } = {}, name = '', description = '', id = ''},
-        application = {}, editApplication, addNewApp } = props
+        application: { logo: { url = '' } = {}, name = '', description = '', id = '' },
+        application = {}, editApplication, addNewApp, handleCancel } = props
     const [state, setState] = React.useState({
         isAddNew: false,
         newId: id,
@@ -62,16 +44,6 @@ function NewApp(props) {
         newLogo: url,
         newDescription: description
     });
-
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const handlePermission = (event) => {
-        setAnchorEl(anchorEl ? null : event.currentTarget);
-    };
-
-    const open = Boolean(anchorEl);
-    const popperId = open ? 'simple-popper' : undefined;
-
 
     React.useEffect(() => {
         setState({ ...state, isAddNew: false });
@@ -133,92 +105,104 @@ function NewApp(props) {
         setState({ ...state, isAddNew: false });
     }
 
-    const handleHide = () => {
-        handleDone("hide");
+    const cancelButton = () => {
+        handleCancel()
     }
 
     return (
         <Card className={classes.root}>
             {!state.isAddNew && !isEditMode ? (
                 <CardActions>
-                    <Button
+                    {/* <Button
                         size="large"
                         color="secondary"
                         onClick={handleNewApp}
                     >
                         Add New App
-                        </Button>
+                        </Button> */}
                 </CardActions>
             ) : (
                     <React.Fragment>
-                        <TextField
-                            className={classes.editImage}
-                            id="edit-image"
-                            label="Enter Image URL"
-                            defaultValue={url}
-                            variant="outlined"
-                            color="secondary"
-                            multiline
-                            rows="3"
-                            onChange={handleAppLogoChange}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <InsertPhotoRoundedIcon color="secondary" />
-                                    </InputAdornment>
-                                ),
-                            }} />
                         <CardContent className={classes.cardContent}>
+                            <Typography style={{ fontSize: '10px' }}>Logo Image URL</Typography>
                             <TextField
-                                className={classes.editID}
+                                id="edit-image"
+                                defaultValue={url}
+                                variant="outlined"
+                                color="secondary"
+                                rows="3"
+                                fullWidth
+                                size='small'
+                                InputProps={{
+                                    classes: {
+                                        input: classes.resize,
+                                    },
+                                }}
+                                onChange={handleAppLogoChange}
+                            />
+                            <Typography className={classes.padding}>POD Profile</Typography>
+                            <TextField
                                 id="profie-id"
-                                label="Enter Profile Id"
                                 defaultValue={id}
                                 placeholder="https://yodata.io/profile/card#me"
                                 variant="outlined"
                                 color="secondary"
                                 fullWidth
+                                size='small'
+                                InputProps={{
+                                    classes: {
+                                        input: classes.resize,
+                                    },
+                                }}
                                 onChange={handleAppIdChange}
                             />
+                            <Typography className={classes.padding}>Display Name</Typography>
                             <TextField
-                                className={classes.editAppTitle}
                                 id="app-title"
                                 defaultValue={name}
                                 placeholder="App Title"
                                 variant="outlined"
                                 color="secondary"
                                 fullWidth
+                                size='small'
+                                InputProps={{
+                                    classes: {
+                                        input: classes.resize,
+                                    },
+                                }}
                                 onChange={handleAppTitleChange}
                             />
+                            <Typography className={classes.padding}>Company Description</Typography>
                             <TextField
-                                className={classes.editAppDetail}
                                 id="edit-app-detail"
                                 multiline
-                                rows="2"
+                                rows="3"
                                 fullWidth
                                 color="secondary"
                                 placeholder="App Detail"
                                 variant="outlined"
                                 defaultValue={description}
+                                size='small'
+                                InputProps={{
+                                    classes: {
+                                        input: classes.resize,
+                                    },
+                                }}
                                 onChange={handleAppDescriptionChange}
                             />
                         </CardContent>
                         <CardActions>
-                            <Button className={classes.doneButton}
-                                color="secondary"
-                                onClick={handlePermission}
+                            <Button
+                                className={classes.adminButtons}
+                                variant="outlined"
+                                onClick={cancelButton}
                                 fullWidth
                             >
-                                Permissions
+                                Cancel
                             </Button>
-                            <Popper id={popperId}
-                                open={open}
-                                anchorEl={anchorEl}
-                                placement='top-start'>
-                                <CheckList permissions={permissions} />
-                            </Popper>
-                            <Button className={classes.doneButton}
-                                color="secondary"
+                            <Button
+                                className={classes.adminButtons}
+                                variant="outlined"
                                 fullWidth
                                 onClick={state.isAddNew ? handleAddNew : handleDone}
                             >

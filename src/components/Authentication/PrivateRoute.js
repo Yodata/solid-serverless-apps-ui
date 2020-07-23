@@ -5,16 +5,19 @@ import { currentUser } from '../../redux/actions/authenticationActions';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
     const dispatch = useDispatch();
-    const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+    //const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
 
     React.useEffect(() => {
       dispatch(currentUser());
     }, []);
     return (
+        // <Route {...rest} render={props => (
+        //     isLoggedIn
+        //         ? <Component {...props} />
+        //         : <Redirect to={{ pathname: '/login' }} />
+        // )} />
         <Route {...rest} render={props => (
-            isLoggedIn
-                ? <Component {...props} />
-                : <Redirect to={{ pathname: '/login' }} />
+                <Component {...props} />
         )} />
     )
 }

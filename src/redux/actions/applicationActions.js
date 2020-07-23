@@ -42,8 +42,7 @@ export const addNewApp = value => {
     return async (dispatch, getState) => {
         try {
             dispatch(addApp(value));
-            console.log(getState());
-            await API.put(endpoint.allApps, getState().apps.appList);
+            await API.put(endpoint.allApps, getState().apps.storeData);
         } catch (err) {
             throw err
         }
@@ -54,7 +53,7 @@ export const updateApp = value => {
     return async (dispatch, getState) => {
         try {
             dispatch(editApp(value));
-            await API.put(endpoint.allApps, getState().apps.appList);
+            await API.put(endpoint.allApps, getState().apps.storeData);
         } catch (err) {
             throw err;
         }

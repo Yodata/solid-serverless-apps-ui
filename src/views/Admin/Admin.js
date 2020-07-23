@@ -7,8 +7,8 @@ function Admin() {
     return (
         <React.Fragment>
             <Hero />
-            <Group />
-            <AppCard admin={true}/>
+            <Group isAdmin={true} />
+            <AppCard isAdmin={true} />
         </React.Fragment>
     );
 };
