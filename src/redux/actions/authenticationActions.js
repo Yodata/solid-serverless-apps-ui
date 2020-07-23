@@ -27,14 +27,11 @@ export const currentUser = () => {
         try {
             const response = await APIAuth.get(endpoint.userAuth);
             dispatch(getUser(response));
-            if (getState().auth.isLoggedIn) {
-                history.push('/');
-            }
-            else {
-                history.push('/login');
-            }
         } catch (err) {
             dispatch(getUser(err));
+            if(!getState().auth.isLoggedIn){
+                window.location.href = "https://dev.env.yodata.io/reflex/auth/saml/login";
+            }
         };
     };
 };
