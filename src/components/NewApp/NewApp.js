@@ -34,24 +34,15 @@ const styles = theme => ({
 
 function NewApp(props) {
 
-    const { classes, isEditMode, tabIndex,
+    const { classes, isAddNew,
         application: { logo: { url = '' } = {}, name = '', description = '', id = '' },
         application = {}, editApplication, addNewApp, handleCancel } = props
     const [state, setState] = React.useState({
-        isAddNew: false,
         newId: id,
         newTitle: name,
         newLogo: url,
         newDescription: description
     });
-
-    React.useEffect(() => {
-        setState({ ...state, isAddNew: false });
-    }, [tabIndex]);
-
-    const handleNewApp = () => {
-        setState({ ...state, isAddNew: true });
-    };
 
     const handleAppIdChange = event => {
         const id = event.currentTarget.value;
@@ -73,7 +64,7 @@ function NewApp(props) {
         setState({ ...state, newDescription: description })
     };
 
-    const handleDone = value => {
+    const handleEdit = () => {
         const editedApplication = JSON.parse(JSON.stringify(application));
         editedApplication.id = state.newId;
         editedApplication.name = state.newTitle;
@@ -97,12 +88,32 @@ function NewApp(props) {
             permissions: [],
             isVisible: true
         };
+
         editedApplication.id = state.newId;
         editedApplication.name = state.newTitle;
         editedApplication.description = state.newDescription;
         editedApplication.logo.url = state.newLogo;
+        editedApplication.permissions = createPermissions()
+        console.log(editedApplication.permissions)
         addNewApp(editedApplication);
-        setState({ ...state, isAddNew: false });
+        handleCancel();
+    }
+
+    const createPermissions = () => {
+
+        const topics = ['Award', 'Calendar', 'Contact', 'Franchise Reporting', 'Lead', 'Listing',
+            'Marketing Program', 'Service Area', 'Transaction', 'Website'];
+
+        Object.freeze(topics)
+        return topics.map(topic => {
+            return {
+                name: topic,
+                read: false,
+                write: false,
+                version: '0.0.0',
+                object: `/event/topic/realestate/${topic.toLowerCase().split(" ").join("")}`
+            }
+        })
     }
 
     const cancelButton = () => {
@@ -111,107 +122,96 @@ function NewApp(props) {
 
     return (
         <Card className={classes.root}>
-            {!state.isAddNew && !isEditMode ? (
-                <CardActions>
-                    {/* <Button
-                        size="large"
+            <React.Fragment>
+                <CardContent className={classes.cardContent}>
+                    <Typography style={{ fontSize: '10px' }}>Logo Image URL</Typography>
+                    <TextField
+                        id="edit-image"
+                        defaultValue={url}
+                        variant="outlined"
                         color="secondary"
-                        onClick={handleNewApp}
+                        rows="3"
+                        fullWidth
+                        size='small'
+                        InputProps={{
+                            classes: {
+                                input: classes.resize,
+                            },
+                        }}
+                        onChange={handleAppLogoChange}
+                    />
+                    <Typography className={classes.padding}>POD Profile</Typography>
+                    <TextField
+                        id="profie-id"
+                        defaultValue={id}
+                        placeholder="https://yodata.io/profile/card#me"
+                        variant="outlined"
+                        color="secondary"
+                        fullWidth
+                        size='small'
+                        InputProps={{
+                            classes: {
+                                input: classes.resize,
+                            },
+                        }}
+                        onChange={handleAppIdChange}
+                    />
+                    <Typography className={classes.padding}>Display Name</Typography>
+                    <TextField
+                        id="app-title"
+                        defaultValue={name}
+                        placeholder="App Title"
+                        variant="outlined"
+                        color="secondary"
+                        fullWidth
+                        size='small'
+                        InputProps={{
+                            classes: {
+                                input: classes.resize,
+                            },
+                        }}
+                        onChange={handleAppTitleChange}
+                    />
+                    <Typography className={classes.padding}>Company Description</Typography>
+                    <TextField
+                        id="edit-app-detail"
+                        multiline
+                        rows="3"
+                        fullWidth
+                        color="secondary"
+                        placeholder="App Detail"
+                        variant="outlined"
+                        defaultValue={description}
+                        size='small'
+                        InputProps={{
+                            classes: {
+                                input: classes.resize,
+                            },
+                        }}
+                        onChange={handleAppDescriptionChange}
+                    />
+                </CardContent>
+                <CardActions>
+                    <Button
+                        className={classes.adminButtons}
+                        variant="outlined"
+                        onClick={cancelButton}
+                        fullWidth
                     >
-                        Add New App
-                        </Button> */}
+                        Cancel
+                    </Button>
+                    <Button
+                        className={classes.adminButtons}
+                        variant="outlined"
+                        fullWidth
+                        onClick={isAddNew ? handleAddNew : handleEdit}
+                    >
+                        Done
+                    </Button>
                 </CardActions>
-            ) : (
-                    <React.Fragment>
-                        <CardContent className={classes.cardContent}>
-                            <Typography style={{ fontSize: '10px' }}>Logo Image URL</Typography>
-                            <TextField
-                                id="edit-image"
-                                defaultValue={url}
-                                variant="outlined"
-                                color="secondary"
-                                rows="3"
-                                fullWidth
-                                size='small'
-                                InputProps={{
-                                    classes: {
-                                        input: classes.resize,
-                                    },
-                                }}
-                                onChange={handleAppLogoChange}
-                            />
-                            <Typography className={classes.padding}>POD Profile</Typography>
-                            <TextField
-                                id="profie-id"
-                                defaultValue={id}
-                                placeholder="https://yodata.io/profile/card#me"
-                                variant="outlined"
-                                color="secondary"
-                                fullWidth
-                                size='small'
-                                InputProps={{
-                                    classes: {
-                                        input: classes.resize,
-                                    },
-                                }}
-                                onChange={handleAppIdChange}
-                            />
-                            <Typography className={classes.padding}>Display Name</Typography>
-                            <TextField
-                                id="app-title"
-                                defaultValue={name}
-                                placeholder="App Title"
-                                variant="outlined"
-                                color="secondary"
-                                fullWidth
-                                size='small'
-                                InputProps={{
-                                    classes: {
-                                        input: classes.resize,
-                                    },
-                                }}
-                                onChange={handleAppTitleChange}
-                            />
-                            <Typography className={classes.padding}>Company Description</Typography>
-                            <TextField
-                                id="edit-app-detail"
-                                multiline
-                                rows="3"
-                                fullWidth
-                                color="secondary"
-                                placeholder="App Detail"
-                                variant="outlined"
-                                defaultValue={description}
-                                size='small'
-                                InputProps={{
-                                    classes: {
-                                        input: classes.resize,
-                                    },
-                                }}
-                                onChange={handleAppDescriptionChange}
-                            />
-                        </CardContent>
-                        <CardActions>
-                            <Button
-                                className={classes.adminButtons}
-                                variant="outlined"
-                                onClick={cancelButton}
-                                fullWidth
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                className={classes.adminButtons}
-                                variant="outlined"
-                                fullWidth
-                                onClick={state.isAddNew ? handleAddNew : handleDone}
-                            >
-                                Done
-                            </Button>
-                        </CardActions>
-                    </React.Fragment>
+            </React.Fragment>
                 )
-            }
+
         </Card>
     );
 }

@@ -2,11 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import Card from '../../components/Cards';
+import Button from '@material-ui/core/Button'
 import { getAllApps, addNewApp } from '../../redux/actions/applicationActions';
 import NewApp from '../NewApp';
 import { updateApp } from '../../redux/actions/applicationActions';
 import withStyles from '@material-ui/core/styles/withStyles';
-import Container from '@material-ui/core/Container';
 
 /**
  * @Component AppCard
@@ -14,13 +14,23 @@ import Container from '@material-ui/core/Container';
  */
 
 const styles = theme => ({
-    app: {
-        padding: 8
+    root:{
+        paddingTop: 72,
+        paddingLeft: '5vw',
     },
-    // appGrid: {
-    //     paddingLeft: 40,
-    //     paddingRight: 40
-    // }
+    app: {
+        paddingRight: '5vw',
+        paddingBottom: '10vh'
+    },
+    new: {
+        paddingRight: '40px',
+        paddingLeft: '40px',
+        marginBottom: '20px',
+        backgroundColor: theme.palette.new.main,
+        '&:hover': {
+            backgroundColor: theme.palette.new.main,
+          }
+    }
 });
 
 function AppCard(props) {
@@ -31,6 +41,7 @@ function AppCard(props) {
         getApps();
     }, [getApps]);
 
+    const [isNew, setNew] = React.useState(false)
     // const getApplications = (group = 'featured') => {
     //     return applications ? applications.filter(function (app) {
     //         let result = false
@@ -59,37 +70,56 @@ function AppCard(props) {
         editApp(app);
     };
 
+    const handleNew = () => {
+        setNew(true)
+    }
+
+    const handleCancel = () => {
+        setNew(false)
+    }
+
     return (
         <React.Fragment>
-            <Grid item container direction='row' alignItems='center' justify='space-around'>
-                {applications.map(application => (
-                    <>
-                        {application.isVisible ?
-                            (<Grid className={classes.app} item key={application.name}>
-                                <Card application={application}
-                                    isAdmin={isAdmin}
-                                    updateApplication={updateApplication} />
-                            </Grid>
-                            ) : (
-                                isAdmin &&
+            <Grid container direction='column' alignItems='flex-end'>
+                <Grid item>
+                    {isAdmin &&
+                        <Button variant='outlined' className={classes.new} onClick={handleNew}>
+                            Add New Application
+                        </Button>
+                    }
+                </Grid>
+                <Grid className={classes.root} container item direction='row' >
+                    {isAdmin && isNew &&
+                        <Grid item>
+                            <NewApp
+                                isAddNew={isNew}
+                                tabIndex={tabIndex}
+                                application={{}}
+                                addNewApp={addNewApplication}
+                                handleCancel={handleCancel} />
+                        </Grid>
+                    }
+                    {applications.map(application => (
+                        <>
+                            {application.isVisible ?
                                 (<Grid className={classes.app} item key={application.name}>
                                     <Card application={application}
                                         isAdmin={isAdmin}
                                         updateApplication={updateApplication} />
                                 </Grid>
+                                ) : (
+                                    isAdmin &&
+                                    (<Grid className={classes.app} item key={application.name}>
+                                        <Card application={application}
+                                            isAdmin={isAdmin}
+                                            updateApplication={updateApplication} />
+                                    </Grid>
+                                    )
                                 )
-                            )
-                        }
-                    </>
-                ))}
-                {/* {isAdmin &&
-                            <Grid item sm={12} md={6} lg={4}>
-                                <NewApp
-                                    tabIndex={tabIndex}
-                                    application={{}}
-                                    addNewApp={addNewApplication} />
-                            </Grid>
-                        } */}
+                            }
+                        </>
+                    ))}
+                </Grid>
             </Grid>
         </React.Fragment >
     );

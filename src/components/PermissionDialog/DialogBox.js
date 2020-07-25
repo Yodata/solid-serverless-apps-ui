@@ -37,11 +37,11 @@ const styles = theme => ({
     },
     actionButton: {
         color: '#ffffff',
-        backgroundColor: props => props.type === 'Authorize' ? 
-            theme.palette.success.main : 
+        backgroundColor: props => props.type === 'Authorize' ?
+            theme.palette.success.main :
             (props.type === 'Update' ?
-            theme.palette.update.main :
-            theme.palette.error.main)
+                theme.palette.update.main :
+                theme.palette.error.main)
     }
 })
 
@@ -61,7 +61,7 @@ function DialogBox(props) {
                 <Grid container direction='column' justify='center' alignItems='center'>
                     <Grid item xs={12} >
                         <Paper elevation={0} className={classes.image}>
-                            <img alt='app logo' src={application.logo.url} width='350' />
+                            <img alt='app logo' src={application.logo.url} width='250' />
                         </Paper>
                     </Grid>
                     <Grid item className={classes.textSpacing}>
@@ -79,20 +79,26 @@ function DialogBox(props) {
                                 </TableHead>
                                 <TableBody>
                                     {application.permissions.map(topic => (
-                                        <TableRow key={topic.name}>
-                                            <TableCell component="th" scope="row">
-                                                {topic.modes.length === 2 ?
-                                                    'Send and Recieve' : (
-                                                        topic.modes.includes('Write') ?
-                                                            'Send' :
-                                                            'Recieve'
-                                                    )}
-                                            </TableCell>
-                                            <TableCell>{topic.name}</TableCell>
-                                            <TableCell align="right">
-                                                {<img alt='connected application' src='https://www.reliancenetwork.com/reliancenetwork/img/logo.png' width={80} />}
-                                            </TableCell>
-                                        </TableRow>
+                                        <>
+                                            {(!topic.read && !topic.write) ?
+                                                "" : (
+                                                    <TableRow key={topic.name}>
+                                                        <TableCell component="th" scope="row">
+                                                            {(topic.read && topic.write) ?
+                                                                'Send and Recieve' : (
+                                                                    topic.write ?
+                                                                        'Send' :
+                                                                        'Recieve'
+                                                                )}
+                                                        </TableCell>
+                                                        <TableCell>{topic.name}</TableCell>
+                                                        <TableCell align="right">
+                                                            {<img alt='connected application' src='https://www.reliancenetwork.com/reliancenetwork/img/logo.png' width={80} />}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            }
+                                        </>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -107,7 +113,7 @@ function DialogBox(props) {
                         <Grid item>
                             <Button className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
                                 {type}
-                          </Button>
+                            </Button>
                         </Grid>
                     </Grid>
                 </Grid>

@@ -1,27 +1,63 @@
 import { createMuiTheme } from '@material-ui/core';
 
-// A theme with custom primary and secondary color.
-// It's optional.
-
 const theme = createMuiTheme({
   palette: {
     error: {
-      main: '#d32f2f'
+      main: '#d9000e'
     },
     update: {
       main: '#1976d2'
     },
     success: {
-      main: '#4caf50'
+      main: '#618959'
     },
     new: {
       main: '#ffe499'
     },
     adminButtons: {
-      main: '#b6d7a7'
+      main: '#618959'
     },
     invisible: {
-      main: '#b6b6b6'
+      main: '#e6e6e6'
+    },
+    purple: {
+      main: '#552448'
+    },
+    white: {
+      main: '#ffffff'
+    },
+    black: {
+      main: '#000000'
+    }
+  },
+  typography: {
+    fontFamily: [
+      'ProximaNova',
+      'Roboto'
+    ].join(','),
+    body2: {
+      fontSize: 16.2
+    },
+    body1: {
+      fontSize: 17.7,
+      fontFamily: [
+        'ProximaNovaBold',
+        'Roboto'
+      ].join(',')
+    },
+    vendorName: {
+      fontSize: 21.1,
+      fontFamily: [
+        'ProximaNovaBold',
+        'Roboto'
+      ].join(',')
+    }
+  },
+  overrides: {
+    MuiButton: {
+      root: {
+        borderRadius: 0
+      },
     }
   }
 });

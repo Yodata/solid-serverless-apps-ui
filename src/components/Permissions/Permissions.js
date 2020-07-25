@@ -9,74 +9,86 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Switch, Button, Dialog } from '@material-ui/core';
+import isEqual from 'lodash.isequalwith'
 
 const styles = theme => ({
-    root: {
-        // position: 'relative',
-        // minWidth: 300,
-        // maxWidth: 300,
-        // // maxHeight: 350
+    image: {
+        padding: 20,
+        objectFit: "contain"
     },
     dialogPaper: {
-        minWidth: '50vw',
-        maxWidth: '50vw',
-        minHeight: '80vh',
-        maxHeight: '80vh',
+        minWidth: '40vw',
+        maxWidth: '40vw',
+        minHeight: '70vh',
+        maxHeight: '70vh',
     },
     textSpacing: {
-
+        paddingBottom: 10,
     },
     table: {
-        minWidth: '47vw',
-        maxWidth: '47vw',
+        minWidth: '37vw',
+        maxWidth: '37vw',
     },
     toggleSwitch: {
-        backgroundColor: theme.palette.success.main
+        backgroundColor: theme.palette.success.main,
+        color: '#ffffff'
     },
     cancelButton: {
-        backgroundColor: theme.palette.error.main
+        backgroundColor: theme.palette.error.main,
+        color: '#ffffff',
+        textTransform: 'none'
+    },
+    new: {
+        backgroundColor: theme.palette.new.main,
+        textTransform: 'none',
+        "&:disabled": {
+            color: 'black'
+        }
+
     }
 })
 
 
 function Permissions(props) {
 
-    const { classes, application, handleDialog, open } = props
-    // const [state, setState] = React.useState({
-    //     isRead: false,
-    //     isWrite: false
-    // });
+    const { classes, permissions, handleDialog, open, logo, handlePermissionChanged } = props
 
-    // const handleChange = 
-
-    const createData = (name) => {
-        const topic = application.permissions.find(value => value.name === name.toLowerCase())
-        if (topic) {
-            if (topic.modes.length === 2) {
-                return { name, isRead: true, isWrite: true }
-            }
-            else
-                if (topic.modes.includes('Write')) {
-                    return { name, isRead: false, isWrite: true }
-                }
-                else {
-                    return { name, isRead: true, isWrite: false }
-                }
-        }
-        else {
-            return { name, isRead: false, isWrite: false }
-        }
-    }
-
-    const topics = ['Award', 'Calendar', 'Contact', 'Franchise Reporting', 'Lead', 'Listing',
-        'Marketing Program', 'Service Area', 'Transaction', 'Website'];
-
-    Object.freeze(topics)
-
-    const rows = topics.map(createData)
+    const [state, setState] = React.useState({
+        localPermission: JSON.parse(JSON.stringify(permissions))
+    })
 
     const handleCancel = () => {
         handleDialog()
+    }
+
+    const handleChange = e => {
+        const type = e.target.name.split('-')
+        const newPermissions = JSON.parse(JSON.stringify(state.localPermission))
+        const index = newPermissions.findIndex(ele => ele.name === type[0])
+        if (type[1] === 'read') {
+            newPermissions[index].read = !newPermissions[index].read
+            setState({ ...state, localPermission: newPermissions })
+        }
+        else {
+            newPermissions[index].write = !newPermissions[index].write
+            setState({ ...state, localPermission: newPermissions })
+        }
+    }
+
+    const updateVersion = () => {
+        const newPermissions = JSON.parse(JSON.stringify(state.localPermission))
+        for (let i = 0; i < permissions.length; i++) {
+            if (!isEqual(state.localPermission[i], permissions[i])) {
+                newPermissions[i].version++
+            }
+        }
+        setState({ ...state, localPermission: newPermissions })
+        return newPermissions
+    }
+
+    const handleSave = () => {
+        const newPermissions = updateVersion()
+        handlePermissionChanged(newPermissions)
     }
 
     return (
@@ -85,7 +97,7 @@ function Permissions(props) {
                 <Grid className={classes.root} container direction='column' justify='center' alignItems='center'>
                     <Grid item xs={12} >
                         <Paper elevation={0} className={classes.image}>
-                            <img alt='app logo' src={application.logo.url} width='250' />
+                            <img alt='app logo' src={logo} width='150' />
                         </Paper>
                     </Grid>
                     <Grid item className={classes.textSpacing}>
@@ -93,32 +105,40 @@ function Permissions(props) {
                     </Grid>
                     <Grid item className={classes.textSpacing}>
                         <TableContainer>
-                            <Table className={classes.table}>
+                            <Table className={classes.table} size='small'>
                                 <TableHead>
                                     <TableRow>
                                         <TableCell></TableCell>
-                                        <TableCell>Publish</TableCell>
-                                        <TableCell>Subscribe</TableCell>
+                                        <TableCell align='right'>
+                                            <Button variant='outlined' disabled disableRipple className={classes.new}>
+                                                Publish
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            <Button variant='outlined' disabled disableRipple className={classes.new}>
+                                                Subcscribe
+                                            </Button>
+                                        </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rows.map(topic => (
+                                    {state.localPermission.map(topic => (
                                         <TableRow key={topic.name}>
                                             <TableCell>{topic.name}</TableCell>
-                                            <TableCell>
+                                            <TableCell align='right'>
                                                 <Switch
-                                                    // classes={iosStyles}
-                                                    checked={topic.isRead}
-                                                    name='topicSwitchPublish'
-                                                    onChange={handle}
+                                                    size='small'
+                                                    checked={topic.write}
+                                                    name={topic.name + '-write'}
+                                                    onChange={handleChange}
                                                 />
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell align='right'>
                                                 <Switch
-                                                    // classes={iosStyles}
-                                                    checked={topic.isWrite}
-                                                    name='topicSwitchSubscribe'
-                                                    onChange={() => { }}
+                                                    size='small'
+                                                    checked={topic.read}
+                                                    name={topic.name + '-read'}
+                                                    onChange={handleChange}
                                                 />
                                             </TableCell>
                                         </TableRow>
@@ -127,17 +147,22 @@ function Permissions(props) {
                             </Table>
                         </TableContainer>
                     </Grid>
-                    <Grid className={classes.textSpacing} item container direction='row' justify='space-between' alignItems='center'>
+                    <Grid className={classes.textSpacing} item container direction='row' justify='space-around' alignItems='center'>
                         <Grid item>
                             <Button className={classes.cancelButton} name="cancel" onClick={handleCancel} disableElevation>
                                 cancel
-                        </Button>
+                            </Button>
                         </Grid>
                         <Grid item>
-                            <Button className={classes.toggleSwitch} name="save" onClick={() => { }} disableElevation>
+                            <Button className={classes.toggleSwitch} name="save" onClick={handleSave} disableElevation>
                                 Save
-                        </Button>
+                            </Button>
                         </Grid>
+                    </Grid>
+                    <Grid container item justify='center'>
+                        <Button className={classes.cancelButton} name="cancel" onClick={handleCancel} disableElevation>
+                            Deactivate & remove vendor
+                        </Button>
                     </Grid>
                 </Grid>
             </Dialog>

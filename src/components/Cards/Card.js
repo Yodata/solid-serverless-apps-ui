@@ -30,26 +30,38 @@ import { Checkbox } from '@material-ui/core';
 const styles = theme => ({
   root: {
     position: 'relative',
-    backgroundColor: props => (!props.application.isVisible && theme.palette.invisible.main),
-    minWidth: 300,
-    maxWidth: 300
+    backgroundColor: theme.palette.invisible.main,
+    // backgroundColor: props => (!props.application.isVisible && theme.palette.invisible.main),
+    minWidth: '26vw',
+    maxWidth: '26vw',
+    borderRadius: 0,
+    boxShadow: '3px 3px 3px 2px rgba(0,0,0,0.3)'
   },
   cardMedia: {
     padding: 10,
     objectFit: "contain",
   },
   cardContent: {
-    height: '155px'
+    height: '155px',
   },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    })
+  // expand: {
+  //   transform: 'rotate(0deg)',
+  //   marginLeft: 'auto',
+  //   transition: theme.transitions.create('transform', {
+  //     duration: theme.transitions.duration.shortest,
+  //   })
+  // },
+  // expandOpen: {
+  //   transform: 'rotate(180deg)',
+  // },
+  vendorName: {
+    fontFamily: theme.typography.vendorName.fontFamily,
+    fontSize: theme.typography.vendorName.fontSize,
+    color: theme.palette.purple.main
   },
-  expandOpen: {
-    transform: 'rotate(180deg)',
+  indicator: {
+    fontSize: 17.7,
+    fontFamily: theme.typography.vendorName.fontFamily
   },
   editAppDetail: {
     marginTop: 16
@@ -77,37 +89,47 @@ const styles = theme => ({
   },
   updateRequired: {
     backgroundColor: theme.palette.error.main,
-    color: '#ffffff'
+    color: theme.palette.white.main,
+    '&:hover': {
+      backgroundColor: theme.palette.error.main,
+    }
   },
   update: {
     color: theme.palette.update.main
   },
   adminButtons: {
-    paddingRight: 17.5,
-    paddingLeft: 17.5,
+    paddingRight: '1.9vw',
+    paddingLeft: '1.9vw',
     backgroundColor: theme.palette.adminButtons.main,
-    textTransform: 'none'
+    '&:hover': {
+      backgroundColor: theme.palette.adminButtons.main,
+    }
   },
   adminGrid: {
-    minWidth: 300,
-    maxWidth: 300
+    minWidth: '26vw',
+    maxWidth: '26vw'
   },
   connectedApp: {
     maxHeight: 20
+  },
+  connectButton: {
+    backgroundColor: theme.palette.purple.main,
+    color: theme.palette.white.main,
+    '&:hover': {
+      backgroundColor: theme.palette.purple.main,
+    }
   }
 });
 
 export function CardComponent(props) {
 
-  // const [isEditable, setEditable] = React.useState(false);
-  // const [isDialogOpen, setDialog] = React.useState(false);
   const [state, setState] = React.useState({
     isEditable: false,
     isDialogOpen: false,
     isConnected: false,
     editPermission: false
   })
-  const { classes, application, isAdmin, updateApplication, isConnected = true, isUpdated = true } = props
+  const { classes, application, isAdmin, updateApplication, isConnected = false, isUpdated=true } = props
 
   const handleEdit = () => {
     setState({ ...state, isEditable: true });
@@ -135,7 +157,6 @@ export function CardComponent(props) {
   }
 
   const handleDialogClose = () => {
-    // setDialog(false);
     setState({ ...state, isDialogOpen: false });
   }
 
@@ -145,6 +166,7 @@ export function CardComponent(props) {
   }
 
   const handleConnected = () => {
+    handleVisibility()
     const setValue = !state.isConnected
     setState({ ...state, isConnected: setValue })
   }
@@ -157,10 +179,16 @@ export function CardComponent(props) {
     setState({ ...state, editPermission: false })
   }
 
+  const handlePermissionChanged = permissions => {
+    const editedApplication = JSON.parse(JSON.stringify(application));
+    editedApplication.permissions = permissions
+    editApplication(editedApplication);
+    setState({ ...state, editPermission: false })
+  }
+
   return (
     <React.Fragment>
       {
-
         state.isEditable ?
           (
             <NewApp isEditMode={state.isEditable}
@@ -171,7 +199,7 @@ export function CardComponent(props) {
             <React.Fragment>
               <Grid container direction='column' alignItems="flex-start" justify='flex-start'>
                 <Grid item>
-                  <Card className={classes.root}>
+                  <Card elevation={3} className={classes.root}>
                     {isAdmin &&
                       <>
                         <Grid className={classes.connectedApp} container direction='row' alignItems='center' justify='flex-start'>
@@ -206,7 +234,7 @@ export function CardComponent(props) {
                       onError={handleImageError}
                     />
                     <CardContent className={classes.cardContent}>
-                      <Typography gutterBottom variant="h5" component="h2">
+                      <Typography className={classes.vendorName} variant="h5" component="h2">
                         {application.name}
                       </Typography>
                       <Typography variant="body2">
@@ -217,6 +245,10 @@ export function CardComponent(props) {
                       <CardActions>
                         <Grid container direction='row' alignItems="center" justify="space-between">
                           <Grid className={classes.cardActions} spacing={1} item container direction='row' alignItems="center" justify="flex-start">
+                            <Grid item variant='body1'>
+                              {isConnected &&
+                                <Typography className={classes.success}>Connected</Typography>}
+                            </Grid>
                             <Grid item>
                               {isConnected &&
                                 (isUpdated ?
@@ -225,23 +257,19 @@ export function CardComponent(props) {
                                   <ErrorIcon className={classes.error} />)
                               }
                             </Grid>
-                            <Grid item>
-                              {isConnected &&
-                                <Typography className={classes.success}>Connected</Typography>}
-                            </Grid>
                           </Grid>
                           <Grid item>
                             {isConnected ?
                               (isUpdated ?
                                 <Button name="setting" variant="outlined" onClick={handleActivity} disableElevation>
                                   Settings
-                          </Button> :
+                                </Button> :
                                 <Button className={classes.updateRequired} name="update" variant="contained" onClick={handleActivity} disableElevation>
                                   Update Required
-                          </Button>) :
-                              <Button name="connect" variant="contained" onClick={handleActivity} disableElevation>
+                                </Button>) :
+                              <Button className={classes.connectButton} name="connect" variant="contained" onClick={handleActivity} disableElevation>
                                 Connect
-                      </Button>
+                              </Button>
                             }
                           </Grid>
                         </Grid>
@@ -274,8 +302,14 @@ export function CardComponent(props) {
                   </Grid>
                 }
               </Grid>
-              <Permissions open={state.editPermission} handleDialog={handlePermissionCancel} application={application} />
-              <PermissionDialog open={state.isDialogOpen} handleDialog={handleDialogClose} application={application}
+              <Permissions open={state.editPermission}
+                handleDialog={handlePermissionCancel}
+                permissions={application.permissions}
+                logo={application.logo.url}
+                handlePermissionChanged={handlePermissionChanged} />
+              <PermissionDialog open={state.isDialogOpen}
+                handleDialog={handleDialogClose}
+                application={application}
                 type={isConnected ? (isUpdated ? 'Disconnect' : 'Update') : 'Authorize'} />
             </React.Fragment>
           )
