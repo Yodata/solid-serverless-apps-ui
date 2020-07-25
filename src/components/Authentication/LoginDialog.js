@@ -1,20 +1,23 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+// // import Button from '@material-ui/core/Button';
+// // import Dialog from '@material-ui/core/Dialog';
+// // import DialogActions from '@material-ui/core/DialogActions';
+// // import DialogContent from '@material-ui/core/DialogContent';
+// // import DialogContentText from '@material-ui/core/DialogContentText';
+// // import DialogTitle from '@material-ui/core/DialogTitle';
 
-function LoginDialog(props) {
+function LoginDialog() {
 
-    const handleLogin = () => {
-        //window.location.href = "https://dev.env.yodata.io/reflex/auth/saml/login";
-    };
+    // return {}
+    // return window.location.href = "https://dev.env.yodata.io/reflex/auth/saml/login";
+    // const handleLogin = async () => {
+    //    window.location.href = "https://dev.env.yodata.io/reflex/auth/saml/login"
+    // };
 
     return (
         <React.Fragment>
-            <Dialog
+            
+            {/* <Dialog
                 open={true}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
@@ -30,7 +33,7 @@ function LoginDialog(props) {
                         Login
                     </Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog> */}
         </React.Fragment>
     );
 }
