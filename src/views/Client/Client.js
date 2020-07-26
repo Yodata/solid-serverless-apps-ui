@@ -1,5 +1,5 @@
 import React from 'react';
-import Hero from '../../components/Hero';
+import { HeroUser } from '../../components/Hero';
 // import Group from '../../components/Groups';
 import AppCard from '../../components/AppCard';
 import Paper from '@material-ui/core/Paper'
@@ -13,7 +13,7 @@ function Client() {
     return (
         <React.Fragment>
             <Paper>
-                <Hero />
+                <HeroUser />
                 {/* <Group /> */}
                 <AppCard />
             </Paper>

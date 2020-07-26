@@ -1,3 +1,4 @@
-import Header from './Header';
+import HeaderAdmin from './HeaderAdmin';
+import HeaderUser from './HeaderUser';
 
-export default Header;
+export { HeaderAdmin, HeaderUser }
