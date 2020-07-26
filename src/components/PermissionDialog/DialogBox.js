@@ -81,7 +81,7 @@ function DialogBox(props) {
                                     {application.permissions.map(topic => (
                                         <>
                                             {(!topic.read && !topic.write) ?
-                                                "" : (
+                                                null : (
                                                     <TableRow key={topic.name}>
                                                         <TableCell component="th" scope="row">
                                                             {(topic.read && topic.write) ?

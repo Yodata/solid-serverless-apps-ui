@@ -151,8 +151,6 @@ export function CardComponent(props) {
   };
 
   const handleActivity = e => {
-    // const type = e.currentTarget.name
-    // setDialog(true);
     setState({ ...state, isDialogOpen: true });
   }
 

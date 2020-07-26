@@ -30,7 +30,7 @@ const editApp = payload => {
 export const getAllApps = () => {
     return async dispatch => {
         try {
-            const response = await API.get(endpoint.allApps);
+            const response = await API.get(`https://forevercloudstore.bhhs.hsfaffiliates.com/${endpoint.allApps}`);
             dispatch(getApps(response.data));
         } catch (err) {
             throw err;
@@ -42,7 +42,7 @@ export const addNewApp = value => {
     return async (dispatch, getState) => {
         try {
             dispatch(addApp(value));
-            await API.put(endpoint.allApps, getState().apps.storeData);
+            await API.put(`https://forevercloudstore.bhhs.hsfaffiliates.com/${endpoint.allApps}`, getState().apps.storeData);
         } catch (err) {
             throw err
         }

@@ -56,8 +56,15 @@ const theme = createMuiTheme({
   overrides: {
     MuiButton: {
       root: {
-        borderRadius: 0
+        borderRadius: 0,
+        '&:hover': {
+          backgroundColor: 'transparent',
+        }
       },
+      outlined: {
+        borderColor: '#552448',
+        color: '#552448'
+      }
     }
   }
 });
