@@ -19,8 +19,9 @@ import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
 
 import Permissions from '../Permissions'
 import NewApp from '../NewApp';
-import { serviceEnabled, serviceExpanded } from '../../redux/slices/servicesSlice';
+import { serviceEnabled, serviceUpdated } from '../../redux/slices/servicesSlice';
 import { Checkbox } from '@material-ui/core';
+import publishEvent from '../../api/publishEvents'
 
 /**
  * @Component Card
@@ -98,9 +99,8 @@ const styles = theme => ({
     color: theme.palette.update.main
   },
   adminButtons: {
-    paddingRight: '1.9vw',
-    paddingLeft: '1.9vw',
     backgroundColor: theme.palette.adminButtons.main,
+    color: theme.palette.white.main,
     '&:hover': {
       backgroundColor: theme.palette.adminButtons.main,
     }
@@ -129,7 +129,7 @@ export function CardComponent(props) {
     isConnected: false,
     editPermission: false
   })
-  const { classes, application, isAdmin, updateApplication, isConnected = false, isUpdated=true } = props
+  const { classes, application, isAdmin, updateApplication, enableService, enabledID, updatedService, updatedID, userData } = props
 
   const handleEdit = () => {
     setState({ ...state, isEditable: true });
@@ -180,8 +180,52 @@ export function CardComponent(props) {
   const handlePermissionChanged = permissions => {
     const editedApplication = JSON.parse(JSON.stringify(application));
     editedApplication.permissions = permissions
+    editedApplication.version++
     editApplication(editedApplication);
     setState({ ...state, editPermission: false })
+  }
+
+  const handleAuthorize = type => {
+    const payload = generateData(type)
+    if (type !== 'Update') {
+      enableService(Object.keys(application.identifier)[0])
+    } else {
+      const newUpdateIDs = updatedID.slice();
+      const index = newUpdateIDs.indexOf(Object.keys(application.identifier)[0])
+      newUpdateIDs.splice(index, 1)
+      updatedService(newUpdateIDs)
+    }
+    handleDialogClose()
+    publishEvent(payload)
+  }
+
+  const generateData = type => {
+    const readPermissions = application.permissions.map(value => {
+      return value.read === true && `realestate/${value.name}`
+    })
+    const writePermissions = application.permissions.map(value => {
+      return value.write === true && `realestate/${value.name}`
+    })
+    return {
+      "topic": `yodata/subscription#${type === 'Authorize' ? 'authorize' : (type === 'Disconnect' ? 'revoke' : 'update')}`,
+      "recipient": `${userData.profile_id}`,
+      "data": {
+        "type": `${type === 'Authorize' ? 'Authorize' : (type === 'Disconnect' ? 'Revoke' : 'Update')}Action`,
+        "agent": `${userData.profile_id}`,
+        "instrument": {
+          "uri of the store": `https://sandbox.dev.env.yodata.io/settings/forevercloudstore.json`
+        },
+        "object": {
+          "type": "Subscription",
+          "version": `${application.version}`,
+          "agent": `${application.id}`,
+          "instrument": "https://sandbox.dev.env.yodata.io/settings/forevercloudstore.json",
+          "host": `https://${userData.raw.contact_id}.dev.env.yodata.io`,
+          "subscribes": readPermissions,
+          "publishes": writePermissions
+        }
+      }
+    }
   }
 
   return (
@@ -244,12 +288,12 @@ export function CardComponent(props) {
                         <Grid container direction='row' alignItems="center" justify="space-between">
                           <Grid className={classes.cardActions} spacing={1} item container direction='row' alignItems="center" justify="flex-start">
                             <Grid item variant='body1'>
-                              {isConnected &&
+                              {enabledID?.includes(Object.keys(application.identifier)[0]) &&
                                 <Typography className={classes.success}>Connected</Typography>}
                             </Grid>
                             <Grid item>
-                              {isConnected &&
-                                (isUpdated ?
+                              {enabledID?.includes(Object.keys(application.identifier)[0]) &&
+                                (!updatedID?.includes(Object.keys(application.identifier)[0]) ?
                                   <CheckCircleIcon className={classes.success} />
                                   :
                                   <ErrorIcon className={classes.error} />)
@@ -257,8 +301,8 @@ export function CardComponent(props) {
                             </Grid>
                           </Grid>
                           <Grid item>
-                            {isConnected ?
-                              (isUpdated ?
+                            {enabledID?.includes(Object.keys(application.identifier)[0]) ?
+                              (!updatedID?.includes(Object.keys(application.identifier)[0]) ?
                                 <Button name="setting" variant="outlined" onClick={handleActivity} disableElevation>
                                   Settings
                                 </Button> :
@@ -276,12 +320,12 @@ export function CardComponent(props) {
                   </Card>
                 </Grid>
                 {isAdmin &&
-                  <Grid item className={classes.adminGrid} container direction='row' justify='flex-end'>
+                  <Grid item className={classes.adminGrid} container direction='row' justify='space-around'>
                     {!state.isConnected &&
                       <Grid item>
                         <Button
                           className={classes.adminButtons}
-                          variant="outlined"
+                          variant="contained"
                           onClick={handlePermission}
                         >
                           Edit Permission
@@ -291,7 +335,7 @@ export function CardComponent(props) {
                     <Grid item>
                       <Button
                         className={classes.adminButtons}
-                        variant="outlined"
+                        variant="contained"
                         onClick={handleEdit}
                       >
                         Edit Company Info
@@ -308,7 +352,8 @@ export function CardComponent(props) {
               <PermissionDialog open={state.isDialogOpen}
                 handleDialog={handleDialogClose}
                 application={application}
-                type={isConnected ? (isUpdated ? 'Disconnect' : 'Update') : 'Authorize'} />
+                handleAuthorize={handleAuthorize}
+                type={enabledID?.includes(Object.keys(application.identifier)[0]) ? (!updatedID?.includes(Object.keys(application.identifier)[0]) ? 'Disconnect' : 'Update') : 'Authorize'} />
             </React.Fragment>
           )
       }
@@ -317,15 +362,16 @@ export function CardComponent(props) {
 }
 const mapStateToProps = state => {
   return {
-    expandedID: state.services.expandedID,
-    enabledID: state.services.enabledID
+    enabledID: state.services.enabledID,
+    updatedID: state.services.updatedID,
+    userData: state.auth.userData
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     enableService: id => dispatch(serviceEnabled(id)),
-    expandService: id => dispatch(serviceExpanded(id))
+    updatedService: id => dispatch(serviceUpdated(id))
   };
 };
 

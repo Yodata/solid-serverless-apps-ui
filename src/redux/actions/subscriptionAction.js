@@ -1,5 +1,6 @@
 import { APISubs, API } from '../../api/apiRequest'
 import endpoint from '../../api/endpoints'
+import { serviceEnabled } from '../slices/servicesSlice'
 
 
 /**
@@ -35,8 +36,14 @@ export const globalSubscription = () => {
 export const userSubscriptions = () => {
   return async (dispatch, getState) => {
     try {
-      const response = await API.get(`https://${getState().auth.userId}.bhhs.hsfaffiliates.com/${endpoint.subs}`)
+      const response = await API.get(`https://${getState().auth.userId}.dev.env.yodata.io/${endpoint.subs}`)
       dispatch(getUserSubscriptions(response))
+      const subsIdentifiers = getState().subs.userSubs.items.map(value => {
+        return `${value.agent.split("/")[2].split(".")[0]}_id`
+      })
+      subsIdentifiers.forEach(element => {
+        dispatch(serviceEnabled(element))
+      })
     } catch (err) {
       dispatch(getUserSubscriptions(err))
     }

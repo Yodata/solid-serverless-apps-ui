@@ -4,7 +4,7 @@ const serviceSlice = createSlice({
     name: 'service',
     initialState: {
         enabledID: [],
-        expandedID: []
+        updatedID: []
     },
     reducers: {
         serviceEnabled: (state, action) => {
@@ -16,17 +16,14 @@ const serviceSlice = createSlice({
                 enabledID: newEnabledIDs
             }
         },
-        serviceExpanded: (state, action) => {
-            const newExpandedIDs = state.expandedID.includes(action.payload) ?
-                state.expandedID.filter(value => value !== action.payload) :
-                [...state.expandedID, action.payload];
+        serviceUpdated: (state, action) => {
             return {
                 ...state,
-                expandedID: newExpandedIDs
+                updatedID: action.payload
             }
         }
     }
 });
 
-export const { serviceEnabled, serviceExpanded } = serviceSlice.actions;
+export const { serviceEnabled, serviceUpdated } = serviceSlice.actions;
 export default serviceSlice.reducer;

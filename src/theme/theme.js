@@ -65,6 +65,21 @@ const theme = createMuiTheme({
         borderColor: '#552448',
         color: '#552448'
       }
+    },
+    MuiTableCell:{
+      head:{
+        color: '#552448',
+        fontFamily: [
+          'ProximaNovaBold',
+          'Roboto'
+        ].join(',')
+      },
+      root: {
+        fontFamily: [
+          'ProximaNovaBold',
+          'Roboto'
+        ].join(',')
+      }
     }
   }
 });

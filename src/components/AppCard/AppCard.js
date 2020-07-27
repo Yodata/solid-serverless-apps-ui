@@ -14,7 +14,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
  */
 
 const styles = theme => ({
-    root:{
+    root: {
         paddingTop: 72,
         paddingLeft: '5vw',
     },
@@ -29,18 +29,25 @@ const styles = theme => ({
         backgroundColor: theme.palette.new.main,
         '&:hover': {
             backgroundColor: theme.palette.new.main,
-          }
+        }
     }
 });
 
 function AppCard(props) {
 
-    const { classes, tabIndex, applications = [], getApps, isAdmin, addApp, editApp } = props;
-
+    const { classes, tabIndex, applications = [], getApps, isAdmin, addApp, editApp, globalSubs } = props;
+    
     React.useEffect(() => {
         getApps();
     }, [getApps]);
+    
+    const [connectedApps, setConnectedApps] = React.useState([])
 
+    const getConnectedApps = id => {
+        // const application = applications.filter(value => Object.keys(value.identifier)[0] === id)
+        // application.permissions.map(value =>  value.name.toLowerCase())
+    }
+    
     const [isNew, setNew] = React.useState(false)
     // const getApplications = (group = 'featured') => {
     //     return applications ? applications.filter(function (app) {
@@ -54,6 +61,8 @@ function AppCard(props) {
     //         return result
     //     }) : [];
     // };
+
+
 
     const addNewApplication = value => {
         value.group.push(tabIndex);
@@ -83,7 +92,7 @@ function AppCard(props) {
             <Grid container direction='column' alignItems='flex-end'>
                 <Grid item>
                     {isAdmin &&
-                        <Button variant='outlined' className={classes.new} onClick={handleNew}>
+                        <Button variant='contained' disableElevation className={classes.new} onClick={handleNew}>
                             Add New Application
                         </Button>
                     }
@@ -105,7 +114,9 @@ function AppCard(props) {
                                 (<Grid className={classes.app} item key={application.name}>
                                     <Card application={application}
                                         isAdmin={isAdmin}
-                                        updateApplication={updateApplication} />
+                                        updateApplication={updateApplication}
+                                        connectedApps= {connectedApps}
+                                        getConnectedApps={getConnectedApps} />
                                 </Grid>
                                 ) : (
                                     isAdmin &&
@@ -128,7 +139,8 @@ function AppCard(props) {
 const mapStateToProps = state => {
     return {
         tabIndex: state.groups.tabIndex,
-        applications: state.apps.storeData && state.apps.storeData.application
+        applications: state.apps?.storeData && state.apps?.storeData?.application,
+        globalSubs: state.subs.globalSubs
     }
 }
 

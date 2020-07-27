@@ -3,7 +3,7 @@ import axios from 'axios';
 const API = axios.create({
     responseType: 'json',
     headers: {
-        "x-api-key": 'qR4tAA93d3DnPCbLL59NaPxOgN9xk2n5rlcdjiWMwI',
+        "x-api-key": 'yvqUgOn4IZotIF8B0FXFyolCpPlvLTni3mZ67Yk6TX',
         "Content-Type": "application/ld+json"
     }
 });
@@ -25,5 +25,14 @@ const APISubs = axios.create({
     }
 })
 
-export { API, APIAuth, APISubs };
+const APIEvents = axios.create({
+    baseURL: 'https://dev.env.yodata.io/',
+    responseType: 'json',
+    headers: {
+        'x-api-key': 'yvqUgOn4IZotIF8B0FXFyolCpPlvLTni3mZ67Yk6TX',
+        'Content-Type': 'application/ld+json'
+    }
+})
+
+export { API, APIAuth, APISubs, APIEvents };
 

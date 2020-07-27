@@ -2,7 +2,8 @@ import { GET_USER, LOGOUT_USER } from '../actions/authenticationActions';
 
 const defaultState = {
     isLoggedIn: false,
-    userId: null
+    userId: null,
+    userData: {}
 }
 
 const authenticationReducer = (state = defaultState, action) => {
@@ -11,10 +12,12 @@ const authenticationReducer = (state = defaultState, action) => {
             const isUserLoggedIn = action.authentication.response && 
             action.authentication.response.status === 401 ? false : true;
             const currentUserId = isUserLoggedIn ? action.authentication.data?.raw?.contact_id[0] : null
+            const currentUserData = isUserLoggedIn ? action.authentication.data : {}
             return {
                 ...state,
                 isLoggedIn: isUserLoggedIn,
-                userId: currentUserId
+                userId: currentUserId,
+                userData: currentUserData
             }
         case LOGOUT_USER:
             return{

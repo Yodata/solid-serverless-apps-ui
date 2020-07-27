@@ -22,8 +22,8 @@ function HeroAdmin(props) {
         <React.Fragment>
             <HeaderAdmin
                 className={classes.heroUnit}
-                title='ForeverCloud App Exchange'
-                content='Select the apps you want to use.'
+                title='FOREVER CLOUD APP EXCHANGE'
+                content='ADMIN'
                 backgroundImage={userCustomization && userCustomization.userLogo}
                 backgroundColor={userCustomization && userCustomization.userBackground}>
             </HeaderAdmin>

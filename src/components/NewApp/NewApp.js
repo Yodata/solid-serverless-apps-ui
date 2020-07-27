@@ -86,7 +86,7 @@ function NewApp(props) {
             },
             group: [],
             permissions: [],
-            isVisible: true
+            isVisible: false
         };
 
         editedApplication.id = state.newId;
@@ -94,7 +94,6 @@ function NewApp(props) {
         editedApplication.description = state.newDescription;
         editedApplication.logo.url = state.newLogo;
         editedApplication.permissions = createPermissions()
-        console.log(editedApplication.permissions)
         addNewApp(editedApplication);
         handleCancel();
     }
