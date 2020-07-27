@@ -17,8 +17,5 @@
             "src": "/.*",
             "dest": "/server.js"
         }
-    ],
-    "env": {
-        "VERSION": "@version"
-    }
+    ]
 }
