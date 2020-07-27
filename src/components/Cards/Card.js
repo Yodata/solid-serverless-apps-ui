@@ -101,7 +101,7 @@ const styles = theme => ({
   adminButtons: {
     backgroundColor: theme.palette.adminButtons.main,
     color: theme.palette.white.main,
-    paddingLeft:26.9,
+    paddingLeft: 26.9,
     paddingRight: 26.9,
     '&:hover': {
       backgroundColor: theme.palette.adminButtons.main,
@@ -203,25 +203,24 @@ export function CardComponent(props) {
 
   const generateData = type => {
     const readPermissions = application.permissions.map(value => {
-      return value.read === true && `realestate/${value.name}`
-    })
+      return value.read === true && `realestate/${value.name.toLowerCase()}`
+    }).filter(Boolean)
     const writePermissions = application.permissions.map(value => {
-      return value.write === true && `realestate/${value.name}`
-    })
+      return value.write === true && `realestate/${value.name.toLowerCase()}`
+    }).filter(Boolean)
     return {
       "topic": `yodata/subscription#${type === 'Authorize' ? 'authorize' : (type === 'Disconnect' ? 'revoke' : 'update')}`,
       "recipient": `${userData.profile_id}`,
       "data": {
         "type": `${type === 'Authorize' ? 'Authorize' : (type === 'Disconnect' ? 'Revoke' : 'Update')}Action`,
         "agent": `${userData.profile_id}`,
-        "instrument": {
-          "uri of the store": `https://sandbox.dev.env.yodata.io/settings/forevercloudstore.json`
-        },
+        "instrument": `https://sandbox.dev.env.yodata.io`
+        ,
         "object": {
           "type": "Subscription",
           "version": `${application.version}`,
           "agent": `${application.id}`,
-          "instrument": "https://sandbox.dev.env.yodata.io/settings/forevercloudstore.json",
+          "instrument": "https://sandbox.dev.env.yodata.io",
           "host": `https://${userData.raw.contact_id}.dev.env.yodata.io`,
           "subscribes": readPermissions,
           "publishes": writePermissions
