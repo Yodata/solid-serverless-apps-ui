@@ -5,31 +5,31 @@ const applicationReducer = (state = {}, action) => {
         case GET_APPS:
             return {
                 ...state,
-                appList: action.application
+                storeData: action.application
             };
         case ADD_APP:
-            const newList = state.appList && 
-            state.appList.application ? state.appList.application.slice() : [];
+            const newList = state.storeData && 
+            state.storeData.application ? state.storeData.application.slice() : [];
             newList.push(action.application);
             return {
                 ...state,
-                appList: {
-                    ...state.appList,
+                storeData: {
+                    ...state.storeData,
                     application: [
                     ...newList
                 ]}
             };
         case EDIT_APP:
-            const indexOfAppToEdit = state.appList.application.findIndex(x => Object.keys(x.identifier)[0] === Object.keys(action.application.identifier)[0]);
+            const indexOfAppToEdit = state.storeData.application.findIndex(x => Object.keys(x.identifier)[0] === Object.keys(action.application.identifier)[0]);
             const newApp = { ...action.application}
-            const newAppList = state.appList.application.slice();
-            newAppList.splice(indexOfAppToEdit, 1, newApp);
+            const newstoreData = state.storeData.application.slice();
+            newstoreData.splice(indexOfAppToEdit, 1, newApp);
             return {
                 ...state,
-                appList: {
-                    ...state.appList,
+                storeData: {
+                    ...state.storeData,
                     application: [
-                    ...newAppList
+                    ...newstoreData
                 ]}
             };
         default:

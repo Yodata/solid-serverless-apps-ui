@@ -1,14 +1,17 @@
 import React from 'react';
-import Hero from '../../components/Hero';
-import Group from '../../components/Groups';
+import { HeroAdmin } from '../../components/Hero';
+// import Group from '../../components/Groups';
 import AppCard from '../../components/AppCard';
+import Paper from '@material-ui/core/Paper'
 
 function Admin() {
     return (
         <React.Fragment>
-            <Hero />
-            <Group />
-            <AppCard admin={true}/>
+            <Paper>
+                <HeroAdmin />
+                {/* <Group isAdmin={true} /> */}
+                <AppCard isAdmin={true} />
+            </Paper>
         </React.Fragment>
     );
 };

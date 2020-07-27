@@ -1,3 +1,4 @@
-import Hero from './Hero';
+import HeroAdmin from './HeroAdmin';
+import HeroUser from './HeroUser'
 
-export default Hero;
+export {HeroAdmin, HeroUser}

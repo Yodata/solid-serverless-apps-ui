@@ -1,24 +1,27 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
-import Collapse from '@material-ui/core/Collapse'
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import IconButton from '@material-ui/core/IconButton';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import Switch from '@material-ui/core/Switch';
 import CardActions from '@material-ui/core/CardActions';
-import CheckList from '../Checklist';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Button from '@material-ui/core/Button';
+import ErrorIcon from '@material-ui/icons/Error';
+import PermissionDialog from '../PermissionDialog'
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
 
+import Permissions from '../Permissions'
 import NewApp from '../NewApp';
-import { serviceEnabled, serviceExpanded } from '../../redux/slices/servicesSlice';
+import { serviceEnabled, serviceUpdated } from '../../redux/slices/servicesSlice';
+import { Checkbox } from '@material-ui/core';
+import publishEvent from '../../api/publishEvents'
 
 /**
  * @Component Card
@@ -28,30 +31,38 @@ import { serviceEnabled, serviceExpanded } from '../../redux/slices/servicesSlic
 const styles = theme => ({
   root: {
     position: 'relative',
-    opacity: props => (props.application.isVisible ? 1 : 0.5)
+    backgroundColor: theme.palette.invisible.main,
+    // backgroundColor: props => (!props.application.isVisible && theme.palette.invisible.main),
+    minWidth: '26vw',
+    maxWidth: '26vw',
+    borderRadius: 0,
+    boxShadow: '3px 3px 3px 2px rgba(0,0,0,0.3)'
   },
   cardMedia: {
-    paddingTop: '56.25%',
-    backgroundSize: '56.25%',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat'
+    padding: 10,
+    objectFit: "contain",
   },
   cardContent: {
-    height: '155px'
+    height: '155px',
   },
-  actions: {
-    display: 'flex',
-    justifyContent: 'space-between'
+  // expand: {
+  //   transform: 'rotate(0deg)',
+  //   marginLeft: 'auto',
+  //   transition: theme.transitions.create('transform', {
+  //     duration: theme.transitions.duration.shortest,
+  //   })
+  // },
+  // expandOpen: {
+  //   transform: 'rotate(180deg)',
+  // },
+  vendorName: {
+    fontFamily: theme.typography.vendorName.fontFamily,
+    fontSize: theme.typography.vendorName.fontSize,
+    color: theme.palette.purple.main
   },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    })
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)',
+  indicator: {
+    fontSize: 17.7,
+    fontFamily: theme.typography.vendorName.fontFamily
   },
   editAppDetail: {
     marginTop: 16
@@ -67,24 +78,66 @@ const styles = theme => ({
     position: 'absolute',
     top: 0,
     right: 0
+  },
+  cardActions: {
+    maxWidth: 'fit-content'
+  },
+  success: {
+    color: theme.palette.success.main
+  },
+  error: {
+    color: theme.palette.error.main
+  },
+  updateRequired: {
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.white.main,
+    '&:hover': {
+      backgroundColor: theme.palette.error.main,
+    }
+  },
+  update: {
+    color: theme.palette.update.main
+  },
+  adminButtons: {
+    backgroundColor: theme.palette.adminButtons.main,
+    color: theme.palette.white.main,
+    '&:hover': {
+      backgroundColor: theme.palette.adminButtons.main,
+    }
+  },
+  adminGrid: {
+    minWidth: '26vw',
+    maxWidth: '26vw'
+  },
+  connectedApp: {
+    maxHeight: 20
+  },
+  connectButton: {
+    backgroundColor: theme.palette.purple.main,
+    color: theme.palette.white.main,
+    '&:hover': {
+      backgroundColor: theme.palette.purple.main,
+    }
   }
 });
 
 export function CardComponent(props) {
 
-  const [isEditable, setEditable] = React.useState(false);
-  const { classes, application, enableService, expandService,
-    enabledID, expandedID, isAdmin, updateApplication } = props
-  const handleSwitchToggle = async () => {
-    enableService(application.id);
-  };
-  const handleExpandClick = () => {
-    expandService(application.id);
-  };
+  const [state, setState] = React.useState({
+    isEditable: false,
+    isDialogOpen: false,
+    isConnected: false,
+    editPermission: false
+  })
+  const { classes, application, isAdmin, updateApplication, enableService, enabledID, updatedService, updatedID, userData } = props
 
   const handleEdit = () => {
-    setEditable(true);
+    setState({ ...state, isEditable: true });
   };
+
+  const handleCancel = () => {
+    setState({ ...state, isEditable: false });
+  }
 
   const handleVisibility = () => {
     const editedApplication = JSON.parse(JSON.stringify(application));
@@ -94,96 +147,231 @@ export function CardComponent(props) {
 
   const editApplication = app => {
     updateApplication(app);
-    setEditable(false);
+    setState({ ...state, isEditable: false });
   };
+
+  const handleActivity = e => {
+    setState({ ...state, isDialogOpen: true });
+  }
+
+  const handleDialogClose = () => {
+    setState({ ...state, isDialogOpen: false });
+  }
+
+  const handleImageError = (e) => {
+    e.target.onerror = null;
+    e.target.src = "https://via.placeholder.com/150"
+  }
+
+  const handleConnected = () => {
+    handleVisibility()
+    const setValue = !state.isConnected
+    setState({ ...state, isConnected: setValue })
+  }
+
+  const handlePermission = () => {
+    setState({ ...state, editPermission: true })
+  }
+
+  const handlePermissionCancel = () => {
+    setState({ ...state, editPermission: false })
+  }
+
+  const handlePermissionChanged = permissions => {
+    const editedApplication = JSON.parse(JSON.stringify(application));
+    editedApplication.permissions = permissions
+    editedApplication.version++
+    editApplication(editedApplication);
+    setState({ ...state, editPermission: false })
+  }
+
+  const handleAuthorize = type => {
+    const payload = generateData(type)
+    if (type !== 'Update') {
+      enableService(Object.keys(application.identifier)[0])
+    } else {
+      const newUpdateIDs = updatedID.slice();
+      const index = newUpdateIDs.indexOf(Object.keys(application.identifier)[0])
+      newUpdateIDs.splice(index, 1)
+      updatedService(newUpdateIDs)
+    }
+    handleDialogClose()
+    publishEvent(payload)
+  }
+
+  const generateData = type => {
+    const readPermissions = application.permissions.map(value => {
+      return value.read === true && `realestate/${value.name}`
+    })
+    const writePermissions = application.permissions.map(value => {
+      return value.write === true && `realestate/${value.name}`
+    })
+    return {
+      "topic": `yodata/subscription#${type === 'Authorize' ? 'authorize' : (type === 'Disconnect' ? 'revoke' : 'update')}`,
+      "recipient": `${userData.profile_id}`,
+      "data": {
+        "type": `${type === 'Authorize' ? 'Authorize' : (type === 'Disconnect' ? 'Revoke' : 'Update')}Action`,
+        "agent": `${userData.profile_id}`,
+        "instrument": {
+          "uri of the store": `https://sandbox.dev.env.yodata.io/settings/forevercloudstore.json`
+        },
+        "object": {
+          "type": "Subscription",
+          "version": `${application.version}`,
+          "agent": `${application.id}`,
+          "instrument": "https://sandbox.dev.env.yodata.io/settings/forevercloudstore.json",
+          "host": `https://${userData.raw.contact_id}.dev.env.yodata.io`,
+          "subscribes": readPermissions,
+          "publishes": writePermissions
+        }
+      }
+    }
+  }
 
   return (
     <React.Fragment>
       {
-        isEditable ?
+        state.isEditable ?
           (
-            <NewApp isEditMode={isEditable}
+            <NewApp isEditMode={state.isEditable}
               application={application}
-              editApplication={editApplication} />
+              editApplication={editApplication}
+              handleCancel={handleCancel} />
           ) : (
             <React.Fragment>
-              <Card className={classes.root}>
-                <CardMedia
-                  className={classes.cardMedia}
-                  image={application.logo.url}
-                  title={application.name}
-                />
-                {isAdmin &&
-                  <IconButton
-                    className={classes.hideButton}
-                    onClick={handleVisibility}>
-                    {application.isVisible ?
-                      <Visibility />
-                      :
-                      <VisibilityOff />}
-                  </IconButton>
-                }
-                <CardContent className={classes.cardContent}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {application.name}
-                  </Typography>
-                  <Typography variant="body2">
-                    {application.description}
-                  </Typography>
-                </CardContent>
-                <Grid container spacing={5} alignItems="center">
-                  <Grid item sm={12} md={6} lg={4}>
-                    <CardActions className={classes.actions}>
-                      <Switch checked={enabledID.includes(application.id)} onClick={handleSwitchToggle} />
-                      <Typography>{enabledID.includes(application.id) && 'CONNECTED'}</Typography>
-                    </CardActions>
-                  </Grid>
-                  <Grid item sm={12} md={6} lg={4}>
-                    <CardActions>
-                      <IconButton
-                        style={{ display: 'none' }}
-                        className={classNames(classes.expand, {
-                          [classes.expandOpen]: expandedID.includes(application.id),
-                        })}
-                        onClick={handleExpandClick}
-                        aria-expanded={expandedID.includes(application.id)}
-                        aria-label="Show permissions"
-                      >
-                        <ExpandMoreIcon />
-                      </IconButton>
-                    </CardActions>
-                  </Grid>
+              <Grid container direction='column' alignItems="flex-start" justify='flex-start'>
+                <Grid item>
+                  <Card elevation={3} className={classes.root}>
+                    {isAdmin &&
+                      <>
+                        <Grid className={classes.connectedApp} container direction='row' alignItems='center' justify='flex-start'>
+                          <Grid item>
+                            <Checkbox
+                              icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                              checkedIcon={<CheckBoxOutlinedIcon style={{ color: 'black' }} fontSize="small" />}
+                              name="checkedConnectedApp"
+                              onChange={handleConnected}
+                            />
+                          </Grid>
+                          <Grid item>
+                            <Typography>Connected App</Typography>
+                          </Grid>
+                        </Grid>
+                        <IconButton
+                          className={classes.hideButton}
+                          onClick={handleVisibility}>
+                          {application.isVisible ?
+                            <Visibility />
+                            :
+                            <VisibilityOff />}
+                        </IconButton>
+                      </>
+                    }
+                    <CardMedia
+                      component="img"
+                      height="140"
+                      className={classes.cardMedia}
+                      image={application.logo.url}
+                      title={application.name}
+                      onError={handleImageError}
+                    />
+                    <CardContent className={classes.cardContent}>
+                      <Typography className={classes.vendorName} variant="h5" component="h2">
+                        {application.name}
+                      </Typography>
+                      <Typography variant="body2">
+                        {application.description}
+                      </Typography>
+                    </CardContent>
+                    {!isAdmin &&
+                      <CardActions>
+                        <Grid container direction='row' alignItems="center" justify="space-between">
+                          <Grid className={classes.cardActions} spacing={1} item container direction='row' alignItems="center" justify="flex-start">
+                            <Grid item variant='body1'>
+                              {enabledID?.includes(Object.keys(application.identifier)[0]) &&
+                                <Typography className={classes.success}>Connected</Typography>}
+                            </Grid>
+                            <Grid item>
+                              {enabledID?.includes(Object.keys(application.identifier)[0]) &&
+                                (!updatedID?.includes(Object.keys(application.identifier)[0]) ?
+                                  <CheckCircleIcon className={classes.success} />
+                                  :
+                                  <ErrorIcon className={classes.error} />)
+                              }
+                            </Grid>
+                          </Grid>
+                          <Grid item>
+                            {enabledID?.includes(Object.keys(application.identifier)[0]) ?
+                              (!updatedID?.includes(Object.keys(application.identifier)[0]) ?
+                                <Button name="setting" variant="outlined" onClick={handleActivity} disableElevation>
+                                  Settings
+                                </Button> :
+                                <Button className={classes.updateRequired} name="update" variant="contained" onClick={handleActivity} disableElevation>
+                                  Update Required
+                                </Button>) :
+                              <Button className={classes.connectButton} name="connect" variant="contained" onClick={handleActivity} disableElevation>
+                                Connect
+                              </Button>
+                            }
+                          </Grid>
+                        </Grid>
+                      </CardActions>
+                    }
+                  </Card>
                 </Grid>
-                <Collapse in={expandedID.includes(application.id)} timeout="auto" unmountOnExit>
-                  <CheckList permissions={application.permissions} />
-                </Collapse>
-              </Card>
-              {isAdmin &&
-                <Button className={classes.button}
-                  variant="outlined"
-                  color="secondary"
-                  onClick={handleEdit}
-                  fullWidth >
-                  Edit App
-              </Button>
-              }
+                {isAdmin &&
+                  <Grid item className={classes.adminGrid} container direction='row' justify='space-around'>
+                    {!state.isConnected &&
+                      <Grid item>
+                        <Button
+                          className={classes.adminButtons}
+                          variant="contained"
+                          onClick={handlePermission}
+                        >
+                          Edit Permission
+                          </Button>
+                      </Grid>
+                    }
+                    <Grid item>
+                      <Button
+                        className={classes.adminButtons}
+                        variant="contained"
+                        onClick={handleEdit}
+                      >
+                        Edit Company Info
+                        </Button>
+                    </Grid>
+                  </Grid>
+                }
+              </Grid>
+              <Permissions open={state.editPermission}
+                handleDialog={handlePermissionCancel}
+                permissions={application.permissions}
+                logo={application.logo.url}
+                handlePermissionChanged={handlePermissionChanged} />
+              <PermissionDialog open={state.isDialogOpen}
+                handleDialog={handleDialogClose}
+                application={application}
+                handleAuthorize={handleAuthorize}
+                type={enabledID?.includes(Object.keys(application.identifier)[0]) ? (!updatedID?.includes(Object.keys(application.identifier)[0]) ? 'Disconnect' : 'Update') : 'Authorize'} />
             </React.Fragment>
           )
       }
-    </React.Fragment>
+    </React.Fragment >
   );
 }
 const mapStateToProps = state => {
   return {
-    expandedID: state.services.expandedID,
-    enabledID: state.services.enabledID
+    enabledID: state.services.enabledID,
+    updatedID: state.services.updatedID,
+    userData: state.auth.userData
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     enableService: id => dispatch(serviceEnabled(id)),
-    expandService: id => dispatch(serviceExpanded(id))
+    updatedService: id => dispatch(serviceUpdated(id))
   };
 };
 

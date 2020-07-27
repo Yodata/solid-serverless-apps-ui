@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Header from '../../components/Header';
+import {HeaderAdmin} from '../Header';
 import { withStyles } from '@material-ui/core';
 
 /**
@@ -14,27 +14,27 @@ const styles = theme => ({
     }
 });
 
-function Hero(props) {
+function HeroAdmin(props) {
 
     const { classes, userCustomization } = props;
 
     return (
         <React.Fragment>
-            <Header
+            <HeaderAdmin
                 className={classes.heroUnit}
-                title='ForeverCloud App Exchange'
-                content='Select the apps you want to use.'
+                title='FOREVER CLOUD APP EXCHANGE'
+                content='ADMIN'
                 backgroundImage={userCustomization && userCustomization.userLogo}
                 backgroundColor={userCustomization && userCustomization.userBackground}>
-            </Header>
+            </HeaderAdmin>
         </React.Fragment>
     );
 }
 
 const mapStateToProps = state => {
     return {
-        userCustomization: state.apps.appList && state.apps.appList.userCustomization
+        userCustomization: state.apps.storeData && state.apps.storeData.userCustomization
     };
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(Hero));
+export default connect(mapStateToProps)(withStyles(styles)(HeroAdmin));

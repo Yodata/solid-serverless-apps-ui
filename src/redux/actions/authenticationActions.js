@@ -1,6 +1,7 @@
 import { APIAuth } from '../../api/apiRequest';
 import endpoint from '../../api/endpoints';
 import { history } from '../../components/Authentication/history';
+import { globalSubscription, userSubscriptions } from '../../redux/actions/subscriptionAction'
 
 /**
 *   Constants
@@ -27,7 +28,11 @@ export const currentUser = () => {
         try {
             const response = await APIAuth.get(endpoint.userAuth);
             dispatch(getUser(response));
-        } catch (err) {
+            if(getState().auth.isLoggedIn){
+                dispatch(globalSubscription())
+                dispatch(userSubscriptions())
+            }
+        } catch (err) {    
             dispatch(getUser(err));
             if(!getState().auth.isLoggedIn){
                 window.location.href = "https://dev.env.yodata.io/reflex/auth/saml/login";

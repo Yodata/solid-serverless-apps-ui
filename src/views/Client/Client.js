@@ -1,7 +1,8 @@
 import React from 'react';
-import Hero from '../../components/Hero';
-import Group from '../../components/Groups';
+import { HeroUser } from '../../components/Hero';
+// import Group from '../../components/Groups';
 import AppCard from '../../components/AppCard';
+import Paper from '@material-ui/core/Paper'
 
 /**
  * @Component Client
@@ -11,9 +12,11 @@ import AppCard from '../../components/AppCard';
 function Client() {
     return (
         <React.Fragment>
-            <Hero />
-            <Group />
-            <AppCard />
+            <Paper>
+                <HeroUser />
+                {/* <Group /> */}
+                <AppCard />
+            </Paper>
         </React.Fragment>
     );
 };
