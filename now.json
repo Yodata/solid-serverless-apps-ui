@@ -16,6 +16,27 @@
             },
             "src": "/.*",
             "dest": "/server.js"
-        }
-    ]
+        },
+        {
+            "src": "/(.*)\\.(.*)",
+            "dest": "/build/$1.$2"
+          },
+          {
+            "src": "/",
+            "dest": "/build/index.html"
+          },
+          {
+            "src": "/(.*)",
+            "status": 301, "headers": { "Location": "/" }
+          }
+    ],
+    "type": "static",
+    "static": {
+        "rewrites": [
+            {
+                "source": "**",
+                "destination": "/index.html"
+            }
+        ]
+    }
 }
