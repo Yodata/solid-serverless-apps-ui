@@ -99,7 +99,7 @@ function AppCard(props) {
                 </Grid>
                 <Grid className={classes.root} container item direction='row' >
                     {isAdmin && isNew &&
-                        <Grid item>
+                        <Grid item className={classes.app}>
                             <NewApp
                                 isAddNew={isNew}
                                 tabIndex={tabIndex}

@@ -32,7 +32,7 @@ const styles = theme => ({
   root: {
     position: 'relative',
     backgroundColor: theme.palette.invisible.main,
-    // backgroundColor: props => (!props.application.isVisible && theme.palette.invisible.main),
+    opacity: props => (!props.application.isVisible && 0.5),
     minWidth: '26vw',
     maxWidth: '26vw',
     borderRadius: 0,
@@ -101,6 +101,8 @@ const styles = theme => ({
   adminButtons: {
     backgroundColor: theme.palette.adminButtons.main,
     color: theme.palette.white.main,
+    paddingLeft:26.9,
+    paddingRight: 26.9,
     '&:hover': {
       backgroundColor: theme.palette.adminButtons.main,
     }
@@ -320,7 +322,7 @@ export function CardComponent(props) {
                   </Card>
                 </Grid>
                 {isAdmin &&
-                  <Grid item className={classes.adminGrid} container direction='row' justify='space-around'>
+                  <Grid item className={classes.adminGrid} container direction='row' justify='flex-end'>
                     {!state.isConnected &&
                       <Grid item>
                         <Button
