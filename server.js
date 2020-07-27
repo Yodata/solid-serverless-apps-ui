@@ -12,8 +12,8 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-app.post('/post', function(request, response) {
-    response.send(request.body);
+app.post('/', function(request, response) {
+    response.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.get("/get", (req, res, next) => {
