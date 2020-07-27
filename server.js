@@ -36,10 +36,10 @@ app.listen(port, err => {
     console.log(`> Ready On Server http://localhost:${port}`)
 });
 
-app.get('/', function (req, res) {
+app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-app.post('/', function (request, response) {
+app.post('/*', function (request, response) {
     response.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
