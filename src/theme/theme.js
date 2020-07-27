@@ -2,6 +2,9 @@ import { createMuiTheme } from '@material-ui/core';
 
 const theme = createMuiTheme({
   palette: {
+    primary:{
+      main: '#618901'
+    },
     error: {
       main: '#d9000e'
     },
@@ -66,8 +69,8 @@ const theme = createMuiTheme({
         color: '#552448'
       }
     },
-    MuiTableCell:{
-      head:{
+    MuiTableCell: {
+      head: {
         color: '#552448',
         fontFamily: [
           'ProximaNovaBold',
@@ -79,6 +82,11 @@ const theme = createMuiTheme({
           'ProximaNovaBold',
           'Roboto'
         ].join(',')
+      }
+    },
+    MuiSwitch:{
+      thumb: {
+        color: '#ffffff'
       }
     }
   }

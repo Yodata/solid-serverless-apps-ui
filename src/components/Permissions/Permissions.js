@@ -24,6 +24,8 @@ const styles = theme => ({
     },
     textSpacing: {
         paddingBottom: 10,
+        paddingLeft: 12,
+        paddingRight: 12,
     },
     table: {
         minWidth: '37vw',
@@ -31,12 +33,18 @@ const styles = theme => ({
     },
     toggleSwitch: {
         backgroundColor: theme.palette.success.main,
-        color: '#ffffff'
+        color: '#ffffff',
+        '&:hover': {
+            backgroundColor: theme.palette.success.main,
+        }
     },
     cancelButton: {
         backgroundColor: theme.palette.error.main,
         color: '#ffffff',
-        textTransform: 'none'
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.error.main,
+        }
     },
     new: {
         backgroundColor: theme.palette.new.main,
@@ -44,8 +52,7 @@ const styles = theme => ({
         "&:disabled": {
             color: 'black'
         }
-
-    }
+    },
 })
 
 
@@ -127,6 +134,14 @@ function Permissions(props) {
                                             <TableCell>{topic.name}</TableCell>
                                             <TableCell align='right'>
                                                 <Switch
+                                                    className={{
+                                                        root: classes.root,
+                                                        switchBase: classes.switchBase,
+                                                        thumb: classes.thumb,
+                                                        track: classes.track,
+                                                        checked: classes.checked,
+                                                    }}
+                                                    color='primary'
                                                     size='small'
                                                     checked={topic.write}
                                                     name={topic.name + '-write'}
@@ -135,6 +150,8 @@ function Permissions(props) {
                                             </TableCell>
                                             <TableCell align='right'>
                                                 <Switch
+                                                    color='primary'
+                                                    className={classes.color}
                                                     size='small'
                                                     checked={topic.read}
                                                     name={topic.name + '-read'}
@@ -147,7 +164,7 @@ function Permissions(props) {
                             </Table>
                         </TableContainer>
                     </Grid>
-                    <Grid className={classes.textSpacing} item container direction='row' justify='space-around' alignItems='center'>
+                    <Grid className={classes.textSpacing} item container direction='row' justify='space-between' alignItems='center'>
                         <Grid item>
                             <Button className={classes.cancelButton} name="cancel" onClick={handleCancel} disableElevation>
                                 cancel
@@ -159,11 +176,11 @@ function Permissions(props) {
                             </Button>
                         </Grid>
                     </Grid>
-                    <Grid container item justify='center'>
+                    {/* <Grid container item justify='center'>
                         <Button className={classes.cancelButton} name="cancel" onClick={handleCancel} disableElevation>
                             Deactivate & remove vendor
                         </Button>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </Dialog>
         </>

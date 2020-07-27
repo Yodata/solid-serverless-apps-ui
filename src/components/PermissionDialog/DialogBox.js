@@ -146,7 +146,7 @@ function DialogBox(props) {
                                                         </TableCell>
                                                         <TableCell>{topic.name}</TableCell>
                                                         <TableCell align="right">
-                                                            {connectedApps && connectedApps.map(app => {
+                                                            {/* {connectedApps && connectedApps.map(app => {
                                                                 if (topic === Object.keys(app)[0]) {
                                                                     return app.topic.map(img => (
                                                                         <img alt='connected application'
@@ -154,7 +154,19 @@ function DialogBox(props) {
                                                                             width='50' />
                                                                     ))
                                                                 }
-                                                            })
+                                                                return ( */}
+                                                            <>
+                                                                <img alt='logo'
+                                                                    src='https://imprev.com/wp-content/uploads/2017/09/logo.png'
+                                                                    width='70'
+                                                                />
+                                                                <img alt='logo1'
+                                                                    src='https://www.docebo.com/wp-content/uploads/2017/06/logo_docebo_color.svg'
+                                                                    width='70'
+                                                                />
+                                                            </>
+                                                            {/* )
+                                                            }) */
                                                             }
                                                         </TableCell>
                                                     </TableRow>
