@@ -3,14 +3,19 @@ const express = require("express");
 var cors = require('cors')
 const app = express(); // create express app
 
-app.use(cors())
+var corsOptions = {
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204
+}
 app.use(express.static(path.join(__dirname, "..", "build")))
 
-app.post('/*', function (request, response) {
+app.post('/*', cors(corsOptions), function (request, response) {
     response.sendFile(path.join(__dirname, "..", 'build', 'index.html'));
 });
 
-app.get('/*', function (request, response) {
+app.get('/*', cors(corsOptions), function (request, response) {
     response.sendFile(path.join(__dirname, "..", 'build', 'index.html'));
 });
 
