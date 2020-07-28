@@ -9,21 +9,34 @@
     ],
     "routes": [
         {
+            "src": ".*",
+            "methods": [
+                "GET",
+                "POST",
+                "OPTIONS"
+            ],
             "headers": {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept"
-            }
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
+                "Access-Control-Allow-Credentials": "true"
+            },
+            "dest": "/server/index.js",
+            "continue": true
         },
         {
             "src": "/*",
             "dest": "/server/index.js",
-            "methods": ["GET"]
-          },
-          {
+            "methods": [
+                "GET"
+            ]
+        },
+        {
             "src": "/*",
             "dest": "/server/index.js",
-            "methods": ["POST"]
-          }
+            "methods": [
+                "POST"
+            ]
+        }
     ]
 }
