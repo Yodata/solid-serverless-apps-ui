@@ -1,7 +1,9 @@
 const path = require("path");
 const express = require("express");
+var cors = require('cors')
 const app = express(); // create express app
 
+app.use(cors())
 app.use(express.static(path.join(__dirname, "..", "build")))
 
 app.post('/*', function (request, response) {
