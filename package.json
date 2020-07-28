@@ -1,5 +1,6 @@
 {
   "name": "solid-serverless-apps",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -56,6 +57,5 @@
   },
   "devDependencies": {
     "enzyme-to-json": "^3.4.4"
-  },
-  "proxy": "http://localhost:8080"
+  }
 }
