@@ -11,7 +11,7 @@ function Routes() {
             <Switch>
                 <PrivateRoute exact path="/" component={Client} />
                 <Route path="/login" component={Login} />
-                <Route path="/admin" component={Admin} />
+                <PrivateRoute path="/admin" component={Admin} />
                 <Redirect from="*" to="/" />
             </Switch>
         </React.Fragment>
