@@ -62,7 +62,11 @@ function AppCard(props) {
     //     }) : [];
     // };
 
-
+    const sortApplications = () => {
+        return [...applications].sort((a,b) => {
+            return a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1
+        })
+    }
 
     const addNewApplication = value => {
         value.group.push(tabIndex);
@@ -108,7 +112,7 @@ function AppCard(props) {
                                 handleCancel={handleCancel} />
                         </Grid>
                     }
-                    {applications.map(application => (
+                    {sortApplications().map(application => (
                         <>
                             {application.isVisible ?
                                 (<Grid className={classes.app} item key={application.name}>

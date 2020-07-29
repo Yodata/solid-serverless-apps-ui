@@ -52,7 +52,7 @@ const styles = theme => ({
         "&:disabled": {
             color: 'black'
         }
-    },
+    }
 })
 
 
@@ -134,14 +134,6 @@ function Permissions(props) {
                                             <TableCell>{topic.name}</TableCell>
                                             <TableCell align='right'>
                                                 <Switch
-                                                    className={{
-                                                        root: classes.root,
-                                                        switchBase: classes.switchBase,
-                                                        thumb: classes.thumb,
-                                                        track: classes.track,
-                                                        checked: classes.checked,
-                                                    }}
-                                                    color='primary'
                                                     size='small'
                                                     checked={topic.write}
                                                     name={topic.name + '-write'}
@@ -150,8 +142,6 @@ function Permissions(props) {
                                             </TableCell>
                                             <TableCell align='right'>
                                                 <Switch
-                                                    color='primary'
-                                                    className={classes.color}
                                                     size='small'
                                                     checked={topic.read}
                                                     name={topic.name + '-read'}

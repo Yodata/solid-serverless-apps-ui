@@ -182,7 +182,7 @@ export function CardComponent(props) {
   const handlePermissionChanged = permissions => {
     const editedApplication = JSON.parse(JSON.stringify(application));
     editedApplication.permissions = permissions
-    editedApplication.version++
+    editedApplication.version = (1 + Number.parseInt(editedApplication.version)).toString()
     editApplication(editedApplication);
     setState({ ...state, editPermission: false })
   }
