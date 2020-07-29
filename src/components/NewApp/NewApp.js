@@ -87,7 +87,8 @@ function NewApp(props) {
             group: [],
             permissions: [],
             isVisible: false,
-            version: "1"
+            version: "1",
+            connected: false
         };
         editedApplication.id = state.newId;
         editedApplication.name = state.newTitle;

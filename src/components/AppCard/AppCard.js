@@ -74,7 +74,7 @@ function AppCard(props) {
             return Number.parseInt(Object.values(app.identifier)[0]);
         });
         const maxId = Math.max(...idArray);
-        const idName = value.name + "_id";
+        const idName = value.name.split(" ").join("") + "_id";
         value.identifier[idName] = maxId + 1;
         addApp(value);
     }
