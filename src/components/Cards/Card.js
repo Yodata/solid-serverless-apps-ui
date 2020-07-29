@@ -32,7 +32,7 @@ const styles = theme => ({
   root: {
     position: 'relative',
     backgroundColor: theme.palette.invisible.main,
-    opacity: props => (!props.application.isVisible && 0.5),
+    opacity: props => (props.application.connected ? 0.5 : !props.application.isVisible && 0.5),
     minWidth: '26vw',
     maxWidth: '26vw',
     borderRadius: 0,
@@ -142,9 +142,11 @@ export function CardComponent(props) {
   }
 
   const handleVisibility = () => {
-    const editedApplication = JSON.parse(JSON.stringify(application));
-    editedApplication.isVisible = !application.isVisible;
-    editApplication(editedApplication);
+    if(application.connected === false){
+      const editedApplication = JSON.parse(JSON.stringify(application));
+      editedApplication.isVisible = !application.isVisible
+      editApplication(editedApplication);
+    }
   }
 
   const editApplication = app => {
@@ -166,9 +168,9 @@ export function CardComponent(props) {
   }
 
   const handleConnected = () => {
-    handleVisibility()
-    const setValue = !state.isConnected
-    setState({ ...state, isConnected: setValue })
+    const editedApplication = JSON.parse(JSON.stringify(application));
+    editedApplication.connected = !application.connected
+    editApplication(editedApplication);
   }
 
   const handlePermission = () => {
@@ -248,6 +250,7 @@ export function CardComponent(props) {
                         <Grid className={classes.connectedApp} container direction='row' alignItems='center' justify='flex-start'>
                           <Grid item>
                             <Checkbox
+                              checked={application.connected}
                               icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                               checkedIcon={<CheckBoxOutlinedIcon style={{ color: 'black' }} fontSize="small" />}
                               name="checkedConnectedApp"
@@ -261,7 +264,7 @@ export function CardComponent(props) {
                         <IconButton
                           className={classes.hideButton}
                           onClick={handleVisibility}>
-                          {application.isVisible ?
+                          {!application.connected && application.isVisible ?
                             <Visibility />
                             :
                             <VisibilityOff />}
@@ -322,7 +325,7 @@ export function CardComponent(props) {
                 </Grid>
                 {isAdmin &&
                   <Grid item className={classes.adminGrid} container direction='row' justify='flex-end'>
-                    {!state.isConnected &&
+                    {!application.connected &&
                       <Grid item>
                         <Button
                           className={classes.adminButtons}
