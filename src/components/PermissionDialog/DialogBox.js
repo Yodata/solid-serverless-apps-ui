@@ -13,6 +13,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import { Typography } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip'
 
 const styles = theme => ({
     root: {
@@ -88,24 +89,25 @@ function DialogBox(props) {
         handleAuthorize(type)
     }
 
+    const handleImageError = (e) => {
+        e.target.onerror = null;
+        e.target.src = 'https://via.placeholder.com/70x20'
+    }
+
     const connectedApps = application.permissions.map(topic => {
         if (topic.read || topic.write) {
             const subsIdentifier = globalSubs?.items?.map(value => {
-                if (value.object.split('/').pop().toLowerCase() === topic.name.toLowerCase()) {
-                    return `${value.agent.split('/')[2].split('.').shift()}_id`
+                if (value.object.includes(topic.name.toLowerCase())) {
+                    return `${value.agent.split('/')[2].split('.').shift()}`
                 }
-            })
+            }).filter(Boolean)
             const images = subsIdentifier?.map(sub => {
-                return apps.forEach(app => {
-                    if (Object.keys(app.identifier)[0] === sub) {
-                        return app.logo.url
-                    }
-                })
-            })
+                return {name: sub, image: (apps.find(ele => Object.keys(ele.identifier)[0] === `${sub}_id`))?.logo?.url || 'https://via.placeholder.com/70x20'}
+            }).filter(Boolean)
             return { [topic.name.toLowerCase()]: images }
         }
-        return {}
-    })
+        return null
+    }).filter(Boolean)
 
 
     return (
@@ -138,36 +140,46 @@ function DialogBox(props) {
                                                     <TableRow key={topic.name}>
                                                         <TableCell component="th" scope="row">
                                                             {(topic.read && topic.write) ?
-                                                                'Send and Recieve' : (
+                                                                'Send and Receive' : (
                                                                     topic.write ?
                                                                         'Send' :
-                                                                        'Recieve'
+                                                                        'Receive'
                                                                 )}
                                                         </TableCell>
                                                         <TableCell>{topic.name}</TableCell>
                                                         <TableCell align="right">
-                                                            {/* {connectedApps && connectedApps.map(app => {
-                                                                if (topic === Object.keys(app)[0]) {
-                                                                    return app.topic.map(img => (
-                                                                        <img alt='connected application'
-                                                                            src={img}
-                                                                            width='50' />
-                                                                    ))
-                                                                }
-                                                                return ( */}
                                                             <>
-                                                                <img alt='logo'
-                                                                    src='https://imprev.com/wp-content/uploads/2017/09/logo.png'
-                                                                    width='70'
-                                                                />
-                                                                <img alt='logo1'
-                                                                    src='https://www.docebo.com/wp-content/uploads/2017/06/logo_docebo_color.svg'
-                                                                    width='70'
-                                                                />
+                                                                {connectedApps && connectedApps.map(app => {
+                                                                    if (topic.name.toLowerCase() === (Object.keys(app)[0]).toLowerCase()) {
+                                                                        console.log(app[topic.name.toLowerCase()])
+                                                                        return app[topic.name.toLowerCase()] && app[topic.name.toLowerCase()].map(value => (
+                                                                            <>
+                                                                                <Tooltip title={`${application.name}
+                                                                                    ${(topic.read && topic.write) ?
+                                                                                        'send and receivs' : (
+                                                                                            topic.write ?
+                                                                                                'sends' :
+                                                                                                'receives'
+                                                                                        )}
+                                                                                    ${topic.name} data 
+                                                                                    ${(topic.read && topic.write) ?
+                                                                                        'to/from' : (
+                                                                                            topic.write ?
+                                                                                                'to' :
+                                                                                                'from'
+                                                                                        )}
+                                                                                    ${value.name}
+                                                                                `} arrow>
+                                                                                    <img alt='connected application'
+                                                                                        src={value.image}
+                                                                                        width='70'
+                                                                                        onError={handleImageError} />
+                                                                                </Tooltip>
+                                                                            </>
+                                                                        ))
+                                                                    }
+                                                                })}
                                                             </>
-                                                            {/* )
-                                                            }) */
-                                                            }
                                                         </TableCell>
                                                     </TableRow>
                                                 )
