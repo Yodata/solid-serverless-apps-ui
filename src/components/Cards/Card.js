@@ -164,7 +164,8 @@ export function CardComponent(props) {
 
   const handleImageError = (e) => {
     e.target.onerror = null;
-    e.target.src = "https://via.placeholder.com/150"
+    const name = e.target.name
+    e.target.src = `https://via.placeholder.com/150/e6e6e6/000000?text=${name}`
   }
 
   const handleConnected = () => {
@@ -274,6 +275,7 @@ export function CardComponent(props) {
                     <CardMedia
                       component="img"
                       height="140"
+                      name={application.name}
                       className={classes.cardMedia}
                       image={application.logo.url}
                       title={application.name}
