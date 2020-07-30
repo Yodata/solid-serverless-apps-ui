@@ -87,15 +87,6 @@ const theme = createMuiTheme({
         ].join(',')
       }
     },
-    MuiSwitch: {
-      track: {
-        backgroundColor: '#d9000e',
-        opacity: 1,
-      },
-      thumb: {
-        color: '#ffffff'
-      }
-    },
     MuiTooltip: {
       tooltip: {
         fontSize: '1em',

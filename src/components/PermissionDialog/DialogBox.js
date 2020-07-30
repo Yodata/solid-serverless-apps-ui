@@ -77,7 +77,6 @@ const styles = theme => ({
     }
 })
 
-
 function DialogBox(props) {
     const { classes, open, handleDialog, application, type, apps, globalSubs, handleAuthorize } = props
 
@@ -91,7 +90,8 @@ function DialogBox(props) {
 
     const handleImageError = (e) => {
         e.target.onerror = null;
-        e.target.src = 'https://via.placeholder.com/70x20'
+        const name = e.target.name
+        e.target.src = `https://via.placeholder.com/70x20/e6e6e6/000000?text=${name}`
     }
 
     const connectedApps = application.permissions.map(topic => {
@@ -102,7 +102,7 @@ function DialogBox(props) {
                 }
             }).filter(Boolean)
             const images = subsIdentifier?.map(sub => {
-                return {name: sub, image: (apps.find(ele => Object.keys(ele.identifier)[0] === `${sub}_id`))?.logo?.url || 'https://via.placeholder.com/70x20'}
+                return {name: sub, image: (apps.find(ele => Object.keys(ele.identifier)[0] === `${sub}_id`))?.logo?.url || `https://via.placeholder.com/70x20/e6e6e6/000000?text=${sub}`}
             }).filter(Boolean)
             return { [topic.name.toLowerCase()]: images }
         }
@@ -173,6 +173,7 @@ function DialogBox(props) {
                                                                                     <img alt='connected application'
                                                                                         src={value.image}
                                                                                         width='70'
+                                                                                        name={value.name}
                                                                                         onError={handleImageError} />
                                                                                 </Tooltip>
                                                                             </>
