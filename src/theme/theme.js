@@ -95,6 +95,18 @@ const theme = createMuiTheme({
       thumb: {
         color: '#ffffff'
       }
+    },
+    MuiTooltip: {
+      tooltip: {
+        fontSize: '1em',
+        color: '#000000',
+        backgroundColor: '#ffffff',
+        borderStyle: 'solid',
+        borderWidth: 1
+      },
+      arrow: {
+        color: '#000000'
+      }
     }
   }
 });
