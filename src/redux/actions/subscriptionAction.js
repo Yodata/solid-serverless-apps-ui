@@ -33,10 +33,10 @@ export const globalSubscription = () => {
   }
 }
 
-export const userSubscriptions = () => {
+export const userSubscriptions = id => {
   return async (dispatch, getState) => {
     try {
-      const response = await API.get(`https://${getState().auth.userId}.dev.env.yodata.io/${endpoint.subs}`)
+      const response = await API.get(`https://${id}.dev.env.yodata.io/${endpoint.subs}`)
       dispatch(getUserSubscriptions(response))
       const subsIdentifiers = getState().subs.userSubs.items.map(value => {
         return `${value.agent.split("/")[2].split(".")[0]}_id`
