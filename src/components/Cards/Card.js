@@ -171,6 +171,7 @@ export function CardComponent(props) {
   const handleConnected = () => {
     const editedApplication = JSON.parse(JSON.stringify(application));
     editedApplication.connected = !application.connected
+    editedApplication.isVisible = !editedApplication.connected
     editApplication(editedApplication);
   }
 
