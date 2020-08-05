@@ -43,11 +43,11 @@ export const getAllApps = () => {
                             return identifier
                         }
                     }
-                })
+                }).filter(Boolean)
                 dispatch(serviceUpdated(updatedIDs))
             }
         } catch (err) {
-            throw err;
+            console.log(`error: ${err}`)    
         };
     };
 };

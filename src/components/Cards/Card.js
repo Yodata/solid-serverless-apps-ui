@@ -224,7 +224,7 @@ export function CardComponent(props) {
           "version": `${application.version}`,
           "agent": `${application.id}`,
           "instrument": "https://sandbox.dev.env.yodata.io",
-          "host": `https://${userData.raw.contact_id}.dev.env.yodata.io`,
+          "host": `https://${userData.contact_id}.dev.env.yodata.io`,
           "subscribes": readPermissions,
           "publishes": writePermissions
         }
@@ -370,7 +370,8 @@ const mapStateToProps = state => {
   return {
     enabledID: state.services.enabledID,
     updatedID: state.services.updatedID,
-    userData: state.auth.userData
+    userData: state.auth.userData,
+    userId: state.auth.userId
   };
 };
 
