@@ -1,6 +1,7 @@
 import { APISubs, API } from '../../api/apiRequest'
 import endpoint from '../../api/endpoints'
 import { serviceEnabled } from '../slices/servicesSlice'
+import { getAllApps } from '../../redux/actions/applicationActions';
 
 
 /**
@@ -36,7 +37,8 @@ export const globalSubscription = () => {
 export const userSubscriptions = id => {
   return async (dispatch, getState) => {
     try {
-      const response = await API.get(`https://${id}.dev.env.yodata.io/${endpoint.subs}`)
+      // const response = await API.get(`https://${id}.dev.env.yodata.io/${endpoint.subs}`)
+      const response = await API.get(`https://${id || getState().auth.userData.contact_id}.dev.env.yodata.io/${endpoint.subs}`)
       dispatch(getUserSubscriptions(response))
       const subsIdentifiers = getState().subs.userSubs.items.map(value => {
         return `${value.agent.split("/")[2].split(".")[0]}_id`
@@ -46,6 +48,8 @@ export const userSubscriptions = id => {
       })
     } catch (err) {
       dispatch(getUserSubscriptions(err))
+    } finally {
+      dispatch(getAllApps())
     }
   }
 }

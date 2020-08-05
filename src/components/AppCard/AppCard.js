@@ -7,6 +7,7 @@ import { getAllApps, addNewApp } from '../../redux/actions/applicationActions';
 import NewApp from '../NewApp';
 import { updateApp } from '../../redux/actions/applicationActions';
 import withStyles from '@material-ui/core/styles/withStyles';
+import { userSubscriptions } from '../../redux/actions/subscriptionAction';
 
 /**
  * @Component AppCard
@@ -35,11 +36,11 @@ const styles = theme => ({
 
 function AppCard(props) {
 
-    const { classes, tabIndex, applications = [], getApps, isAdmin, addApp, editApp, globalSubs } = props;
+    const { classes, tabIndex, applications = [], isAdmin, addApp, editApp, userSubscriptions } = props;
     
     React.useEffect(() => {
-        getApps();
-    }, [getApps]);
+        userSubscriptions()
+    }, []);
     
     const [connectedApps, setConnectedApps] = React.useState([])
 
@@ -152,7 +153,8 @@ const mapDispatchToProps = dispatch => {
     return {
         getApps: () => dispatch(getAllApps()),
         addApp: value => dispatch(addNewApp(value)),
-        editApp: value => dispatch(updateApp(value))
+        editApp: value => dispatch(updateApp(value)),
+        userSubscriptions: () => dispatch(userSubscriptions())
     };
 };
 

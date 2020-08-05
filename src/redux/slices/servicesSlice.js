@@ -8,9 +8,11 @@ const serviceSlice = createSlice({
     },
     reducers: {
         serviceEnabled: (state, action) => {
-            const newEnabledIDs = state.enabledID.includes(action.payload) ?
-                state.enabledID.filter(value => value !== action.payload) :
-                [...state.enabledID, action.payload];
+            const newEnabledIDs = action.payload ?
+                (state.enabledID.includes(action.payload) ?
+                    state.enabledID.filter(value => value !== action.payload) :
+                    [...state.enabledID, action.payload]) :
+                []
             return {
                 ...state,
                 enabledID: newEnabledIDs

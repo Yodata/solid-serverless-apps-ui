@@ -14,6 +14,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip'
+// import { franchiseUserList } from '../../redux/actions/authenticationActions'
 
 const styles = theme => ({
     root: {
@@ -78,7 +79,10 @@ const styles = theme => ({
 })
 
 function DialogBox(props) {
-    const { classes, open, handleDialog, application, type, apps, globalSubs, handleAuthorize } = props
+    const { classes, open, handleDialog, application, type, apps, globalSubs, handleAuthorize, franchiseList, adminList, userId } = props
+
+    const onlyReadRole = ['bc', 'owner', 'broker of record', 'marketing director']
+    Object.freeze(onlyReadRole)
 
     const handleClose = () => {
         handleDialog()
@@ -204,9 +208,21 @@ function DialogBox(props) {
                         </Grid>
                         <Grid className={classes.typeButton} container item direction='column' justify='space-evenly' alignItems='flex-end' >
                             <Grid item>
-                                <Button className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
-                                    {type}
-                                </Button>
+                                {/* {adminList.some(ele => ele.contactId === userId && onlyReadRole.includes(ele.roleName.toLowerCase())) ? */}
+                                    {/* (
+                                        <Button disable className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
+                                            {type}
+                                        </Button>) :
+                                    (
+                                        franchiseList.some(ele => ele.contactId === userId && onlyReadRole.includes(ele.roleName.toLowerCase())) ?
+                                            (<Button disable className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
+                                                {type}
+                                            </Button>) : */}
+                                            (<Button className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
+                                                {type}
+                                            </Button>)
+                                    {/* )
+                                } */}
                             </Grid>
                             <Grid item>
                                 <Typography className={classes.secondMsg} align='right' variant='subtitle2'>
@@ -227,7 +243,10 @@ function DialogBox(props) {
 const mapStateToProps = state => {
     return {
         globalSubs: state.subs.globalSubs,
-        apps: state.apps?.storeData?.application
+        apps: state.apps?.storeData?.application,
+        adminList: state.auth.userList,
+        franchiseList: state.auth.franchiseList,
+        userId: state.auth.userId
     };
 };
 

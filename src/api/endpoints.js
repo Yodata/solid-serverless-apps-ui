@@ -4,5 +4,5 @@ export default {
     userLogOut: 'reflex/auth/logout',
     subs: 'settings/subscriptions',
     publish:'publish/',
-    credentials: 'credentials'
+    credentials: 'settings/credentials.json'
 }
