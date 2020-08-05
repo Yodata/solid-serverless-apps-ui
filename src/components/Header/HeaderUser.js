@@ -14,7 +14,7 @@ const styles = theme => ({
         maxWidth: 550,
         width: '100%',
         height: 'auto',
-        paddingBottom:50
+        paddingBottom: 50
     },
 })
 

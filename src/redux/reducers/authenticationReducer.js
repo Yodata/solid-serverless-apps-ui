@@ -1,9 +1,10 @@
-import { GET_USER, LOGOUT_USER } from '../actions/authenticationActions';
+import { GET_USER, LOGOUT_USER, AUTHORISED_USER } from '../actions/authenticationActions';
 
 const defaultState = {
     isLoggedIn: false,
     userId: null,
-    userData: {}
+    userData: {},
+    userList: []
 }
 
 const authenticationReducer = (state = defaultState, action) => {
@@ -18,6 +19,12 @@ const authenticationReducer = (state = defaultState, action) => {
                 isLoggedIn: isUserLoggedIn,
                 userId: currentUserId,
                 userData: currentUserData
+            }
+        case AUTHORISED_USER:
+            const list = action.userList
+            return{
+                ...state,
+                userList: list
             }
         case LOGOUT_USER:
             return{

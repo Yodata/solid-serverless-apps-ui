@@ -102,7 +102,7 @@ function DialogBox(props) {
                 }
             }).filter(Boolean)
             const images = subsIdentifier?.map(sub => {
-                return {name: sub, image: (apps.find(ele => Object.keys(ele.identifier)[0] === `${sub}_id`))?.logo?.url || `https://via.placeholder.com/70x20/e6e6e6/000000?text=${sub}`}
+                return { name: sub, image: (apps.find(ele => Object.keys(ele.identifier)[0] === `${sub}_id`))?.logo?.url || `https://via.placeholder.com/70x20/e6e6e6/000000?text=${sub}` }
             }).filter(Boolean)
             return { [topic.name.toLowerCase()]: images }
         }
@@ -151,7 +151,6 @@ function DialogBox(props) {
                                                             <>
                                                                 {connectedApps && connectedApps.map(app => {
                                                                     if (topic.name.toLowerCase() === (Object.keys(app)[0]).toLowerCase()) {
-                                                                        console.log(app[topic.name.toLowerCase()])
                                                                         return app[topic.name.toLowerCase()] && app[topic.name.toLowerCase()].map(value => (
                                                                             <>
                                                                                 <Tooltip title={`${application.name}
