@@ -13,7 +13,7 @@ function Routes() {
             <Switch>
                 <PrivateRoute exact path="/" component={Client} />
                 <Route path="/login" component={Login} />
-                {state.userList.some(ele => ele.id === state.id) &&
+                {state.userList.some(ele => ele.contactId === state.id) &&
                     (<PrivateRoute exact path="/admin" component={Admin} />)
                 }
                 <Redirect from="*" to="/" />
