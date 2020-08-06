@@ -164,10 +164,10 @@ function DialogBox(props) {
                                                                             <>
                                                                                 <Tooltip title={`${application.name}
                                                                                     ${(topic.read && topic.write) ?
-                                                                                        'send and receivs' : (
+                                                                                        'Sends and Receives' : (
                                                                                             topic.write ?
-                                                                                                'sends' :
-                                                                                                'receives'
+                                                                                                'Sends' :
+                                                                                                'Receives'
                                                                                         )}
                                                                                     ${topic.name} data 
                                                                                     ${(topic.read && topic.write) ?
@@ -176,7 +176,7 @@ function DialogBox(props) {
                                                                                                 'to' :
                                                                                                 'from'
                                                                                         )}
-                                                                                    ${value.name}
+                                                                                    ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}
                                                                                 `} arrow>
                                                                                     <img alt='connected application'
                                                                                         src={value.image}
@@ -231,7 +231,7 @@ function DialogBox(props) {
                             </Grid>
                             <Grid item>
                                 <Typography className={classes.secondMsg} align='right' variant='subtitle2'>
-                                    {`By clicking ${type} you agree to enable
+                                    {`By clicking ${type} you agree to ${type !== 'Disconnect' ? 'enable' : 'disable'}
                                     data sharing between this vendor and the
                                     connected applications depicted above.`}
                                 </Typography>
