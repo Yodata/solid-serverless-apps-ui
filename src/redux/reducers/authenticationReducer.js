@@ -26,7 +26,7 @@ const authenticationReducer = (state = defaultState, action) => {
                 userId: currentUserId,
                 userData: {
                     profile_id: currentUserData.profile_id,
-                    contact_id: currentUserData.raw.contact_id
+                    contact_id: currentUserData.raw.contact_id[0]
                 }
             }
         case AUTHORISED_USER:
@@ -40,7 +40,8 @@ const authenticationReducer = (state = defaultState, action) => {
             const listOfRoles = profile.memberOf.map(value => {
                 if (value.roleName.toLowerCase() === 'marketing director'
                     || value.roleName.toLowerCase() === 'broker of record'
-                    || value.roleName.toLowerCase() === 'owner') {
+                    || value.roleName.toLowerCase() === 'owner'
+                    || value.roleName.toLowerCase() === 'company technology admin') {
                     return { contactId: value.memberOf.id, roleName: value.roleName}
                 }
             }).filter(Boolean)
