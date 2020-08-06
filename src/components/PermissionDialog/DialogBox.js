@@ -79,7 +79,8 @@ const styles = theme => ({
 })
 
 function DialogBox(props) {
-    const { classes, open, handleDialog, application, type, apps, globalSubs, handleAuthorize, franchiseList, adminList, userId } = props
+    const { classes, open, handleDialog, application, type, apps,
+        globalSubs, handleAuthorize, franchiseList, adminList, userId, userData } = props
 
     const onlyReadRole = ['bc', 'owner', 'broker of record', 'marketing director']
     Object.freeze(onlyReadRole)
@@ -124,7 +125,11 @@ function DialogBox(props) {
                         </Paper>
                     </Grid>
                     <Grid item className={classes.textSpacing}>
-                        Requires access to
+                        {type !== 'Disconnect' ? 'Requires access to' :
+                            <Typography align='center' variant='body2'>
+                                Revoking data access permissions for this application will disconnect the application from the following
+                            </Typography>
+                        }
                     </Grid>
                     <Grid item className={classes.textSpacing}>
                         <TableContainer>
@@ -208,21 +213,21 @@ function DialogBox(props) {
                         </Grid>
                         <Grid className={classes.typeButton} container item direction='column' justify='space-evenly' alignItems='flex-end' >
                             <Grid item>
-                                {/* {adminList.some(ele => ele.contactId === userId && onlyReadRole.includes(ele.roleName.toLowerCase())) ? */}
-                                    {/* (
-                                        <Button disable className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
-                                            {type}
-                                        </Button>) :
+                                {userId === userData.contact_id ||
+                                    !(adminList.some(ele => ele.contactId === userId &&
+                                        onlyReadRole.includes(ele.roleName.toLowerCase())) ||
+                                        franchiseList.some(ele => ele.contactId === userId &&
+                                            onlyReadRole.includes(ele.roleName.toLowerCase()))) ?
                                     (
-                                        franchiseList.some(ele => ele.contactId === userId && onlyReadRole.includes(ele.roleName.toLowerCase())) ?
-                                            (<Button disable className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
-                                                {type}
-                                            </Button>) : */}
-                                            (<Button className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
-                                                {type}
-                                            </Button>)
-                                    {/* )
-                                } */}
+                                        <Button className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
+                                            {type}
+                                        </Button>
+                                    ) : (
+                                        <Button disabled className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
+                                            {type}
+                                        </Button>
+                                    )
+                                }
                             </Grid>
                             <Grid item>
                                 <Typography className={classes.secondMsg} align='right' variant='subtitle2'>
@@ -246,7 +251,8 @@ const mapStateToProps = state => {
         apps: state.apps?.storeData?.application,
         adminList: state.auth.userList,
         franchiseList: state.auth.franchiseList,
-        userId: state.auth.userId
+        userId: state.auth.userId,
+        userData: state.auth.userData
     };
 };
 
