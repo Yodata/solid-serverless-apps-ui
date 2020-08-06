@@ -101,7 +101,7 @@ function NewApp(props) {
 
     const createPermissions = () => {
 
-        const topics = ['Award', 'Calendar', 'Contact', 'Franchise Reporting', 'Lead', 'Listing',
+        const topics = ['Award', 'Calendar', 'Contacts', 'Franchise Reporting', 'Lead', 'Listing',
             'Marketing Program', 'Service Area', 'Transaction', 'Website'];
 
         Object.freeze(topics)
