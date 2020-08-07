@@ -49,7 +49,7 @@ function HeroUser(props) {
     }))
     const dispatch = useDispatch()
     const [user, setUser] = React.useState(0)
-    const [franchiseUser, setFranchiseUser] = React.useState(state.id)
+    const [franchiseUser, setFranchiseUser] = React.useState('')
     React.useEffect(() => {
         dispatch(authorisedUserList())
         dispatch(franchiseUserList())
@@ -71,8 +71,9 @@ function HeroUser(props) {
     }
 
     const handleSelect = e => {
+        const value = e.target.value === '' ? state.franchiseList[0].contactId : e.target.value
         setFranchiseUser(e.target.value)
-        dispatch(setProfileId(e.target.value))
+        dispatch(setProfileId(value))
         dispatch(serviceEnabled(false))
         dispatch(serviceUpdated())
         dispatch(userSubscriptions())
@@ -118,7 +119,7 @@ function HeroUser(props) {
                                 </>
                             )
                             :
-                            (state.franchiseList.length > 0 &&
+                            (state.franchiseList.length > 1 &&
                                 (<Grid item>
                                     <Typography style={{ fontSize: '10px' }}>Select Contact ID</Typography>
                                     <Select
@@ -126,14 +127,22 @@ function HeroUser(props) {
                                         onChange={handleSelect}
                                         displayEmpty
                                     >
-                                        <MenuItem value={state.id}>
-                                            <Typography>{state.id}</Typography>
+                                        <MenuItem value="">
+                                            <Typography>
+                                                {state.franchiseList[0].contactId.split("//").pop().split(".").shift().toUpperCase()}
+                                            </Typography>
                                         </MenuItem>
-                                        {state.franchiseList.map(ele => {
-                                            const value = ele.contactId.split("//").pop().split(".").shift()
-                                            return (
-                                                <MenuItem value={ele.contactId}>{value}</MenuItem>
-                                            )
+                                        {state.franchiseList.map((ele, index) => {
+                                            if (index > 0) {
+                                                const value = ele.contactId.split("//").pop().split(".").shift()
+                                                return (
+                                                    <MenuItem value={value}>
+                                                        <Typography>
+                                                            {value.toUpperCase()}
+                                                        </Typography>
+                                                    </MenuItem>
+                                                )
+                                            }
                                         })}
                                     </Select>
                                 </Grid>)
