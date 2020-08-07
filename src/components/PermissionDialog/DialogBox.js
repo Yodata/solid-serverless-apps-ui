@@ -25,10 +25,9 @@ const styles = theme => ({
         objectFit: "contain"
     },
     dialogPaper: {
-        minWidth: '50vw',
-        maxWidth: '50vw',
-        minHeight: '80vh',
-        maxHeight: '80vh',
+        minWidth: '60vw',
+        maxWidth: '60vw',
+        overflowX: 'hidden'
     },
     textSpacing: {
         paddingBottom: 20,
@@ -36,8 +35,8 @@ const styles = theme => ({
         paddingRight: 20
     },
     table: {
-        minWidth: '47vw',
-        maxWidth: '47vw',
+        minWidth: '57vw',
+        maxWidth: '57vw',
     },
     actionButton: {
         color: '#ffffff',
@@ -60,16 +59,17 @@ const styles = theme => ({
 
     },
     firstMsg: {
-        fontSize: '0.7em',
-        maxWidth: 310,
+        fontSize: '1em',
+        maxWidth: 450,
         lineHeight: '1em',
         fontFamily: [
             'ProximaNovaBold',
             'Roboto'
-        ].join(',')
+        ].join(','),
+        marginBottom: 20
     },
     secondMsg: {
-        fontSize: '0.7em',
+        fontSize: '1em',
         maxWidth: 200,
         lineHeight: '1em',
     },
@@ -200,9 +200,9 @@ function DialogBox(props) {
                         </TableContainer>
                     </Grid>
                     <Grid item>
-                        <Typography gutterBottom className={classes.firstMsg} align='center' variant='subtitle2'>
+                        <Typography className={classes.firstMsg} align='center' variant='subtitle2'>
                             To add additional Connected Applications, authorize this
-                            vendor and return to the AppExchange to repeat this proces
+                            vendor and return to the App Exchange to repeat this process.
                         </Typography>
                     </Grid>
                     <Grid className={classes.textSpacing} item container direction='row' justify='space-between' alignItems='flex-start'>
