@@ -40,6 +40,7 @@ export const userSubscriptions = id => {
       // const response = await API.get(`https://${id}.dev.env.yodata.io/${endpoint.subs}`)
       const response = await API.get(`https://${id || getState().auth.userData.contact_id}.dev.env.yodata.io/${endpoint.subs}`)
       dispatch(getUserSubscriptions(response))
+      dispatch(serviceEnabled(false))
       const subsIdentifiers = getState().subs.userSubs.items.map(value => {
         return `${value.agent.split("/")[2].split(".")[0]}_id`
       })

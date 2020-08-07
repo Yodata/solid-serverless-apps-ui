@@ -295,12 +295,12 @@ export function CardComponent(props) {
                         <Grid container direction='row' alignItems="center" justify="space-between">
                           <Grid className={classes.cardActions} spacing={1} item container direction='row' alignItems="center" justify="flex-start">
                             <Grid item variant='body1'>
-                              {enabledID?.includes(Object.keys(application.identifier)[0]) &&
+                              {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) &&
                                 <Typography className={classes.success}>Connected</Typography>}
                             </Grid>
                             <Grid item>
-                              {enabledID?.includes(Object.keys(application.identifier)[0]) &&
-                                (!updatedID?.includes(Object.keys(application.identifier)[0]) ?
+                              {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) &&
+                                (!updatedID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
                                   <CheckCircleIcon className={classes.success} />
                                   :
                                   <ErrorIcon className={classes.error} />)
@@ -308,8 +308,8 @@ export function CardComponent(props) {
                             </Grid>
                           </Grid>
                           <Grid item>
-                            {enabledID?.includes(Object.keys(application.identifier)[0]) ?
-                              (!updatedID?.includes(Object.keys(application.identifier)[0]) ?
+                            {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
+                              (!updatedID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
                                 <Button name="setting" variant="outlined" onClick={handleActivity} disableElevation>
                                   Settings
                                 </Button> :
