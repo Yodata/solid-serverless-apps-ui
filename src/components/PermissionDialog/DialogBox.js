@@ -85,6 +85,9 @@ function DialogBox(props) {
     const onlyReadRole = ['bc', 'owner', 'broker of record', 'marketing director']
     Object.freeze(onlyReadRole)
 
+    const topicsToShow = ['Lead', 'Contact', 'Website']
+    Object.freeze(topicsToShow)
+
     const handleClose = () => {
         handleDialog()
     }
@@ -144,55 +147,56 @@ function DialogBox(props) {
                                 <TableBody>
                                     {application.permissions?.map(topic => (
                                         <>
-                                            {(!topic.read && !topic.write) ?
-                                                null : (
-                                                    <TableRow key={topic.name}>
-                                                        <TableCell component="th" scope="row">
-                                                            {(topic.read && topic.write) ?
-                                                                'Send and Receive' : (
-                                                                    topic.write ?
-                                                                        'Send' :
-                                                                        'Receive'
-                                                                )}
-                                                        </TableCell>
-                                                        <TableCell>{topic.name}</TableCell>
-                                                        <TableCell align="right">
-                                                            <>
-                                                                {connectedApps && connectedApps.map(app => {
-                                                                    if (topic.name.toLowerCase() === (Object.keys(app)[0]).toLowerCase()) {
-                                                                        return app[topic.name.toLowerCase()] && app[topic.name.toLowerCase()].map(value => (
-                                                                            <>
-                                                                                <Tooltip title={`${application.name}
+                                            {topicsToShow.includes(topic.name) &&
+                                                ((!topic.read && !topic.write) ?
+                                                    null : (
+                                                        <TableRow key={topic.name}>
+                                                            <TableCell component="th" scope="row">
+                                                                {(topic.read && topic.write) ?
+                                                                    'Send and Receive' : (
+                                                                        topic.write ?
+                                                                            'Send' :
+                                                                            'Receive'
+                                                                    )}
+                                                            </TableCell>
+                                                            <TableCell>{topic.name === 'Website' ? 'Website Customer Activity' : topic.name}</TableCell>
+                                                            <TableCell align="right">
+                                                                <>
+                                                                    {connectedApps && connectedApps.map(app => {
+                                                                        if (topic.name.toLowerCase() === (Object.keys(app)[0]).toLowerCase()) {
+                                                                            return app[topic.name.toLowerCase()] && app[topic.name.toLowerCase()].map(value => (
+                                                                                <>
+                                                                                    <Tooltip title={`${application.name}
                                                                                     ${(topic.read && topic.write) ?
-                                                                                        'Sends and Receives' : (
-                                                                                            topic.write ?
-                                                                                                'Sends' :
-                                                                                                'Receives'
-                                                                                        )}
-                                                                                    ${topic.name} data 
+                                                                                            'Sends and Receives' : (
+                                                                                                topic.write ?
+                                                                                                    'Sends' :
+                                                                                                    'Receives'
+                                                                                            )}
+                                                                                    ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
                                                                                     ${(topic.read && topic.write) ?
-                                                                                        'to/from' : (
-                                                                                            topic.write ?
-                                                                                                'to' :
-                                                                                                'from'
-                                                                                        )}
+                                                                                            'to/from' : (
+                                                                                                topic.write ?
+                                                                                                    'to' :
+                                                                                                    'from'
+                                                                                            )}
                                                                                     ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}
                                                                                 `} arrow>
-                                                                                    <img alt='connected application'
-                                                                                        src={value.image}
-                                                                                        width='70'
-                                                                                        name={value.name}
-                                                                                        onError={handleImageError} />
-                                                                                </Tooltip>
-                                                                            </>
-                                                                        ))
-                                                                    }
-                                                                })}
-                                                            </>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )
-                                            }
+                                                                                        <img alt='connected application'
+                                                                                            src={value.image}
+                                                                                            width='70'
+                                                                                            name={value.name}
+                                                                                            onError={handleImageError} />
+                                                                                    </Tooltip>
+                                                                                </>
+                                                                            ))
+                                                                        }
+                                                                    })}
+                                                                </>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )
+                                                )}
                                         </>
                                     ))}
                                 </TableBody>
