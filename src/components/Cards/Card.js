@@ -45,16 +45,6 @@ const styles = theme => ({
   cardContent: {
     height: '155px',
   },
-  // expand: {
-  //   transform: 'rotate(0deg)',
-  //   marginLeft: 'auto',
-  //   transition: theme.transitions.create('transform', {
-  //     duration: theme.transitions.duration.shortest,
-  //   })
-  // },
-  // expandOpen: {
-  //   transform: 'rotate(180deg)',
-  // },
   vendorName: {
     fontFamily: theme.typography.vendorName.fontFamily,
     fontSize: theme.typography.vendorName.fontSize,
@@ -218,14 +208,14 @@ export function CardComponent(props) {
       "data": {
         "type": `${type === 'Authorize' ? 'Authorize' : (type === 'Disconnect' ? 'Revoke' : 'Update')}Action`,
         "agent": `${userData.profile_id}`,
-        "instrument": `https://sandbox.dev.env.yodata.io`
+        "instrument": `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}`
         ,
         "object": {
           "type": "Subscription",
           "version": `${application.version}`,
           "agent": `${application.id}`,
-          "instrument": "https://sandbox.dev.env.yodata.io",
-          "host": `https://${userData.contact_id}.dev.env.yodata.io`,
+          "instrument": `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}`,
+          "host": `https://${userData.contact_id}.${process.env.REACT_APP_HOSTNAME}`,
           "subscribes": readPermissions,
           "publishes": writePermissions
         }

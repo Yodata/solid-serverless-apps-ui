@@ -31,7 +31,7 @@ const editApp = payload => {
 export const getAllApps = () => {
     return async (dispatch, getState) => {
         try {
-            const response = await API.get(`https://sandbox.dev.env.yodata.io/${endpoint.allApps}`);
+            const response = await API.get(`https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.allApps}`);
             dispatch(getApps(response.data));
             const subs = getState().subs?.userSubs?.items
             if (subs) {
@@ -56,7 +56,7 @@ export const addNewApp = value => {
     return async (dispatch, getState) => {
         try {
             dispatch(addApp(value));
-            await API.put(`https://sandbox.dev.env.yodata.io/${endpoint.allApps}`, getState().apps.storeData);
+            await API.put(`https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.allApps}`, getState().apps.storeData);
         } catch (err) {
             throw err
         }
@@ -67,7 +67,7 @@ export const updateApp = value => {
     return async (dispatch, getState) => {
         try {
             dispatch(editApp(value));
-            await API.put(`https://sandbox.dev.env.yodata.io/${endpoint.allApps}`, getState().apps.storeData);
+            await API.put(`https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.allApps}`, getState().apps.storeData);
         } catch (err) {
             throw err;
         }
