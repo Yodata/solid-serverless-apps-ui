@@ -32,7 +32,7 @@ const styles = theme => ({
   root: {
     position: 'relative',
     backgroundColor: theme.palette.invisible.main,
-    opacity: props => (!props.application.isVisible && 0.5),
+    opacity: props => (props.application.connected ? 0.5 : !props.application.isVisible && 0.5),
     minWidth: '26vw',
     maxWidth: '26vw',
     borderRadius: 0,
@@ -142,9 +142,11 @@ export function CardComponent(props) {
   }
 
   const handleVisibility = () => {
-    const editedApplication = JSON.parse(JSON.stringify(application));
-    editedApplication.isVisible = !application.isVisible;
-    editApplication(editedApplication);
+    if(application.connected === false){
+      const editedApplication = JSON.parse(JSON.stringify(application));
+      editedApplication.isVisible = !application.isVisible
+      editApplication(editedApplication);
+    }
   }
 
   const editApplication = app => {
@@ -162,13 +164,15 @@ export function CardComponent(props) {
 
   const handleImageError = (e) => {
     e.target.onerror = null;
-    e.target.src = "https://via.placeholder.com/150"
+    const name = e.target.name
+    e.target.src = `https://via.placeholder.com/150/e6e6e6/000000?text=${name}`
   }
 
   const handleConnected = () => {
-    handleVisibility()
-    const setValue = !state.isConnected
-    setState({ ...state, isConnected: setValue })
+    const editedApplication = JSON.parse(JSON.stringify(application));
+    editedApplication.connected = !application.connected
+    editedApplication.isVisible = !editedApplication.connected
+    editApplication(editedApplication);
   }
 
   const handlePermission = () => {
@@ -182,7 +186,7 @@ export function CardComponent(props) {
   const handlePermissionChanged = permissions => {
     const editedApplication = JSON.parse(JSON.stringify(application));
     editedApplication.permissions = permissions
-    editedApplication.version++
+    editedApplication.version = (1 + Number.parseInt(editedApplication.version)).toString()
     editApplication(editedApplication);
     setState({ ...state, editPermission: false })
   }
@@ -221,7 +225,7 @@ export function CardComponent(props) {
           "version": `${application.version}`,
           "agent": `${application.id}`,
           "instrument": "https://sandbox.dev.env.yodata.io",
-          "host": `https://${userData.raw.contact_id}.dev.env.yodata.io`,
+          "host": `https://${userData.contact_id}.dev.env.yodata.io`,
           "subscribes": readPermissions,
           "publishes": writePermissions
         }
@@ -248,6 +252,7 @@ export function CardComponent(props) {
                         <Grid className={classes.connectedApp} container direction='row' alignItems='center' justify='flex-start'>
                           <Grid item>
                             <Checkbox
+                              checked={application.connected}
                               icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                               checkedIcon={<CheckBoxOutlinedIcon style={{ color: 'black' }} fontSize="small" />}
                               name="checkedConnectedApp"
@@ -261,7 +266,7 @@ export function CardComponent(props) {
                         <IconButton
                           className={classes.hideButton}
                           onClick={handleVisibility}>
-                          {application.isVisible ?
+                          {!application.connected && application.isVisible ?
                             <Visibility />
                             :
                             <VisibilityOff />}
@@ -271,6 +276,7 @@ export function CardComponent(props) {
                     <CardMedia
                       component="img"
                       height="140"
+                      name={application.name}
                       className={classes.cardMedia}
                       image={application.logo.url}
                       title={application.name}
@@ -289,12 +295,12 @@ export function CardComponent(props) {
                         <Grid container direction='row' alignItems="center" justify="space-between">
                           <Grid className={classes.cardActions} spacing={1} item container direction='row' alignItems="center" justify="flex-start">
                             <Grid item variant='body1'>
-                              {enabledID?.includes(Object.keys(application.identifier)[0]) &&
+                              {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) &&
                                 <Typography className={classes.success}>Connected</Typography>}
                             </Grid>
                             <Grid item>
-                              {enabledID?.includes(Object.keys(application.identifier)[0]) &&
-                                (!updatedID?.includes(Object.keys(application.identifier)[0]) ?
+                              {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) &&
+                                (!updatedID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
                                   <CheckCircleIcon className={classes.success} />
                                   :
                                   <ErrorIcon className={classes.error} />)
@@ -302,8 +308,8 @@ export function CardComponent(props) {
                             </Grid>
                           </Grid>
                           <Grid item>
-                            {enabledID?.includes(Object.keys(application.identifier)[0]) ?
-                              (!updatedID?.includes(Object.keys(application.identifier)[0]) ?
+                            {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
+                              (!updatedID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
                                 <Button name="setting" variant="outlined" onClick={handleActivity} disableElevation>
                                   Settings
                                 </Button> :
@@ -322,7 +328,7 @@ export function CardComponent(props) {
                 </Grid>
                 {isAdmin &&
                   <Grid item className={classes.adminGrid} container direction='row' justify='flex-end'>
-                    {!state.isConnected &&
+                    {!application.connected &&
                       <Grid item>
                         <Button
                           className={classes.adminButtons}
@@ -365,7 +371,8 @@ const mapStateToProps = state => {
   return {
     enabledID: state.services.enabledID,
     updatedID: state.services.updatedID,
-    userData: state.auth.userData
+    userData: state.auth.userData,
+    userId: state.auth.userId
   };
 };
 

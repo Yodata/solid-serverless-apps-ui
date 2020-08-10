@@ -13,6 +13,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import { Typography } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip'
+// import { franchiseUserList } from '../../redux/actions/authenticationActions'
 
 const styles = theme => ({
     root: {
@@ -23,10 +25,9 @@ const styles = theme => ({
         objectFit: "contain"
     },
     dialogPaper: {
-        minWidth: '50vw',
-        maxWidth: '50vw',
-        minHeight: '80vh',
-        maxHeight: '80vh',
+        minWidth: '60vw',
+        maxWidth: '60vw',
+        overflowX: 'hidden'
     },
     textSpacing: {
         paddingBottom: 20,
@@ -34,8 +35,8 @@ const styles = theme => ({
         paddingRight: 20
     },
     table: {
-        minWidth: '47vw',
-        maxWidth: '47vw',
+        minWidth: '57vw',
+        maxWidth: '57vw',
     },
     actionButton: {
         color: '#ffffff',
@@ -58,16 +59,17 @@ const styles = theme => ({
 
     },
     firstMsg: {
-        fontSize: '0.7em',
-        maxWidth: 310,
+        fontSize: '1em',
+        maxWidth: 450,
         lineHeight: '1em',
         fontFamily: [
             'ProximaNovaBold',
             'Roboto'
-        ].join(',')
+        ].join(','),
+        marginBottom: 20
     },
     secondMsg: {
-        fontSize: '0.7em',
+        fontSize: '1em',
         maxWidth: 200,
         lineHeight: '1em',
     },
@@ -76,9 +78,15 @@ const styles = theme => ({
     }
 })
 
-
 function DialogBox(props) {
-    const { classes, open, handleDialog, application, type, apps, globalSubs, handleAuthorize } = props
+    const { classes, open, handleDialog, application, type, apps,
+        globalSubs, handleAuthorize, franchiseList, adminList, userId, userData } = props
+
+    const onlyReadRole = ['bc', 'owner', 'broker of record', 'marketing director']
+    Object.freeze(onlyReadRole)
+
+    const topicsToShow = ['Lead', 'Contact', 'Website']
+    Object.freeze(topicsToShow)
 
     const handleClose = () => {
         handleDialog()
@@ -88,24 +96,26 @@ function DialogBox(props) {
         handleAuthorize(type)
     }
 
+    const handleImageError = (e) => {
+        e.target.onerror = null;
+        const name = e.target.name
+        e.target.src = `https://via.placeholder.com/70x20/e6e6e6/000000?text=${name}`
+    }
+
     const connectedApps = application.permissions.map(topic => {
         if (topic.read || topic.write) {
             const subsIdentifier = globalSubs?.items?.map(value => {
-                if (value.object.split('/').pop().toLowerCase() === topic.name.toLowerCase()) {
-                    return `${value.agent.split('/')[2].split('.').shift()}_id`
+                if (value.object.includes(topic.name.toLowerCase())) {
+                    return `${value.agent.split('/')[2].split('.').shift()}`
                 }
-            })
+            }).filter(Boolean)
             const images = subsIdentifier?.map(sub => {
-                return apps.forEach(app => {
-                    if (Object.keys(app.identifier)[0] === sub) {
-                        return app.logo.url
-                    }
-                })
-            })
+                return { name: sub, image: (apps.find(ele => Object.keys(ele.identifier)[0] === `${sub}_id`))?.logo?.url || `https://via.placeholder.com/70x20/e6e6e6/000000?text=${sub}` }
+            }).filter(Boolean)
             return { [topic.name.toLowerCase()]: images }
         }
-        return {}
-    })
+        return null
+    }).filter(Boolean)
 
 
     return (
@@ -118,7 +128,11 @@ function DialogBox(props) {
                         </Paper>
                     </Grid>
                     <Grid item className={classes.textSpacing}>
-                        Requires access to
+                        {type !== 'Disconnect' ? 'Requires access to' :
+                            <Typography align='center' variant='body2'>
+                                Revoking data access permissions for this application will disconnect the application from the following
+                            </Typography>
+                        }
                     </Grid>
                     <Grid item className={classes.textSpacing}>
                         <TableContainer>
@@ -133,45 +147,56 @@ function DialogBox(props) {
                                 <TableBody>
                                     {application.permissions?.map(topic => (
                                         <>
-                                            {(!topic.read && !topic.write) ?
-                                                null : (
-                                                    <TableRow key={topic.name}>
-                                                        <TableCell component="th" scope="row">
-                                                            {(topic.read && topic.write) ?
-                                                                'Send and Recieve' : (
-                                                                    topic.write ?
-                                                                        'Send' :
-                                                                        'Recieve'
-                                                                )}
-                                                        </TableCell>
-                                                        <TableCell>{topic.name}</TableCell>
-                                                        <TableCell align="right">
-                                                            {/* {connectedApps && connectedApps.map(app => {
-                                                                if (topic === Object.keys(app)[0]) {
-                                                                    return app.topic.map(img => (
-                                                                        <img alt='connected application'
-                                                                            src={img}
-                                                                            width='50' />
-                                                                    ))
-                                                                }
-                                                                return ( */}
-                                                            <>
-                                                                <img alt='logo'
-                                                                    src='https://imprev.com/wp-content/uploads/2017/09/logo.png'
-                                                                    width='70'
-                                                                />
-                                                                <img alt='logo1'
-                                                                    src='https://www.docebo.com/wp-content/uploads/2017/06/logo_docebo_color.svg'
-                                                                    width='70'
-                                                                />
-                                                            </>
-                                                            {/* )
-                                                            }) */
-                                                            }
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )
-                                            }
+                                            {topicsToShow.includes(topic.name) &&
+                                                ((!topic.read && !topic.write) ?
+                                                    null : (
+                                                        <TableRow key={topic.name}>
+                                                            <TableCell component="th" scope="row">
+                                                                {(topic.read && topic.write) ?
+                                                                    'Send and Receive' : (
+                                                                        topic.write ?
+                                                                            'Send' :
+                                                                            'Receive'
+                                                                    )}
+                                                            </TableCell>
+                                                            <TableCell>{topic.name === 'Website' ? 'Website Customer Activity' : topic.name}</TableCell>
+                                                            <TableCell align="right">
+                                                                <>
+                                                                    {connectedApps && connectedApps.map(app => {
+                                                                        if (topic.name.toLowerCase() === (Object.keys(app)[0]).toLowerCase()) {
+                                                                            return app[topic.name.toLowerCase()] && app[topic.name.toLowerCase()].map(value => (
+                                                                                <>
+                                                                                    <Tooltip title={`${application.name}
+                                                                                    ${(topic.read && topic.write) ?
+                                                                                            'Sends and Receives' : (
+                                                                                                topic.write ?
+                                                                                                    'Sends' :
+                                                                                                    'Receives'
+                                                                                            )}
+                                                                                    ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
+                                                                                    ${(topic.read && topic.write) ?
+                                                                                            'to/from' : (
+                                                                                                topic.write ?
+                                                                                                    'to' :
+                                                                                                    'from'
+                                                                                            )}
+                                                                                    ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}
+                                                                                `} arrow>
+                                                                                        <img alt='connected application'
+                                                                                            src={value.image}
+                                                                                            width='70'
+                                                                                            name={value.name}
+                                                                                            onError={handleImageError} />
+                                                                                    </Tooltip>
+                                                                                </>
+                                                                            ))
+                                                                        }
+                                                                    })}
+                                                                </>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )
+                                                )}
                                         </>
                                     ))}
                                 </TableBody>
@@ -179,9 +204,9 @@ function DialogBox(props) {
                         </TableContainer>
                     </Grid>
                     <Grid item>
-                        <Typography gutterBottom className={classes.firstMsg} align='center' variant='subtitle2'>
+                        <Typography className={classes.firstMsg} align='center' variant='subtitle2'>
                             To add additional Connected Applications, authorize this
-                            vendor and return to the AppExchange to repeat this proces
+                            vendor and return to the App Exchange to repeat this process.
                         </Typography>
                     </Grid>
                     <Grid className={classes.textSpacing} item container direction='row' justify='space-between' alignItems='flex-start'>
@@ -192,13 +217,25 @@ function DialogBox(props) {
                         </Grid>
                         <Grid className={classes.typeButton} container item direction='column' justify='space-evenly' alignItems='flex-end' >
                             <Grid item>
-                                <Button className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
-                                    {type}
-                                </Button>
+                                {userId === userData.contact_id ||
+                                    !(adminList.some(ele => ele.contactId === userId &&
+                                        onlyReadRole.includes(ele.roleName.toLowerCase())) ||
+                                        franchiseList.some(ele => ele.contactId === userId &&
+                                            onlyReadRole.includes(ele.roleName.toLowerCase()))) ?
+                                    (
+                                        <Button className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
+                                            {type}
+                                        </Button>
+                                    ) : (
+                                        <Button disabled className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
+                                            {type}
+                                        </Button>
+                                    )
+                                }
                             </Grid>
                             <Grid item>
                                 <Typography className={classes.secondMsg} align='right' variant='subtitle2'>
-                                    {`By clicking ${type} you agree to enable
+                                    {`By clicking ${type} you agree to ${type !== 'Disconnect' ? 'enable' : 'disable'}
                                     data sharing between this vendor and the
                                     connected applications depicted above.`}
                                 </Typography>
@@ -215,7 +252,11 @@ function DialogBox(props) {
 const mapStateToProps = state => {
     return {
         globalSubs: state.subs.globalSubs,
-        apps: state.apps?.storeData?.application
+        apps: state.apps?.storeData?.application,
+        adminList: state.auth.userList,
+        franchiseList: state.auth.franchiseList,
+        userId: state.auth.userId,
+        userData: state.auth.userData
     };
 };
 

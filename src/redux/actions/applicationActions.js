@@ -38,17 +38,16 @@ export const getAllApps = () => {
                 const updatedIDs = getState().apps?.storeData?.application.map(value => {
                     for (let i = 0; i < subs.length; i++) {
                         const identifier = `${subs[i].agent.split("/")[2].split(".")[0]}_id`
-                        if (Object.keys(value.identifier)[0] === identifier
+                        if (Object.keys(value.identifier)[0].toLowerCase() === identifier
                             && value.version !== subs[i].version) {
                             return identifier
                         }
                     }
                 }).filter(Boolean)
-                console.log(updatedIDs)
                 dispatch(serviceUpdated(updatedIDs))
             }
         } catch (err) {
-            throw err;
+            console.log(`error: ${err}`)    
         };
     };
 };

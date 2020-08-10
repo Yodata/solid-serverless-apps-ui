@@ -7,6 +7,9 @@ import { getAllApps, addNewApp } from '../../redux/actions/applicationActions';
 import NewApp from '../NewApp';
 import { updateApp } from '../../redux/actions/applicationActions';
 import withStyles from '@material-ui/core/styles/withStyles';
+import { userSubscriptions } from '../../redux/actions/subscriptionAction';
+import { setProfileId } from '../../redux/actions/authenticationActions'
+import { serviceEnabled, serviceUpdated } from '../../redux/slices/servicesSlice';
 
 /**
  * @Component AppCard
@@ -35,19 +38,19 @@ const styles = theme => ({
 
 function AppCard(props) {
 
-    const { classes, tabIndex, applications = [], getApps, isAdmin, addApp, editApp, globalSubs } = props;
-    
-    React.useEffect(() => {
-        getApps();
-    }, [getApps]);
-    
-    const [connectedApps, setConnectedApps] = React.useState([])
+    const { classes, tabIndex, applications = [], isAdmin, addApp,
+        editApp, userSubscriptions, userList, franchiseList, userId, setProfileId } = props;
 
-    const getConnectedApps = id => {
-        // const application = applications.filter(value => Object.keys(value.identifier)[0] === id)
-        // application.permissions.map(value =>  value.name.toLowerCase())
-    }
-    
+    React.useEffect(() => {
+        if (userList.some(ele => ele.contactId === userId && ele.roleName)) {
+            userSubscriptions()
+        } else
+            if (franchiseList.length > 0) {
+                setProfileId(franchiseList[0].contactId)
+                userSubscriptions()
+            }
+    }, [userList, franchiseList]);
+
     const [isNew, setNew] = React.useState(false)
     // const getApplications = (group = 'featured') => {
     //     return applications ? applications.filter(function (app) {
@@ -62,7 +65,11 @@ function AppCard(props) {
     //     }) : [];
     // };
 
-
+    const sortApplications = () => {
+        return [...applications].sort((a, b) => {
+            return a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1
+        })
+    }
 
     const addNewApplication = value => {
         value.group.push(tabIndex);
@@ -70,7 +77,7 @@ function AppCard(props) {
             return Number.parseInt(Object.values(app.identifier)[0]);
         });
         const maxId = Math.max(...idArray);
-        const idName = value.name + "_id";
+        const idName = value.name.split(" ").join("") + "_id";
         value.identifier[idName] = maxId + 1;
         addApp(value);
     }
@@ -108,15 +115,14 @@ function AppCard(props) {
                                 handleCancel={handleCancel} />
                         </Grid>
                     }
-                    {applications.map(application => (
+                    {sortApplications().map(application => (
                         <>
                             {application.isVisible ?
                                 (<Grid className={classes.app} item key={application.name}>
                                     <Card application={application}
                                         isAdmin={isAdmin}
                                         updateApplication={updateApplication}
-                                        connectedApps= {connectedApps}
-                                        getConnectedApps={getConnectedApps} />
+                                    />
                                 </Grid>
                                 ) : (
                                     isAdmin &&
@@ -140,7 +146,10 @@ const mapStateToProps = state => {
     return {
         tabIndex: state.groups.tabIndex,
         applications: state.apps?.storeData && state.apps?.storeData?.application,
-        globalSubs: state.subs.globalSubs
+        globalSubs: state.subs.globalSubs,
+        userList: state.auth.userList,
+        franchiseList: state.auth.franchiseList,
+        userId: state.auth.userId
     }
 }
 
@@ -148,7 +157,11 @@ const mapDispatchToProps = dispatch => {
     return {
         getApps: () => dispatch(getAllApps()),
         addApp: value => dispatch(addNewApp(value)),
-        editApp: value => dispatch(updateApp(value))
+        editApp: value => dispatch(updateApp(value)),
+        userSubscriptions: () => dispatch(userSubscriptions()),
+        setProfileId: value => dispatch(setProfileId(value)),
+        serviceEnabled: value => dispatch(serviceEnabled(value)),
+        serviceUpdated: () => dispatch(serviceUpdated())
     };
 };
 

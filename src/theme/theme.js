@@ -2,8 +2,11 @@ import { createMuiTheme } from '@material-ui/core';
 
 const theme = createMuiTheme({
   palette: {
-    primary:{
-      main: '#618901'
+    primary: {
+      main: '#618959'
+    },
+    secondary: {
+      main: '#d9000e'
     },
     error: {
       main: '#d9000e'
@@ -84,9 +87,16 @@ const theme = createMuiTheme({
         ].join(',')
       }
     },
-    MuiSwitch:{
-      thumb: {
-        color: '#ffffff'
+    MuiTooltip: {
+      tooltip: {
+        fontSize: '1em',
+        color: '#000000',
+        backgroundColor: '#ffffff',
+        borderStyle: 'solid',
+        borderWidth: 1
+      },
+      arrow: {
+        color: '#000000'
       }
     }
   }

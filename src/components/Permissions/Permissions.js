@@ -52,9 +52,27 @@ const styles = theme => ({
         "&:disabled": {
             color: 'black'
         }
-    },
+    }
 })
 
+const TopicSwitch = withStyles((theme) => ({
+    switchBase: {
+        color: theme.palette.white.main,
+        '&$checked': {
+            transform: 'translateX(12px)',
+            color: theme.palette.white.main,
+            '& + $track': {
+                opacity: 1,
+                backgroundColor: theme.palette.success.main,
+            },
+        },
+    },
+    track: {
+        opacity: 1,
+        backgroundColor: theme.palette.error.main,
+    },
+    checked: {},
+}))(Switch);
 
 function Permissions(props) {
 
@@ -133,15 +151,7 @@ function Permissions(props) {
                                         <TableRow key={topic.name}>
                                             <TableCell>{topic.name}</TableCell>
                                             <TableCell align='right'>
-                                                <Switch
-                                                    className={{
-                                                        root: classes.root,
-                                                        switchBase: classes.switchBase,
-                                                        thumb: classes.thumb,
-                                                        track: classes.track,
-                                                        checked: classes.checked,
-                                                    }}
-                                                    color='primary'
+                                                <TopicSwitch
                                                     size='small'
                                                     checked={topic.write}
                                                     name={topic.name + '-write'}
@@ -149,9 +159,7 @@ function Permissions(props) {
                                                 />
                                             </TableCell>
                                             <TableCell align='right'>
-                                                <Switch
-                                                    color='primary'
-                                                    className={classes.color}
+                                                <TopicSwitch
                                                     size='small'
                                                     checked={topic.read}
                                                     name={topic.name + '-read'}

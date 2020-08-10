@@ -3,5 +3,6 @@ export default {
     userAuth: 'reflex/auth/whoami',
     userLogOut: 'reflex/auth/logout',
     subs: 'settings/subscriptions',
-    publish:'publish/'
+    publish:'publish/',
+    credentials: 'settings/credentials.json'
 }
