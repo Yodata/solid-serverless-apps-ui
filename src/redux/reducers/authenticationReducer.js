@@ -1,10 +1,11 @@
 import { GET_USER, LOGOUT_USER, AUTHORISED_USER, LIST_OF_ROLES, SET_PROFILE_ID } from '../actions/authenticationActions';
+import endpoint from '../../api/endpoints'
 
 const defaultState = {
     isLoggedIn: false,
     userId: '3014655',
     userData: {
-        profile_id: 'https://3014655.dev.env.yodata.io/profile/card#me',
+        profile_id: `https://3014655.${process.env.REACT_APP_HOSTNAME}/${endpoint.profile}`,
         raw: {
             contact_id: '3014655'
         }

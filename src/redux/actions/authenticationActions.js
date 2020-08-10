@@ -1,4 +1,4 @@
-import { APIAuth, API } from '../../api/apiRequest';
+import { API, APIBase } from '../../api/apiRequest';
 import endpoint from '../../api/endpoints';
 import { history } from '../../components/Authentication/history';
 import { globalSubscription } from '../../redux/actions/subscriptionAction'
@@ -41,7 +41,7 @@ export const setProfileId = payload => {
 export const currentUser = () => {
     return async (dispatch, getState) => {
         try {
-            const response = await APIAuth.get(endpoint.userAuth);
+            const response = await APIBase.get(endpoint.userAuth);
             dispatch(getUser(response));
             if (getState().auth.isLoggedIn) {
                 dispatch(globalSubscription())
@@ -50,7 +50,7 @@ export const currentUser = () => {
         } catch (err) {
             dispatch(getUser(err));
             if (!getState().auth.isLoggedIn) {
-                window.location.href = "https://dev.env.yodata.io/reflex/auth/saml/login";
+                window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}`;
             }
         }
     }
@@ -67,10 +67,12 @@ export const currentUser = () => {
 export const authorisedUserList = () => {
     return async dispatch => {
         try {
-            const response = await API.get(`https://sandbox.dev.env.yodata.io/${endpoint.credentials}`)
+            const response = await API.get(`https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.credentials}`)
             dispatch(authorisedUser(response.data.adminUsers))
         } catch (err) {
             console.log(err)
+        } finally {
+            dispatch(franchiseUserList())
         }
     }
 }
@@ -89,7 +91,7 @@ export const franchiseUserList = () => {
 export const signoutUser = () => {
     return async (dispatch, getState) => {
         try {
-            const response = await APIAuth.get(endpoint.userLogOut);
+            const response = await APIBase.get(endpoint.userLogOut);
             dispatch(logoutUser());
             history.push('/login');
         } catch (err) {

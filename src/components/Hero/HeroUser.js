@@ -3,10 +3,9 @@ import Paper from '@material-ui/core/Paper'
 import { HeaderUser } from '../Header'
 import { withStyles, Button, Grid, Typography } from '@material-ui/core';
 import { history } from '../Authentication/history';
-import { API } from '../../api/apiRequest'
-import endpoints from '../../api/endpoints'
+import endpoint from '../../api/endpoints'
 import { useSelector, useDispatch } from 'react-redux'
-import { authorisedUserList, franchiseUserList, setProfileId } from '../../redux/actions/authenticationActions'
+import { authorisedUserList, setProfileId } from '../../redux/actions/authenticationActions'
 import { userSubscriptions } from '../../redux/actions/subscriptionAction'
 import TextField from '@material-ui/core/TextField'
 import Select from '@material-ui/core/Select'
@@ -52,7 +51,6 @@ function HeroUser(props) {
     const [franchiseUser, setFranchiseUser] = React.useState('')
     React.useEffect(() => {
         dispatch(authorisedUserList())
-        dispatch(franchiseUserList())
     }, [])
 
     const switchUI = () => {
@@ -64,7 +62,7 @@ function HeroUser(props) {
     }
 
     const handleSubmit = () => {
-        dispatch(setProfileId(`https://${user}.dev.env.yodata.io/profile/card`))
+        dispatch(setProfileId(`https://${user}.${process.env.REACT_APP_HOSTNAME}/${endpoint.profile}`))
         dispatch(serviceEnabled(false))
         dispatch(serviceUpdated())
         dispatch(userSubscriptions(user))
