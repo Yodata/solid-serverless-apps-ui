@@ -117,7 +117,7 @@ function HeroUser(props) {
                                 </>
                             )
                             :
-                            (state.franchiseList.length > 1 &&
+                            (state.franchiseList?.length > 1 &&
                                 (<Grid item>
                                     <Typography style={{ fontSize: '10px' }}>Select Contact ID</Typography>
                                     <Select
