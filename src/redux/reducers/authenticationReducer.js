@@ -8,7 +8,8 @@ const defaultState = {
         profile_id: `https://3014655.${process.env.REACT_APP_HOSTNAME}/${endpoint.profile}`,
         raw: {
             contact_id: '3014655'
-        }
+        },
+        userDomain: ``
     },
     userList: [],
     franchiseList: []
@@ -38,7 +39,7 @@ const authenticationReducer = (state = defaultState, action) => {
             }
         case LIST_OF_ROLES:
             const profile = action.profile
-            const listOfRoles = profile.memberOf.map(value => {
+            const listOfRoles = profile.memberOf?.map(value => {
                 if (value.roleName.toLowerCase() === 'marketing director'
                     || value.roleName.toLowerCase() === 'broker of record'
                     || value.roleName.toLowerCase() === 'owner'

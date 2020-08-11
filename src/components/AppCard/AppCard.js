@@ -45,7 +45,7 @@ function AppCard(props) {
         if (userList.some(ele => ele.contactId === userId && ele.roleName)) {
             userSubscriptions()
         } else
-            if (franchiseList.length > 0) {
+            if (franchiseList?.length > 0) {
                 setProfileId(franchiseList[0].contactId)
                 userSubscriptions()
             }
@@ -77,7 +77,7 @@ function AppCard(props) {
             return Number.parseInt(Object.values(app.identifier)[0]);
         });
         const maxId = Math.max(...idArray);
-        const idName = value.name.split(" ").join("") + "_id";
+        const idName = `${value.id.split("/")[2].split(".")[0]}_id`.toLowerCase();
         value.identifier[idName] = maxId + 1;
         addApp(value);
     }

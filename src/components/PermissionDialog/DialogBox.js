@@ -226,7 +226,7 @@ function DialogBox(props) {
                                             {type}
                                         </Button>
                                     ) : (
-                                        <Button disabled className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
+                                        <Button disabled className={classes.actionButton} name="readOnlySubmit" variant="contained" disableElevation>
                                             {type}
                                         </Button>
                                     )

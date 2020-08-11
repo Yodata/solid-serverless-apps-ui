@@ -44,7 +44,7 @@ export const userSubscriptions = id => {
         return `${value.agent.split("/")[2].split(".")[0]}_id`
       })
       subsIdentifiers.forEach(element => {
-        dispatch(serviceEnabled(element))
+        dispatch(serviceEnabled(element.toLowerCase()))
       })
     } catch (err) {
       dispatch(getUserSubscriptions(err))

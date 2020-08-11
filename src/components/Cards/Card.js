@@ -184,10 +184,10 @@ export function CardComponent(props) {
   const handleAuthorize = type => {
     const payload = generateData(type)
     if (type !== 'Update') {
-      enableService(Object.keys(application.identifier)[0])
+      enableService(Object.keys(application.identifier)[0].toLowerCase())
     } else {
       const newUpdateIDs = updatedID.slice();
-      const index = newUpdateIDs.indexOf(Object.keys(application.identifier)[0])
+      const index = newUpdateIDs.indexOf(Object.keys(application.identifier)[0].toLowerCase())
       newUpdateIDs.splice(index, 1)
       updatedService(newUpdateIDs)
     }
@@ -350,7 +350,7 @@ export function CardComponent(props) {
                 handleDialog={handleDialogClose}
                 application={application}
                 handleAuthorize={handleAuthorize}
-                type={enabledID?.includes(Object.keys(application.identifier)[0]) ? (!updatedID?.includes(Object.keys(application.identifier)[0]) ? 'Disconnect' : 'Update') : 'Authorize'} />
+                type={enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ? (!updatedID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ? 'Disconnect' : 'Update') : 'Authorize'} />
             </React.Fragment>
           )
       }
