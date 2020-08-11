@@ -26,8 +26,8 @@ const authenticationReducer = (state = defaultState, action) => {
                 isLoggedIn: isUserLoggedIn,
                 userId: currentUserId,
                 userData: {
-                    profile_id: currentUserData.profile_id,
-                    contact_id: currentUserData.raw.contact_id[0]
+                    profile_id: currentUserData?.profile_id,
+                    contact_id: currentUserData?.raw.contact_id[0]
                 }
             }
         case AUTHORISED_USER:

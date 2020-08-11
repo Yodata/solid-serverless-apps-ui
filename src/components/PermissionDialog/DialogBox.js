@@ -14,7 +14,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip'
-// import { franchiseUserList } from '../../redux/actions/authenticationActions'
 
 const styles = theme => ({
     root: {
