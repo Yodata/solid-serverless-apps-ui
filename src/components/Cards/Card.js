@@ -215,7 +215,7 @@ export function CardComponent(props) {
           "version": `${application.version}`,
           "agent": `${application.id}`,
           "instrument": `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}`,
-          "host": `https://${userData.contact_id}.${process.env.REACT_APP_HOSTNAME}`,
+          "host": `https://${userData.contact_id}${userData.userDomain}`,
           "subscribes": readPermissions,
           "publishes": writePermissions
         }
