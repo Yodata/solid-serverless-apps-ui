@@ -37,7 +37,7 @@ export const globalSubscription = () => {
 export const userSubscriptions = id => {
   return async (dispatch, getState) => {
     try {
-      const response = await API.get(`https://${id || getState().auth.userData.contact_id}.${process.env.REACT_APP_HOSTNAME}/${endpoint.subs}`)
+      const response = await API.get(`https://${id || getState().auth.userData.contact_id}${getState().auth.userData.userDomain}/${endpoint.subs}`)
       dispatch(getUserSubscriptions(response))
       dispatch(serviceEnabled(false))
       const subsIdentifiers = getState().subs.userSubs.items.map(value => {

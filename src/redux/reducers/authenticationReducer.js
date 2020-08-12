@@ -9,7 +9,7 @@ const defaultState = {
         raw: {
             contact_id: '3014655'
         },
-        userDomain: ``
+        userDomain: ''
     },
     userList: [],
     franchiseList: []
@@ -22,13 +22,15 @@ const authenticationReducer = (state = defaultState, action) => {
                 action.authentication.response.status === 401 ? false : true;
             const currentUserId = isUserLoggedIn ? action.authentication.data?.raw?.contact_id[0] : state.userId
             const currentUserData = isUserLoggedIn ? action.authentication.data : state.userData
+            const currentUserDomain = isUserLoggedIn ? currentUserData?.profile_id.split('/')[2].replace(currentUserData?.raw.contact_id[0], "") : process.env.REACT_APP_HOSTNAME
             return {
                 ...state,
                 isLoggedIn: isUserLoggedIn,
                 userId: currentUserId,
                 userData: {
                     profile_id: currentUserData?.profile_id,
-                    contact_id: currentUserData?.raw.contact_id[0]
+                    contact_id: currentUserData?.raw.contact_id[0],
+                    userDomain: currentUserDomain
                 }
             }
         case AUTHORISED_USER:
