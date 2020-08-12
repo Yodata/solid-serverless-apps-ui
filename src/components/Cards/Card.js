@@ -33,8 +33,8 @@ const styles = theme => ({
     position: 'relative',
     backgroundColor: theme.palette.invisible.main,
     opacity: props => (props.application.connected ? 0.5 : !props.application.isVisible && 0.5),
-    minWidth: '29.3vw',
-    maxWidth: '29.3vw',
+    minWidth: '30vw',
+    maxWidth: '30vw',
     borderRadius: 0,
     boxShadow: '3px 3px 3px 2px rgba(0,0,0,0.3)'
   },
