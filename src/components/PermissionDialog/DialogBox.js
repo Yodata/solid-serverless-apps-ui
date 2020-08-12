@@ -128,7 +128,7 @@ function DialogBox(props) {
                         </Paper>
                     </Grid>
                     <Grid item className={classes.textSpacing}>
-                        {type !== 'Disconnect' ? 'REQUIRES ACCESS TO:' :
+                        {type !== 'Disconnect' ? 'REQUIRES ACCESS TO :' :
                             <Typography align='center' variant='body2'>
                                 Revoking data access permissions for this application will disconnect the application from the following
                             </Typography>
