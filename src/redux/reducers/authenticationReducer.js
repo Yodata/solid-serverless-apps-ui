@@ -6,9 +6,7 @@ const defaultState = {
     userId: '3014655',
     userData: {
         profile_id: `https://3014655.${process.env.REACT_APP_HOSTNAME}/${endpoint.profile}`,
-        raw: {
-            contact_id: '3014655'
-        },
+        contact_id: '3014655',
         userDomain: ''
     },
     userList: [],
@@ -46,7 +44,7 @@ const authenticationReducer = (state = defaultState, action) => {
                     || value.roleName.toLowerCase() === 'broker of record'
                     || value.roleName.toLowerCase() === 'owner'
                     || value.roleName.toLowerCase() === 'company technology admin') {
-                    return { contactId: value.memberOf.id, roleName: value.roleName}
+                    return { contactId: value.memberOf.id, roleName: value.roleName }
                 }
             }).filter(Boolean)
             return {
@@ -56,9 +54,10 @@ const authenticationReducer = (state = defaultState, action) => {
         case SET_PROFILE_ID:
             const profileId = action.profileId
             const newUserId = profileId.split("//").pop().split(".").shift()
-            return{
+            return {
                 ...state,
                 userData: {
+                    ...state.userData,
                     profile_id: profileId,
                     contact_id: newUserId
                 },

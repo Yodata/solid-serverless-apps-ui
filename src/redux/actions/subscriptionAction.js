@@ -2,6 +2,7 @@ import { API, APIBase } from '../../api/apiRequest'
 import endpoint from '../../api/endpoints'
 import { serviceEnabled } from '../slices/servicesSlice'
 import { getAllApps } from '../../redux/actions/applicationActions';
+import { toastSuccess } from '../slices/toastSlice'
 
 
 /**
@@ -46,8 +47,10 @@ export const userSubscriptions = id => {
       subsIdentifiers.forEach(element => {
         dispatch(serviceEnabled(element.toLowerCase()))
       })
+      dispatch(toastSuccess(true))
     } catch (err) {
       dispatch(getUserSubscriptions(err))
+      dispatch(toastSuccess(false))
     } finally {
       dispatch(getAllApps())
     }
