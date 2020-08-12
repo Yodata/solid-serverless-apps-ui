@@ -91,15 +91,15 @@ const styles = theme => ({
   adminButtons: {
     backgroundColor: theme.palette.adminButtons.main,
     color: theme.palette.white.main,
-    paddingLeft: 26.9,
-    paddingRight: 26.9,
+    paddingLeft: 13,
+    paddingRight: 13,
     '&:hover': {
       backgroundColor: theme.palette.adminButtons.main,
     }
   },
   adminGrid: {
-    minWidth: '26vw',
-    maxWidth: '26vw'
+    minWidth: '30vw',
+    maxWidth: '30vw'
   },
   connectedApp: {
     maxHeight: 20
