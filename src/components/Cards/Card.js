@@ -79,14 +79,11 @@ const styles = theme => ({
     color: theme.palette.error.main
   },
   updateRequired: {
-    fontSize: '0.8em',
     backgroundColor: theme.palette.error.main,
     color: theme.palette.white.main,
     '&:hover': {
       backgroundColor: theme.palette.error.main,
     },
-    paddingLeft: 6,
-    paddingRight: 6
   },
   update: {
     color: theme.palette.update.main
