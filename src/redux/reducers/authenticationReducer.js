@@ -27,7 +27,7 @@ const authenticationReducer = (state = defaultState, action) => {
                 userId: currentUserId,
                 userData: {
                     profile_id: currentUserData?.profile_id,
-                    contact_id: currentUserData?.raw.contact_id[0],
+                    contact_id: currentUserData?.raw?.contact_id[0],
                     userDomain: currentUserDomain
                 }
             }
