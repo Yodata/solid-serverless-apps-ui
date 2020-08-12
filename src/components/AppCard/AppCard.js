@@ -19,10 +19,10 @@ import { serviceEnabled, serviceUpdated } from '../../redux/slices/servicesSlice
 const styles = theme => ({
     root: {
         paddingTop: 72,
-        paddingLeft: '3vw',
+        paddingLeft: '2vw',
     },
     app: {
-        paddingRight: '3vw',
+        paddingRight: '2vw',
         paddingBottom: '5vh'
     },
     new: {
