@@ -65,11 +65,12 @@ const styles = theme => ({
             'ProximaNovaBold',
             'Roboto'
         ].join(','),
-        marginBottom: 20
+        marginBottom: 30,
+        marginTop: 10
     },
     secondMsg: {
         fontSize: '1em',
-        maxWidth: 200,
+        maxWidth: 250,
         lineHeight: '1em',
     },
     typeButton: {
@@ -127,7 +128,7 @@ function DialogBox(props) {
                         </Paper>
                     </Grid>
                     <Grid item className={classes.textSpacing}>
-                        {type !== 'Disconnect' ? 'Requires access to' :
+                        {type !== 'Disconnect' ? 'REQUIRES ACCESS TO:' :
                             <Typography align='center' variant='body2'>
                                 Revoking data access permissions for this application will disconnect the application from the following
                             </Typography>
@@ -138,9 +139,9 @@ function DialogBox(props) {
                             <Table className={classes.table} size='small'>
                                 <TableHead className={classes.headerRow}>
                                     <TableRow>
-                                        <TableCell>Data Flow</TableCell>
-                                        <TableCell>Data</TableCell>
-                                        <TableCell align="right">Connected Applications</TableCell>
+                                        <TableCell>DATA FLOW</TableCell>
+                                        <TableCell>DATA</TableCell>
+                                        <TableCell align="right">CONNECTED APPLICATION</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
