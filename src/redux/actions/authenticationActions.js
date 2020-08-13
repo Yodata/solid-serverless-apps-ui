@@ -65,13 +65,14 @@ export const currentUser = () => {
 // }
 
 export const authorisedUserList = () => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         try {
             const response = await API.get(`https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.credentials}`)
             dispatch(authorisedUser(response.data.adminUsers))
         } catch (err) {
             console.log(err)
         } finally {
+            !getState().auth.userList.some(ele => ele.contactId === getState().auth.userId) &&
             dispatch(franchiseUserList())
         }
     }
