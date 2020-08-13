@@ -168,10 +168,10 @@ function DialogBox(props) {
                                                                                 <>
                                                                                     <Tooltip title={`${application.name}
                                                                                     ${(topic.read && topic.write) ?
-                                                                                            'Sends and Receives' : (
+                                                                                            'sends and receives' : (
                                                                                                 topic.write ?
-                                                                                                    'Sends' :
-                                                                                                    'Receives'
+                                                                                                    'sends' :
+                                                                                                    'receives'
                                                                                             )}
                                                                                     ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
                                                                                     ${(topic.read && topic.write) ?
@@ -218,9 +218,11 @@ function DialogBox(props) {
                         <Grid className={classes.typeButton} container item direction='column' justify='space-evenly' alignItems='flex-end' >
                             <Grid item>
                                 {userId === userData.contact_id ||
+                                    franchiseList.some(ele => ele.contactId === userData.contact_id &&
+                                        ele.roleName.toLowerCase() === 'app exchange admin') ||
                                     !(adminList.some(ele => ele.contactId === userId &&
                                         onlyReadRole.includes(ele.roleName.toLowerCase())) ||
-                                        franchiseList.some(ele => ele.contactId === userId &&
+                                        franchiseList.some(ele => ele.contactId === userData.contact_id &&
                                             onlyReadRole.includes(ele.roleName.toLowerCase()))) ?
                                     (
                                         <Button className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
