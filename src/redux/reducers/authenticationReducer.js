@@ -43,8 +43,8 @@ const authenticationReducer = (state = defaultState, action) => {
                 if (value.roleName.toLowerCase() === 'marketing director'
                     || value.roleName.toLowerCase() === 'broker of record'
                     || value.roleName.toLowerCase() === 'owner'
-                    || value.roleName.toLowerCase() === 'company technology admin') {
-                    return { contactId: value.memberOf.id, roleName: value.roleName }
+                    || value.roleName.toLowerCase() === 'app exchange admin') {
+                    return { contactId: value.memberOf.id.split("//").pop().split(".").shift(), roleName: value.roleName }
                 }
             }).filter(Boolean)
             return {
