@@ -14,6 +14,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip'
+import Avatar from '@material-ui/core/Avatar';
 
 const styles = theme => ({
     root: {
@@ -51,11 +52,10 @@ const styles = theme => ({
                     theme.palette.update.main :
                     theme.palette.error.main),
         },
-        marginBottom: 10
+        marginBottom: 20
     },
     headerRow: {
         color: theme.palette.purple.main,
-
     },
     firstMsg: {
         fontSize: '1em',
@@ -75,6 +75,11 @@ const styles = theme => ({
     },
     typeButton: {
         maxWidth: '60%'
+    },
+    avatar: {
+        color: theme.palette.purple.main,
+        width: theme.spacing(3),
+        height: theme.spacing(3),
     }
 })
 
@@ -99,18 +104,26 @@ function DialogBox(props) {
     const handleImageError = (e) => {
         e.target.onerror = null;
         const name = e.target.name
-        e.target.src = `https://via.placeholder.com/70x20/e6e6e6/000000?text=${name}`
+        return (
+            <Avatar className={classes.avatar}>
+                {name.charAt(0).toUpperCase()}
+            </Avatar>
+        )
     }
 
     const connectedApps = application.permissions.map(topic => {
         if (topic.read || topic.write) {
             const subsIdentifier = globalSubs?.items?.map(value => {
                 if (value.object.includes(topic.name.toLowerCase())) {
-                    return `${value.agent.split('/')[2].split('.').shift()}`
+                    return `${value.agent}`
                 }
-            }).filter(Boolean)
+            }).filter(Boolean).sort((a, b) => {
+                return a.toUpperCase() > b.toUpperCase() ? 1 : -1
+            })
             const images = subsIdentifier?.map(sub => {
-                return { name: sub, image: (apps.find(ele => Object.keys(ele.identifier)[0] === `${sub}_id`))?.logo?.url || `https://via.placeholder.com/70x20/e6e6e6/000000?text=${sub}` }
+                return {
+                    name: sub.split('/')[2].split('.').shift(), image: (apps.find(ele => ele.id === `${sub}`))?.logo?.url
+                }
             }).filter(Boolean)
             return { [topic.name.toLowerCase()]: images }
         }
@@ -130,7 +143,7 @@ function DialogBox(props) {
                     <Grid item className={classes.textSpacing}>
                         {type !== 'Disconnect' ? 'REQUIRES ACCESS TO:' :
                             <Typography align='center' variant='body2'>
-                                Revoking data access permissions for this application will disconnect the application from the following
+                                Revoking data access permissions for this application will disconnect the application from the following:
                             </Typography>
                         }
                     </Grid>
@@ -162,36 +175,47 @@ function DialogBox(props) {
                                                             <TableCell>{topic.name === 'Website' ? 'Website Customer Activity' : topic.name}</TableCell>
                                                             <TableCell align="right">
                                                                 <>
-                                                                    {connectedApps && connectedApps.map(app => {
-                                                                        if (topic.name.toLowerCase() === (Object.keys(app)[0]).toLowerCase()) {
-                                                                            return app[topic.name.toLowerCase()] && app[topic.name.toLowerCase()].map(value => (
-                                                                                <>
-                                                                                    <Tooltip title={`${application.name}
+                                                                    <Grid container direction='row' justify='flex-end' alignItems='center'>
+                                                                        {connectedApps && connectedApps.map(app => {
+                                                                            if (topic.name.toLowerCase() === (Object.keys(app)[0]).toLowerCase()) {
+                                                                                return app[topic.name.toLowerCase()] && app[topic.name.toLowerCase()].map(value => (
+                                                                                    <>
+                                                                                        <Grid item>
+                                                                                            <Tooltip title={`${application.name}
                                                                                     ${(topic.read && topic.write) ?
-                                                                                            'sends and receives' : (
-                                                                                                topic.write ?
-                                                                                                    'sends' :
-                                                                                                    'receives'
-                                                                                            )}
+                                                                                                    'sends and receives' : (
+                                                                                                        topic.write ?
+                                                                                                            'sends' :
+                                                                                                            'receives'
+                                                                                                    )}
                                                                                     ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
                                                                                     ${(topic.read && topic.write) ?
-                                                                                            'to/from' : (
-                                                                                                topic.write ?
-                                                                                                    'to' :
-                                                                                                    'from'
-                                                                                            )}
+                                                                                                    'to/from' : (
+                                                                                                        topic.write ?
+                                                                                                            'to' :
+                                                                                                            'from'
+                                                                                                    )}
                                                                                     ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}
                                                                                 `} arrow>
-                                                                                        <img alt='connected application'
-                                                                                            src={value.image}
-                                                                                            width='70'
-                                                                                            name={value.name}
-                                                                                            onError={handleImageError} />
-                                                                                    </Tooltip>
-                                                                                </>
-                                                                            ))
-                                                                        }
-                                                                    })}
+
+                                                                                                {value.image ?
+                                                                                                    <img alt='connected application'
+                                                                                                        src={value.image}
+                                                                                                        width='70'
+                                                                                                        name={value.name}
+                                                                                                        onError={handleImageError} />
+                                                                                                    :
+                                                                                                    <Avatar className={classes.avatar}>
+                                                                                                        {value.name.charAt(0).toUpperCase()}
+                                                                                                    </Avatar>
+                                                                                                }
+                                                                                            </Tooltip>
+                                                                                        </Grid>
+                                                                                    </>
+                                                                                ))
+                                                                            }
+                                                                        })}
+                                                                    </Grid>
                                                                 </>
                                                             </TableCell>
                                                         </TableRow>
@@ -204,10 +228,12 @@ function DialogBox(props) {
                         </TableContainer>
                     </Grid>
                     <Grid item>
-                        <Typography className={classes.firstMsg} align='center' variant='subtitle2'>
-                            To add additional Connected Applications, authorize this
-                            vendor and return to the App Exchange to repeat this process.
-                        </Typography>
+                        {type !== 'Disconnect' &&
+                            <Typography className={classes.firstMsg} align='center' variant='subtitle2'>
+                                To add additional Connected Applications, authorize this
+                                vendor and return to the App Exchange to repeat this process.
+                            </Typography>
+                        }
                     </Grid>
                     <Grid className={classes.textSpacing} item container direction='row' justify='space-between' alignItems='flex-start'>
                         <Grid item>
