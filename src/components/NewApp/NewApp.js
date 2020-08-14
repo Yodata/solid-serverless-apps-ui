@@ -66,9 +66,9 @@ function NewApp(props) {
 
     const handleEdit = () => {
         const editedApplication = JSON.parse(JSON.stringify(application));
-        editedApplication.id = state.newId;
-        editedApplication.name = state.newTitle;
-        editedApplication.description = state.newDescription;
+        editedApplication.id = state.newId.trim();
+        editedApplication.name = state.newTitle.trim();
+        editedApplication.description = state.newDescription.trim();
         editedApplication.logo.url = state.newLogo;
         editApplication(editedApplication);
     }
@@ -90,9 +90,9 @@ function NewApp(props) {
             version: "1",
             connected: false
         };
-        editedApplication.id = state.newId;
-        editedApplication.name = state.newTitle;
-        editedApplication.description = state.newDescription;
+        editedApplication.id = state.newId.trim();
+        editedApplication.name = state.newTitle.trim();
+        editedApplication.description = state.newDescription.trim();
         editedApplication.logo.url = state.newLogo;
         editedApplication.permissions = createPermissions()
         addNewApp(editedApplication);
