@@ -114,18 +114,45 @@ function DialogBox(props) {
     const connectedApps = application.permissions.map(topic => {
         if (topic.read || topic.write) {
             const subsIdentifier = globalSubs?.items?.map(value => {
-                if (value.object.includes(topic.name.toLowerCase())) {
-                    return `${value.agent}`
+                if (!value.publishes && !value.subscribes) {
+                    if (value.object.includes(topic.name.toLowerCase())) {
+                        return `${value.agent}`
+                    }
+                } else {
+                    if (topic.read && topic.write) {
+                        if (value.subscribes.find(value => value.includes(topic.name.toLowerCase())) &&
+                            value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+                            return `${value.agent}`
+                        } else
+                            if (value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
+                                return `${value.agent}?read`
+                            } else
+                                if (value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+                                    return `${value.agent}?write`
+                                }
+                    }
+                    else
+                        if (topic.write && !topic.read && value.subscribes.length > 0 &&
+                            value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
+                            return `${value.agent}`
+                        } else
+                            if (topic.read && !topic.write && value.publishes.length > 0 &&
+                                value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+                                return `${value.agent}`
+                            }
+
                 }
             }).filter(Boolean).sort((a, b) => {
                 return a.toUpperCase() > b.toUpperCase() ? 1 : -1
             })
-            const images = subsIdentifier?.map(sub => {
+            const connectedApplication = subsIdentifier?.map(sub => {
                 return {
-                    name: sub.split('/')[2].split('.').shift(), image: (apps.find(ele => ele.id === `${sub}`))?.logo?.url
+                    name: sub.split('/')[2].split('.').shift(),
+                    image: (apps.find(ele => ele.id === `${sub.split('?')[0]}`))?.logo?.url,
+                    type: sub.split('?')[1]
                 }
             }).filter(Boolean)
-            return { [topic.name.toLowerCase()]: images }
+            return { [topic.name.toLowerCase()]: connectedApplication }
         }
         return null
     }).filter(Boolean)
@@ -181,22 +208,36 @@ function DialogBox(props) {
                                                                                 return app[topic.name.toLowerCase()] && app[topic.name.toLowerCase()].map(value => (
                                                                                     <>
                                                                                         <Grid item>
-                                                                                            <Tooltip title={`${application.name}
+                                                                                            <Tooltip title={!value.type ?
+                                                                                                (`${application.name}
                                                                                     ${(topic.read && topic.write) ?
-                                                                                                    'sends and receives' : (
-                                                                                                        topic.write ?
-                                                                                                            'sends' :
-                                                                                                            'receives'
-                                                                                                    )}
+                                                                                                        'sends and receives' : (
+                                                                                                            topic.write ?
+                                                                                                                'sends' :
+                                                                                                                'receives'
+                                                                                                        )}
                                                                                     ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
                                                                                     ${(topic.read && topic.write) ?
-                                                                                                    'to/from' : (
-                                                                                                        topic.write ?
-                                                                                                            'to' :
-                                                                                                            'from'
-                                                                                                    )}
-                                                                                    ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}
-                                                                                `} arrow>
+                                                                                                        'to/from' : (
+                                                                                                            topic.write ?
+                                                                                                                'to' :
+                                                                                                                'from'
+                                                                                                        )}
+                                                                                    ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}`
+                                                                                                ) : (`${application.name}
+                                                                                                ${value.type === 'write' ?
+                                                                                                        'receives' :
+                                                                                                        'sends'
+                                                                                                    }
+                                                                                                ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
+                                                                                                ${value.type === 'write' ?
+                                                                                                        'from' :
+                                                                                                        'to'
+                                                                                                    }
+                                                                                                ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}`
+                                                                                                )
+                                                                                            }
+                                                                                                arrow>
 
                                                                                                 {value.image ?
                                                                                                     <img alt='connected application'
