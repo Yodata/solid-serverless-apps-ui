@@ -84,7 +84,7 @@ const styles = theme => ({
 })
 
 function DialogBox(props) {
-    const { classes, open, handleDialog, application, type, apps,
+    const { classes, open, handleDialog, application, type, allApplications,
         globalSubs, handleAuthorize, franchiseList, adminList, userId, userData } = props
 
     const onlyReadRole = ['bc', 'owner', 'broker of record', 'marketing director']
@@ -106,7 +106,7 @@ function DialogBox(props) {
         const name = e.target.name
         return (
             <Avatar className={classes.avatar}>
-                {name.charAt(0).toUpperCase()}
+                {name?.charAt(0).toUpperCase()}
             </Avatar>
         )
     }
@@ -146,9 +146,10 @@ function DialogBox(props) {
                 return a.toUpperCase() > b.toUpperCase() ? 1 : -1
             })
             const connectedApplication = subsIdentifier?.map(sub => {
+                const selectedApp = (allApplications.find(ele => ele.id === `${sub.split('?')[0]}`))
                 return {
-                    name: sub.split('/')[2].split('.').shift(),
-                    image: (apps.find(ele => ele.id === `${sub.split('?')[0]}`))?.logo?.url,
+                    name: selectedApp ? selectedApp.name : sub.split('/')[2].split('.').shift(),
+                    image: selectedApp?.logo?.url,
                     type: sub.split('?')[1]
                 }
             }).filter(Boolean)
@@ -156,7 +157,6 @@ function DialogBox(props) {
         }
         return null
     }).filter(Boolean)
-
 
     return (
         <React.Fragment>
@@ -234,7 +234,7 @@ function DialogBox(props) {
                                                                                                         'from' :
                                                                                                         'to'
                                                                                                     }
-                                                                                                ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}`
+                                                                                                ${value.name?.charAt(0).toUpperCase() + value.name?.slice(1)}`
                                                                                                 )
                                                                                             }
                                                                                                 arrow>
@@ -247,7 +247,7 @@ function DialogBox(props) {
                                                                                                         onError={handleImageError} />
                                                                                                     :
                                                                                                     <Avatar className={classes.avatar}>
-                                                                                                        {value.name.charAt(0).toUpperCase()}
+                                                                                                        {value.name?.charAt(0).toUpperCase()}
                                                                                                     </Avatar>
                                                                                                 }
                                                                                             </Tooltip>
@@ -255,6 +255,7 @@ function DialogBox(props) {
                                                                                     </>
                                                                                 ))
                                                                             }
+                                                                            return null
                                                                         })}
                                                                     </Grid>
                                                                 </>
@@ -321,7 +322,7 @@ function DialogBox(props) {
 const mapStateToProps = state => {
     return {
         globalSubs: state.subs.globalSubs,
-        apps: state.apps?.storeData?.application,
+        allApplications: state.apps?.storeData?.application,
         adminList: state.auth.userList,
         franchiseList: state.auth.franchiseList,
         userId: state.auth.userId,
