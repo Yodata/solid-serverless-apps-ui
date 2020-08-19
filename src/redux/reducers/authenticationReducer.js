@@ -47,9 +47,13 @@ const authenticationReducer = (state = defaultState, action) => {
                     return { contactId: value.memberOf.id.split("//").pop().split(".").shift(), roleName: value.roleName }
                 }
             }).filter(Boolean)
+            const removeDuplicates = Array.from(new Set(listOfRoles.map(a => a.contactId)))
+                .map(id => {
+                    return listOfRoles.find(a => a.contactId === id)
+                })
             return {
                 ...state,
-                franchiseList: listOfRoles
+                franchiseList: removeDuplicates
             }
         case SET_PROFILE_ID:
             const profileId = action.profileId

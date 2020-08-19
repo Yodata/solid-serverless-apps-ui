@@ -18,5 +18,15 @@ const APIBase = axios.create({
     }
 });
 
-export { API, APIBase };
+const APIGlobalSubs = axios.create({
+    baseURL: `https://${process.env.REACT_APP_GLOBALSUBS}/`,
+    responseType: 'json',
+    withCredentials: true,
+    headers: {
+        'x-api-key': process.env.REACT_APP_GLOBALSUBSKEY,
+        'Content-Type': 'application/ld+json'
+    }
+});
+
+export { API, APIBase, APIGlobalSubs };
 
