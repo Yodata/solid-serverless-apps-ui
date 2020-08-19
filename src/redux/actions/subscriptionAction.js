@@ -1,4 +1,4 @@
-import { API, APIBase } from '../../api/apiRequest'
+import { API, APIGlobalSubs } from '../../api/apiRequest'
 import endpoint from '../../api/endpoints'
 import { serviceEnabled } from '../slices/servicesSlice'
 import { getAllApps } from '../../redux/actions/applicationActions';
@@ -27,7 +27,7 @@ const getUserSubscriptions = payload => {
 export const globalSubscription = () => {
   return async dispatch => {
     try {
-      const response = await APIBase.get(`${endpoint.subs}`)
+      const response = await APIGlobalSubs.get(`${endpoint.subs}`)
       dispatch(getGlobalSubscriptions(response))
     } catch (err) {
       dispatch(getGlobalSubscriptions(err))
