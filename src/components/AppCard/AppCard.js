@@ -42,11 +42,13 @@ function AppCard(props) {
         editApp, userSubscriptions, userList, franchiseList, userId, setProfileId } = props;
 
     React.useEffect(() => {
-        if (userList.some(ele => ele.contactId === userId && ele.roleName)) {
-            userSubscriptions()
-        } else
+        // if (userList.some(ele => ele.contactId === userId && ele.roleName)) {
+        //     userSubscriptions()
+        // } else
             if (franchiseList?.length > 0) {
                 setProfileId(franchiseList[0].contactId)
+                userSubscriptions()
+            } else {
                 userSubscriptions()
             }
     }, [userList, franchiseList]);
