@@ -41,6 +41,9 @@ export const setProfileId = payload => {
 export const currentUser = () => {
     return async (dispatch, getState) => {
         try {
+            const urlParams = new URLSearchParams(document.location.search)
+            const queryString = urlParams.toString()
+            console.log(queryString)
             const response = await APIBase.get(endpoint.userAuth);
             dispatch(getUser(response));
             if (getState().auth.isLoggedIn) {
