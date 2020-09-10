@@ -37,8 +37,8 @@ export const getAllApps = () => {
             if (subs) {
                 const updatedIDs = getState().apps?.storeData?.application.map(value => {
                     for (let i = 0; i < subs.length; i++) {
-                        const identifier = `${subs[i].agent.split("/")[2].split(".")[0]}_id`
-                        if (Object.keys(value.identifier)[0].toLowerCase() === identifier
+                        const identifier = subs[i].agent
+                        if (value.id.toLowerCase() === identifier
                             && value.version !== subs[i].version) {
                             return identifier
                         }

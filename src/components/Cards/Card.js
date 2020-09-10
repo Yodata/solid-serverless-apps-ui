@@ -184,10 +184,10 @@ export function CardComponent(props) {
   const handleAuthorize = type => {
     const payload = generateData(type)
     if (type !== 'Update') {
-      enableService(Object.keys(application.identifier)[0].toLowerCase())
+      enableService(application.id.toLowerCase())
     } else {
       const newUpdateIDs = updatedID.slice();
-      const index = newUpdateIDs.indexOf(Object.keys(application.identifier)[0].toLowerCase())
+      const index = newUpdateIDs.indexOf(application.id.toLowerCase())
       newUpdateIDs.splice(index, 1)
       updatedService(newUpdateIDs)
     }
@@ -285,12 +285,12 @@ export function CardComponent(props) {
                         <Grid container direction='row' alignItems="center" justify="space-between">
                           <Grid className={classes.cardActions} spacing={1} item container direction='row' alignItems="center" justify="flex-start">
                             <Grid item variant='body1'>
-                              {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) &&
+                              {enabledID?.includes(application.id.toLowerCase()) &&
                                 <Typography className={classes.success}>Connected</Typography>}
                             </Grid>
                             <Grid item>
-                              {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) &&
-                                (!updatedID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
+                              {enabledID?.includes(application.id.toLowerCase()) &&
+                                (!updatedID?.includes(application.id.toLowerCase()) ?
                                   <CheckCircleIcon className={classes.success} />
                                   :
                                   <ErrorIcon className={classes.error} />)
@@ -298,8 +298,8 @@ export function CardComponent(props) {
                             </Grid>
                           </Grid>
                           <Grid item>
-                            {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
-                              (!updatedID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
+                            {enabledID?.includes(application.id.toLowerCase()) ?
+                              (!updatedID?.includes(application.id.toLowerCase()) ?
                                 <Button name="setting" variant="outlined" onClick={handleActivity} disableElevation>
                                   Settings
                                 </Button> :
@@ -350,7 +350,7 @@ export function CardComponent(props) {
                 handleDialog={handleDialogClose}
                 application={application}
                 handleAuthorize={handleAuthorize}
-                type={enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ? (!updatedID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ? 'Disconnect' : 'Update') : 'Authorize'} />
+                type={enabledID?.includes(application.id.toLowerCase()) ? (!updatedID?.includes(application.id.toLowerCase()) ? 'Disconnect' : 'Update') : 'Authorize'} />
             </React.Fragment>
           )
       }
