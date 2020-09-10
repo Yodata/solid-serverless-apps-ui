@@ -18,6 +18,7 @@ const styles = theme => ({
         position: 'absolute',
         top: 0,
         right: 0,
+        paddingTop: 30,
         paddingBottom: 10
     },
     switchUser: {
