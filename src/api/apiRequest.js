@@ -18,15 +18,15 @@ const APIBase = axios.create({
     }
 });
 
-const APIFormData = axios.create({
-    baseURL: `https://${process.env.REACT_APP_HOSTNAME}/`,
-    responseType: 'json',
-    withCredentials: true,
-    headers: {
-        'x-api-key': process.env.REACT_APP_HOSTKEY,
-        'Content-Type': 'multipart/form-data'
-    }
-})
+// const APIFormData = axios.create({
+//     baseURL: `https://${process.env.REACT_APP_HOSTNAME}/`,
+//     responseType: 'json',
+//     withCredentials: true,
+//     headers: {
+//         'x-api-key': process.env.REACT_APP_HOSTKEY,
+//         'Content-Type': 'multipart/form-data'
+//     }
+// })
 
 const APIGlobalSubs = axios.create({
     baseURL: `https://${process.env.REACT_APP_GLOBALSUBS}/`,
@@ -38,5 +38,6 @@ const APIGlobalSubs = axios.create({
     }
 });
 
-export { API, APIBase, APIGlobalSubs, APIFormData };
+// export { API, APIBase, APIGlobalSubs, APIFormData };
+export { API, APIBase, APIGlobalSubs };
 
