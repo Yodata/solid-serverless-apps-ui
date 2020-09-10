@@ -42,7 +42,7 @@ export const userSubscriptions = id => {
       dispatch(getUserSubscriptions(response))
       dispatch(serviceEnabled(false))
       const subsIdentifiers = getState().subs.userSubs.items.map(value => {
-        return `${value.agent.split("/")[2].split(".")[0]}_id`
+        return value.agent
       })
       subsIdentifiers.forEach(element => {
         dispatch(serviceEnabled(element.toLowerCase()))
