@@ -14,6 +14,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip'
+import Avatar from '@material-ui/core/Avatar';
 
 const styles = theme => ({
     root: {
@@ -51,11 +52,10 @@ const styles = theme => ({
                     theme.palette.update.main :
                     theme.palette.error.main),
         },
-        marginBottom: 10
+        marginBottom: 20
     },
     headerRow: {
         color: theme.palette.purple.main,
-
     },
     firstMsg: {
         fontSize: '1em',
@@ -65,20 +65,26 @@ const styles = theme => ({
             'ProximaNovaBold',
             'Roboto'
         ].join(','),
-        marginBottom: 20
+        marginBottom: 30,
+        marginTop: 10
     },
     secondMsg: {
         fontSize: '1em',
-        maxWidth: 200,
+        maxWidth: 250,
         lineHeight: '1em',
     },
     typeButton: {
         maxWidth: '60%'
+    },
+    avatar: {
+        color: theme.palette.purple.main,
+        width: theme.spacing(3),
+        height: theme.spacing(3),
     }
 })
 
 function DialogBox(props) {
-    const { classes, open, handleDialog, application, type, apps,
+    const { classes, open, handleDialog, application, type, allApplications,
         globalSubs, handleAuthorize, franchiseList, adminList, userId, userData } = props
 
     const onlyReadRole = ['bc', 'owner', 'broker of record', 'marketing director']
@@ -98,24 +104,59 @@ function DialogBox(props) {
     const handleImageError = (e) => {
         e.target.onerror = null;
         const name = e.target.name
-        e.target.src = `https://via.placeholder.com/70x20/e6e6e6/000000?text=${name}`
+        return (
+            <Avatar className={classes.avatar}>
+                {name?.charAt(0).toUpperCase()}
+            </Avatar>
+        )
     }
 
     const connectedApps = application.permissions.map(topic => {
         if (topic.read || topic.write) {
             const subsIdentifier = globalSubs?.items?.map(value => {
-                if (value.object.includes(topic.name.toLowerCase())) {
-                    return `${value.agent.split('/')[2].split('.').shift()}`
+                if (!value.publishes && !value.subscribes) {
+                    if (value.object.includes(topic.name.toLowerCase())) {
+                        return `${value.agent}`
+                    }
+                } else {
+                    if (topic.read && topic.write) {
+                        if (value.subscribes.find(value => value.includes(topic.name.toLowerCase())) &&
+                            value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+                            return `${value.agent}`
+                        } else
+                            if (value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
+                                return `${value.agent}?read`
+                            } else
+                                if (value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+                                    return `${value.agent}?write`
+                                }
+                    }
+                    else
+                        if (topic.write && !topic.read && value.subscribes.length > 0 &&
+                            value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
+                            return `${value.agent}`
+                        } else
+                            if (topic.read && !topic.write && value.publishes.length > 0 &&
+                                value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+                                return `${value.agent}`
+                            }
+
+                }
+            }).filter(Boolean).sort((a, b) => {
+                return a.toUpperCase() > b.toUpperCase() ? 1 : -1
+            })
+            const connectedApplication = subsIdentifier?.map(sub => {
+                const selectedApp = (allApplications.find(ele => ele.id === `${sub.split('?')[0]}`))
+                return {
+                    name: selectedApp ? selectedApp.name : sub.split('/')[2].split('.').shift(),
+                    image: selectedApp?.logo?.url,
+                    type: sub.split('?')[1]
                 }
             }).filter(Boolean)
-            const images = subsIdentifier?.map(sub => {
-                return { name: sub, image: (apps.find(ele => Object.keys(ele.identifier)[0] === `${sub}_id`))?.logo?.url || `https://via.placeholder.com/70x20/e6e6e6/000000?text=${sub}` }
-            }).filter(Boolean)
-            return { [topic.name.toLowerCase()]: images }
+            return { [topic.name.toLowerCase()]: connectedApplication }
         }
         return null
     }).filter(Boolean)
-
 
     return (
         <React.Fragment>
@@ -127,9 +168,9 @@ function DialogBox(props) {
                         </Paper>
                     </Grid>
                     <Grid item className={classes.textSpacing}>
-                        {type !== 'Disconnect' ? 'Requires access to' :
+                        {type !== 'Disconnect' ? 'REQUIRES ACCESS TO:' :
                             <Typography align='center' variant='body2'>
-                                Revoking data access permissions for this application will disconnect the application from the following
+                                Revoking data access permissions for this application will disconnect the application from the following:
                             </Typography>
                         }
                     </Grid>
@@ -138,9 +179,9 @@ function DialogBox(props) {
                             <Table className={classes.table} size='small'>
                                 <TableHead className={classes.headerRow}>
                                     <TableRow>
-                                        <TableCell>Data Flow</TableCell>
-                                        <TableCell>Data</TableCell>
-                                        <TableCell align="right">Connected Applications</TableCell>
+                                        <TableCell>DATA FLOW</TableCell>
+                                        <TableCell>DATA</TableCell>
+                                        <TableCell align="right">CONNECTED APPLICATION</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -161,36 +202,62 @@ function DialogBox(props) {
                                                             <TableCell>{topic.name === 'Website' ? 'Website Customer Activity' : topic.name}</TableCell>
                                                             <TableCell align="right">
                                                                 <>
-                                                                    {connectedApps && connectedApps.map(app => {
-                                                                        if (topic.name.toLowerCase() === (Object.keys(app)[0]).toLowerCase()) {
-                                                                            return app[topic.name.toLowerCase()] && app[topic.name.toLowerCase()].map(value => (
-                                                                                <>
-                                                                                    <Tooltip title={`${application.name}
+                                                                    <Grid container direction='row' justify='flex-end' alignItems='center'>
+                                                                        {connectedApps && connectedApps.map(app => {
+                                                                            if (topic.name.toLowerCase() === (Object.keys(app)[0]).toLowerCase()) {
+                                                                                return app[topic.name.toLowerCase()] && app[topic.name.toLowerCase()].map(value => (
+                                                                                    <>
+                                                                                        <Grid item>
+                                                                                            <Tooltip title={!value.type ?
+                                                                                                (`${application.name}
                                                                                     ${(topic.read && topic.write) ?
-                                                                                            'Sends and Receives' : (
-                                                                                                topic.write ?
-                                                                                                    'Sends' :
-                                                                                                    'Receives'
-                                                                                            )}
+                                                                                                        'sends and receives' : (
+                                                                                                            topic.write ?
+                                                                                                                'sends' :
+                                                                                                                'receives'
+                                                                                                        )}
                                                                                     ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
                                                                                     ${(topic.read && topic.write) ?
-                                                                                            'to/from' : (
-                                                                                                topic.write ?
-                                                                                                    'to' :
-                                                                                                    'from'
-                                                                                            )}
-                                                                                    ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}
-                                                                                `} arrow>
-                                                                                        <img alt='connected application'
-                                                                                            src={value.image}
-                                                                                            width='70'
-                                                                                            name={value.name}
-                                                                                            onError={handleImageError} />
-                                                                                    </Tooltip>
-                                                                                </>
-                                                                            ))
-                                                                        }
-                                                                    })}
+                                                                                                        'to/from' : (
+                                                                                                            topic.write ?
+                                                                                                                'to' :
+                                                                                                                'from'
+                                                                                                        )}
+                                                                                    ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}`
+                                                                                                ) : (`${application.name}
+                                                                                                ${value.type === 'write' ?
+                                                                                                        'receives' :
+                                                                                                        'sends'
+                                                                                                    }
+                                                                                                ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
+                                                                                                ${value.type === 'write' ?
+                                                                                                        'from' :
+                                                                                                        'to'
+                                                                                                    }
+                                                                                                ${value.name?.charAt(0).toUpperCase() + value.name?.slice(1)}`
+                                                                                                )
+                                                                                            }
+                                                                                                arrow>
+
+                                                                                                {value.image ?
+                                                                                                    <img alt='connected application'
+                                                                                                        src={value.image}
+                                                                                                        width='70'
+                                                                                                        name={value.name}
+                                                                                                        onError={handleImageError} />
+                                                                                                    :
+                                                                                                    <Avatar className={classes.avatar}>
+                                                                                                        {value.name?.charAt(0).toUpperCase()}
+                                                                                                    </Avatar>
+                                                                                                }
+                                                                                            </Tooltip>
+                                                                                        </Grid>
+                                                                                    </>
+                                                                                ))
+                                                                            }
+                                                                            return null
+                                                                        })}
+                                                                    </Grid>
                                                                 </>
                                                             </TableCell>
                                                         </TableRow>
@@ -203,10 +270,12 @@ function DialogBox(props) {
                         </TableContainer>
                     </Grid>
                     <Grid item>
-                        <Typography className={classes.firstMsg} align='center' variant='subtitle2'>
-                            To add additional Connected Applications, authorize this
-                            vendor and return to the App Exchange to repeat this process.
-                        </Typography>
+                        {type !== 'Disconnect' &&
+                            <Typography className={classes.firstMsg} align='center' variant='subtitle2'>
+                                To add additional Connected Applications, authorize this
+                                vendor and return to the App Exchange to repeat this process.
+                            </Typography>
+                        }
                     </Grid>
                     <Grid className={classes.textSpacing} item container direction='row' justify='space-between' alignItems='flex-start'>
                         <Grid item>
@@ -217,16 +286,18 @@ function DialogBox(props) {
                         <Grid className={classes.typeButton} container item direction='column' justify='space-evenly' alignItems='flex-end' >
                             <Grid item>
                                 {userId === userData.contact_id ||
+                                    franchiseList.some(ele => ele.contactId === userData.contact_id &&
+                                        ele.roleName.toLowerCase() === 'app exchange admin') ||
                                     !(adminList.some(ele => ele.contactId === userId &&
                                         onlyReadRole.includes(ele.roleName.toLowerCase())) ||
-                                        franchiseList.some(ele => ele.contactId === userId &&
+                                        franchiseList.some(ele => ele.contactId === userData.contact_id &&
                                             onlyReadRole.includes(ele.roleName.toLowerCase()))) ?
                                     (
                                         <Button className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
                                             {type}
                                         </Button>
                                     ) : (
-                                        <Button disabled className={classes.actionButton} name="submit" variant="contained" onClick={handleType} disableElevation>
+                                        <Button disabled className={classes.actionButton} name="readOnlySubmit" variant="contained" disableElevation>
                                             {type}
                                         </Button>
                                     )
@@ -251,7 +322,7 @@ function DialogBox(props) {
 const mapStateToProps = state => {
     return {
         globalSubs: state.subs.globalSubs,
-        apps: state.apps?.storeData?.application,
+        allApplications: state.apps?.storeData?.application,
         adminList: state.auth.userList,
         franchiseList: state.auth.franchiseList,
         userId: state.auth.userId,

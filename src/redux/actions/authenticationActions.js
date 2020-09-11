@@ -1,3 +1,4 @@
+// import { API, APIBase, APIFormData } from '../../api/apiRequest';
 import { API, APIBase } from '../../api/apiRequest';
 import endpoint from '../../api/endpoints';
 import { history } from '../../components/Authentication/history';
@@ -35,13 +36,24 @@ const listOfRoles = payload => {
 }
 
 export const setProfileId = payload => {
-    return ({ type: SET_PROFILE_ID, profileId: payload})
+    return ({ type: SET_PROFILE_ID, profileId: payload })
 }
 
 export const currentUser = () => {
     return async (dispatch, getState) => {
         try {
             const response = await APIBase.get(endpoint.userAuth);
+            // const urlParams = new URLSearchParams(document.location.search)
+            // const queryString = urlParams.toString()
+            // console.log(queryString)
+            // let response
+            // if (queryString) {
+            //     const bodyFormData = new FormData()
+            //     bodyFormData.append('signed_request', queryString.split('=')[1])
+            //     response = await APIFormData.post(endpoint.userAuth, bodyFormData)
+            // } else {
+            //     response = await APIBase.get(endpoint.userAuth)
+            // }
             dispatch(getUser(response));
             if (getState().auth.isLoggedIn) {
                 dispatch(globalSubscription())
@@ -65,13 +77,14 @@ export const currentUser = () => {
 // }
 
 export const authorisedUserList = () => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         try {
             const response = await API.get(`https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.credentials}`)
             dispatch(authorisedUser(response.data.adminUsers))
         } catch (err) {
             console.log(err)
         } finally {
+            !getState().auth.userList.some(ele => ele.contactId === getState().auth.userId) &&
             dispatch(franchiseUserList())
         }
     }

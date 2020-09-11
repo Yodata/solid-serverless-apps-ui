@@ -19,11 +19,11 @@ import { serviceEnabled, serviceUpdated } from '../../redux/slices/servicesSlice
 const styles = theme => ({
     root: {
         paddingTop: 72,
-        paddingLeft: '5vw',
+        paddingLeft: '2vw',
     },
     app: {
-        paddingRight: '5vw',
-        paddingBottom: '10vh'
+        paddingRight: '2vw',
+        paddingBottom: '5vh'
     },
     new: {
         paddingRight: '40px',
@@ -42,11 +42,13 @@ function AppCard(props) {
         editApp, userSubscriptions, userList, franchiseList, userId, setProfileId } = props;
 
     React.useEffect(() => {
-        if (userList.some(ele => ele.contactId === userId && ele.roleName)) {
-            userSubscriptions()
-        } else
-            if (franchiseList.length > 0) {
+        // if (userList.some(ele => ele.contactId === userId && ele.roleName)) {
+        //     userSubscriptions()
+        // } else
+            if (franchiseList?.length > 0) {
                 setProfileId(franchiseList[0].contactId)
+                userSubscriptions()
+            } else {
                 userSubscriptions()
             }
     }, [userList, franchiseList]);
@@ -77,7 +79,7 @@ function AppCard(props) {
             return Number.parseInt(Object.values(app.identifier)[0]);
         });
         const maxId = Math.max(...idArray);
-        const idName = value.name.split(" ").join("") + "_id";
+        const idName = `${value.id.split("/")[2].split(".")[0]}_id`.toLowerCase();
         value.identifier[idName] = maxId + 1;
         addApp(value);
     }

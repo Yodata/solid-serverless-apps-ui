@@ -6,9 +6,8 @@ const defaultState = {
     userId: '3014655',
     userData: {
         profile_id: `https://3014655.${process.env.REACT_APP_HOSTNAME}/${endpoint.profile}`,
-        raw: {
-            contact_id: '3014655'
-        }
+        contact_id: '3014655',
+        userDomain: ''
     },
     userList: [],
     franchiseList: []
@@ -21,13 +20,15 @@ const authenticationReducer = (state = defaultState, action) => {
                 action.authentication.response.status === 401 ? false : true;
             const currentUserId = isUserLoggedIn ? action.authentication.data?.raw?.contact_id[0] : state.userId
             const currentUserData = isUserLoggedIn ? action.authentication.data : state.userData
+            const currentUserDomain = isUserLoggedIn ? currentUserData?.profile_id.split('/')[2].replace(currentUserData?.raw.contact_id[0], "") : process.env.REACT_APP_HOSTNAME
             return {
                 ...state,
                 isLoggedIn: isUserLoggedIn,
                 userId: currentUserId,
                 userData: {
                     profile_id: currentUserData?.profile_id,
-                    contact_id: currentUserData?.raw.contact_id[0]
+                    contact_id: currentUserData?.raw?.contact_id[0],
+                    userDomain: currentUserDomain
                 }
             }
         case AUTHORISED_USER:
@@ -38,24 +39,29 @@ const authenticationReducer = (state = defaultState, action) => {
             }
         case LIST_OF_ROLES:
             const profile = action.profile
-            const listOfRoles = profile.memberOf.map(value => {
+            const listOfRoles = profile.memberOf?.map(value => {
                 if (value.roleName.toLowerCase() === 'marketing director'
                     || value.roleName.toLowerCase() === 'broker of record'
                     || value.roleName.toLowerCase() === 'owner'
-                    || value.roleName.toLowerCase() === 'company technology admin') {
-                    return { contactId: value.memberOf.id, roleName: value.roleName}
+                    || value.roleName.toLowerCase() === 'app exchange admin') {
+                    return { contactId: value.memberOf.id.split("//").pop().split(".").shift(), roleName: value.roleName }
                 }
             }).filter(Boolean)
+            const removeDuplicates = Array.from(new Set(listOfRoles.map(a => a.contactId)))
+                .map(id => {
+                    return listOfRoles.find(a => a.contactId === id)
+                })
             return {
                 ...state,
-                franchiseList: listOfRoles
+                franchiseList: removeDuplicates
             }
         case SET_PROFILE_ID:
             const profileId = action.profileId
             const newUserId = profileId.split("//").pop().split(".").shift()
-            return{
+            return {
                 ...state,
                 userData: {
+                    ...state.userData,
                     profile_id: profileId,
                     contact_id: newUserId
                 },

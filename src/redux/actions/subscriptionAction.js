@@ -1,7 +1,8 @@
-import { API, APIBase } from '../../api/apiRequest'
+import { API, APIGlobalSubs } from '../../api/apiRequest'
 import endpoint from '../../api/endpoints'
 import { serviceEnabled } from '../slices/servicesSlice'
 import { getAllApps } from '../../redux/actions/applicationActions';
+import { toastSuccess } from '../slices/toastSlice'
 
 
 /**
@@ -26,7 +27,7 @@ const getUserSubscriptions = payload => {
 export const globalSubscription = () => {
   return async dispatch => {
     try {
-      const response = await APIBase.get(`${endpoint.subs}`)
+      const response = await APIGlobalSubs.get(`${endpoint.subs}`)
       dispatch(getGlobalSubscriptions(response))
     } catch (err) {
       dispatch(getGlobalSubscriptions(err))
@@ -37,17 +38,19 @@ export const globalSubscription = () => {
 export const userSubscriptions = id => {
   return async (dispatch, getState) => {
     try {
-      const response = await API.get(`https://${id || getState().auth.userData.contact_id}.${process.env.REACT_APP_HOSTNAME}/${endpoint.subs}`)
+      const response = await API.get(`https://${id || getState().auth.userData.contact_id}${getState().auth.userData.userDomain}/${endpoint.subs}`)
       dispatch(getUserSubscriptions(response))
       dispatch(serviceEnabled(false))
       const subsIdentifiers = getState().subs.userSubs.items.map(value => {
-        return `${value.agent.split("/")[2].split(".")[0]}_id`
+        return value.agent
       })
       subsIdentifiers.forEach(element => {
-        dispatch(serviceEnabled(element))
+        dispatch(serviceEnabled(element.toLowerCase()))
       })
+      dispatch(toastSuccess(true))
     } catch (err) {
       dispatch(getUserSubscriptions(err))
+      dispatch(toastSuccess(false))
     } finally {
       dispatch(getAllApps())
     }

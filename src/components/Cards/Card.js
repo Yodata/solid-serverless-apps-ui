@@ -33,8 +33,8 @@ const styles = theme => ({
     position: 'relative',
     backgroundColor: theme.palette.invisible.main,
     opacity: props => (props.application.connected ? 0.5 : !props.application.isVisible && 0.5),
-    minWidth: '26vw',
-    maxWidth: '26vw',
+    minWidth: '30vw',
+    maxWidth: '30vw',
     borderRadius: 0,
     boxShadow: '3px 3px 3px 2px rgba(0,0,0,0.3)'
   },
@@ -83,7 +83,7 @@ const styles = theme => ({
     color: theme.palette.white.main,
     '&:hover': {
       backgroundColor: theme.palette.error.main,
-    }
+    },
   },
   update: {
     color: theme.palette.update.main
@@ -91,15 +91,15 @@ const styles = theme => ({
   adminButtons: {
     backgroundColor: theme.palette.adminButtons.main,
     color: theme.palette.white.main,
-    paddingLeft: 26.9,
-    paddingRight: 26.9,
+    paddingLeft: 13,
+    paddingRight: 13,
     '&:hover': {
       backgroundColor: theme.palette.adminButtons.main,
     }
   },
   adminGrid: {
-    minWidth: '26vw',
-    maxWidth: '26vw'
+    minWidth: '30vw',
+    maxWidth: '30vw'
   },
   connectedApp: {
     maxHeight: 20
@@ -184,10 +184,10 @@ export function CardComponent(props) {
   const handleAuthorize = type => {
     const payload = generateData(type)
     if (type !== 'Update') {
-      enableService(Object.keys(application.identifier)[0])
+      enableService(application.id.toLowerCase())
     } else {
       const newUpdateIDs = updatedID.slice();
-      const index = newUpdateIDs.indexOf(Object.keys(application.identifier)[0])
+      const index = newUpdateIDs.indexOf(application.id.toLowerCase())
       newUpdateIDs.splice(index, 1)
       updatedService(newUpdateIDs)
     }
@@ -215,7 +215,7 @@ export function CardComponent(props) {
           "version": `${application.version}`,
           "agent": `${application.id}`,
           "instrument": `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}`,
-          "host": `https://${userData.contact_id}.${process.env.REACT_APP_HOSTNAME}`,
+          "host": `https://${userData.contact_id}${userData.userDomain}`,
           "subscribes": readPermissions,
           "publishes": writePermissions
         }
@@ -285,12 +285,12 @@ export function CardComponent(props) {
                         <Grid container direction='row' alignItems="center" justify="space-between">
                           <Grid className={classes.cardActions} spacing={1} item container direction='row' alignItems="center" justify="flex-start">
                             <Grid item variant='body1'>
-                              {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) &&
+                              {enabledID?.includes(application.id.toLowerCase()) &&
                                 <Typography className={classes.success}>Connected</Typography>}
                             </Grid>
                             <Grid item>
-                              {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) &&
-                                (!updatedID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
+                              {enabledID?.includes(application.id.toLowerCase()) &&
+                                (!updatedID?.includes(application.id.toLowerCase()) ?
                                   <CheckCircleIcon className={classes.success} />
                                   :
                                   <ErrorIcon className={classes.error} />)
@@ -298,8 +298,8 @@ export function CardComponent(props) {
                             </Grid>
                           </Grid>
                           <Grid item>
-                            {enabledID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
-                              (!updatedID?.includes(Object.keys(application.identifier)[0].toLowerCase()) ?
+                            {enabledID?.includes(application.id.toLowerCase()) ?
+                              (!updatedID?.includes(application.id.toLowerCase()) ?
                                 <Button name="setting" variant="outlined" onClick={handleActivity} disableElevation>
                                   Settings
                                 </Button> :
@@ -350,7 +350,7 @@ export function CardComponent(props) {
                 handleDialog={handleDialogClose}
                 application={application}
                 handleAuthorize={handleAuthorize}
-                type={enabledID?.includes(Object.keys(application.identifier)[0]) ? (!updatedID?.includes(Object.keys(application.identifier)[0]) ? 'Disconnect' : 'Update') : 'Authorize'} />
+                type={enabledID?.includes(application.id.toLowerCase()) ? (!updatedID?.includes(application.id.toLowerCase()) ? 'Disconnect' : 'Update') : 'Authorize'} />
             </React.Fragment>
           )
       }

@@ -11,12 +11,14 @@ import TextField from '@material-ui/core/TextField'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem';
 import { serviceEnabled, serviceUpdated } from '../../redux/slices/servicesSlice';
+import Toast from '../Toast'
 
 const styles = theme => ({
     adminButton: {
         position: 'absolute',
         top: 0,
         right: 0,
+        paddingTop: 30,
         paddingBottom: 10
     },
     switchUser: {
@@ -44,11 +46,15 @@ function HeroUser(props) {
     const state = useSelector(state => ({
         id: state.auth.userId,
         userList: state.auth.userList,
-        franchiseList: state.auth.franchiseList
+        franchiseList: state.auth.franchiseList,
+        success: state.toast.success
     }))
+
     const dispatch = useDispatch()
     const [user, setUser] = React.useState(0)
     const [franchiseUser, setFranchiseUser] = React.useState('')
+    const [toastOpen, setToastOpen] = React.useState(false)
+
     React.useEffect(() => {
         dispatch(authorisedUserList())
     }, [])
@@ -66,6 +72,7 @@ function HeroUser(props) {
         dispatch(serviceEnabled(false))
         dispatch(serviceUpdated())
         dispatch(userSubscriptions(user))
+        setToastOpen(true)
     }
 
     const handleSelect = e => {
@@ -75,6 +82,10 @@ function HeroUser(props) {
         dispatch(serviceEnabled(false))
         dispatch(serviceUpdated())
         dispatch(userSubscriptions())
+    }
+
+    const handleToastClose = () => {
+        setToastOpen(false)
     }
 
     return (
@@ -117,9 +128,9 @@ function HeroUser(props) {
                                 </>
                             )
                             :
-                            (state.franchiseList.length > 1 &&
+                            (state.franchiseList?.length > 1 &&
                                 (<Grid item>
-                                    <Typography style={{ fontSize: '10px' }}>Select Contact ID</Typography>
+                                    <Typography style={{ fontSize: '10px' }}>Select Company ID</Typography>
                                     <Select
                                         value={franchiseUser}
                                         onChange={handleSelect}
@@ -148,6 +159,10 @@ function HeroUser(props) {
                     }
                 </Grid>
                 <HeaderUser />
+                <Toast open={toastOpen}
+                    handleToastClose={handleToastClose} 
+                    message={state.success ? 'Subscriptions are updated' : 'No subscriptions present' }
+                    type={state.success ? 'success' : 'error'}/>
             </Paper>
         </>
     )

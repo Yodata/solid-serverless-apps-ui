@@ -1,9 +1,9 @@
-import { APIBase } from './apiRequest'
+import { API } from './apiRequest'
 import endpoints from './endpoints'
 
 const publishEvent = async payload => {
     try {
-        await APIBase.post(endpoints.publish, payload)
+        await API.post(`https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoints.publish}`, payload)
     } catch (err) {
         console.log(err)
     }
