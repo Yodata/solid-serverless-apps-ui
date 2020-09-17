@@ -6,10 +6,10 @@ import withStyles from '@material-ui/core/styles/withStyles';
 
 const styles = theme => ({
     root: {
-        paddingTop: 60,
+        // paddingTop: 60,
         paddingRight: '5vw',
         paddingLeft: '5vw',
-        paddingBottom: 60
+        paddingBottom: 20
     },
     image: {
         maxWidth: 550,
