@@ -44,7 +44,7 @@ const authenticationReducer = (state = defaultState, action) => {
                     || value.roleName.toLowerCase() === 'broker of record'
                     || value.roleName.toLowerCase() === 'owner'
                     || value.roleName.toLowerCase() === 'app exchange admin') {
-                    return { contactId: value.memberOf.id.split("//").pop().split(".").shift(), roleName: value.roleName }
+                    return { profileId: value.memberOf.id, contactId: value.memberOf.id.split("//").pop().split(".").shift(), roleName: value.roleName }
                 }
             }).filter(Boolean)
             const removeDuplicates = Array.from(new Set(listOfRoles.map(a => a.contactId)))

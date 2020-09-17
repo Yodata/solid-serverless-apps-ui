@@ -46,7 +46,7 @@ function AppCard(props) {
         //     userSubscriptions()
         // } else
             if (franchiseList?.length > 0) {
-                setProfileId(franchiseList[0].contactId)
+                setProfileId(franchiseList[0].profileId)
                 userSubscriptions()
             } else {
                 userSubscriptions()
