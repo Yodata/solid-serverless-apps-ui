@@ -15,16 +15,16 @@ import Toast from '../Toast'
 
 const styles = theme => ({
     adminButton: {
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        paddingTop: 30,
-        paddingBottom: 10
+        // position: 'absolute',
+        // top: 0,
+        // right: 0,
+        // paddingTop: 30,
+        // paddingBottom: 10
     },
     switchUser: {
-        position: 'absolute',
-        top: 30,
-        right: 0
+        // position: 'absolute',
+        // top: 30,
+        // right: 0
     },
     switchButton: {
         position: 'absolute',
