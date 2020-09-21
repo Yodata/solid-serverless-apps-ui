@@ -45,12 +45,12 @@ function AppCard(props) {
         // if (userList.some(ele => ele.contactId === userId && ele.roleName)) {
         //     userSubscriptions()
         // } else
-            if (franchiseList?.length > 0) {
-                setProfileId(franchiseList[0].profileId)
-                userSubscriptions()
-            } else {
-                userSubscriptions()
-            }
+        if (franchiseList?.length > 0) {
+            setProfileId(franchiseList[0].profileId)
+            userSubscriptions()
+        } else {
+            userSubscriptions()
+        }
     }, [userList, franchiseList]);
 
     const [isNew, setNew] = React.useState(false)
