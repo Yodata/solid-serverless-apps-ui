@@ -50,6 +50,7 @@ export const userSubscriptions = id => {
       dispatch(toastSuccess(true))
     } catch (err) {
       dispatch(getUserSubscriptions(err))
+      dispatch(serviceEnabled(false))
       dispatch(toastSuccess(false))
     } finally {
       dispatch(getAllApps())
