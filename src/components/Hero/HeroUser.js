@@ -92,7 +92,7 @@ function HeroUser(props) {
         <>
             <Paper elevation={0}>
                 <Grid container direction='column' className={classes.adminButton} alignItems='flex-end'>
-                    {state.userList.some(ele => ele.contactId === state.id) &&
+                    {state.userList.some(ele => ele.contactId === state.id && ele.roleName === 'AEA') &&
                         <Grid item>
                             <Button
                                 onClick={switchUI}>
