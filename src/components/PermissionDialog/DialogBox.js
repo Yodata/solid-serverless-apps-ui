@@ -85,7 +85,7 @@ const styles = theme => ({
 
 function DialogBox(props) {
     const { classes, open, handleDialog, application, type, allApplications,
-        globalSubs, handleAuthorize, franchiseList, adminList, userId, userData } = props
+        globalSubs, handleAuthorize, franchiseList, adminList, userId, userData, userSubs } = props
 
     const onlyReadRole = ['bc', 'owner', 'broker of record', 'marketing director']
     Object.freeze(onlyReadRole)
@@ -111,38 +111,73 @@ function DialogBox(props) {
         )
     }
 
-    const connectedApps = application.permissions.map(topic => {
-        if (topic.read || topic.write) {
-            const subsIdentifier = globalSubs?.items?.map(value => {
-                if (!value.publishes && !value.subscribes) {
-                    if (value.object.includes(topic.name.toLowerCase())) {
+    const getSubsIdentifier = (value, topic) => {
+        if (!value.publishes && !value.subscribes) {
+            if (value.object.includes(topic.name.toLowerCase())) {
+                return `${value.agent}`
+            }
+        } else {
+            if (topic.read && topic.write) {
+                if (value.subscribes.find(value => value.includes(topic.name.toLowerCase())) &&
+                    value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+                    return `${value.agent}`
+                } else
+                    if (value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
+                        return `${value.agent}?read`
+                    } else
+                        if (value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+                            return `${value.agent}?write`
+                        }
+            }
+            else
+                if (topic.write && !topic.read && value.subscribes.length > 0 &&
+                    value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
+                    return `${value.agent}`
+                } else
+                    if (topic.read && !topic.write && value.publishes.length > 0 &&
+                        value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
                         return `${value.agent}`
                     }
-                } else {
-                    if (topic.read && topic.write) {
-                        if (value.subscribes.find(value => value.includes(topic.name.toLowerCase())) &&
-                            value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
-                            return `${value.agent}`
-                        } else
-                            if (value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
-                                return `${value.agent}?read`
-                            } else
-                                if (value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
-                                    return `${value.agent}?write`
-                                }
-                    }
-                    else
-                        if (topic.write && !topic.read && value.subscribes.length > 0 &&
-                            value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
-                            return `${value.agent}`
-                        } else
-                            if (topic.read && !topic.write && value.publishes.length > 0 &&
-                                value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
-                                return `${value.agent}`
-                            }
 
-                }
-            }).filter(Boolean).sort((a, b) => {
+        }
+    }
+
+    const connectedApps = application.permissions.map(topic => {
+        if (topic.read || topic.write) {
+            const globalSubsIdentifier = globalSubs && globalSubs.items ? globalSubs.items.map(value => getSubsIdentifier(value, topic)).filter(Boolean) : []
+            //value => {
+            // if (!value.publishes && !value.subscribes) {
+            //     if (value.object.includes(topic.name.toLowerCase())) {
+            //         return `${value.agent}`
+            //     }
+            // } else {
+            //     if (topic.read && topic.write) {
+            //         if (value.subscribes.find(value => value.includes(topic.name.toLowerCase())) &&
+            //             value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+            //             return `${value.agent}`
+            //         } else
+            //             if (value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
+            //                 return `${value.agent}?read`
+            //             } else
+            //                 if (value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+            //                     return `${value.agent}?write`
+            //                 }
+            //     }
+            //     else
+            //         if (topic.write && !topic.read && value.subscribes.length > 0 &&
+            //             value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
+            //             return `${value.agent}`
+            //         } else
+            //             if (topic.read && !topic.write && value.publishes.length > 0 &&
+            //                 value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+            //                 return `${value.agent}`
+            //             }
+
+            // }
+            // ).filter(Boolean)
+            const userSubsIdentifier = userSubs && userSubs.items ? userSubs.items.map(value => getSubsIdentifier(value, topic)).filter(Boolean) : []
+
+            const subsIdentifier = [...globalSubsIdentifier, ...userSubsIdentifier]?.sort((a, b) => {
                 return a.toUpperCase() > b.toUpperCase() ? 1 : -1
             })
             const connectedApplication = subsIdentifier?.map(sub => {
@@ -322,6 +357,7 @@ function DialogBox(props) {
 const mapStateToProps = state => {
     return {
         globalSubs: state.subs.globalSubs,
+        userSubs: state.subs.userSubs,
         allApplications: state.apps?.storeData?.application,
         adminList: state.auth.userList,
         franchiseList: state.auth.franchiseList,

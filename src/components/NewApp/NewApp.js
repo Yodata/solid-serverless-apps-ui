@@ -140,7 +140,7 @@ function NewApp(props) {
                         }}
                         onChange={handleAppLogoChange}
                     />
-                    {isAddNew &&
+                    {isAddNew ?
                         <>
                             <Typography className={classes.padding}>POD Profile</Typography>
                             <TextField
@@ -150,6 +150,26 @@ function NewApp(props) {
                                 variant="outlined"
                                 color="secondary"
                                 fullWidth
+                                size='small'
+                                InputProps={{
+                                    classes: {
+                                        input: classes.resize,
+                                    },
+                                }}
+                                onChange={handleAppIdChange}
+                            />
+                        </>
+                        :
+                        <>
+                            <Typography className={classes.padding}>POD Profile</Typography>
+                            <TextField
+                                id="profie-id"
+                                defaultValue={id}
+                                placeholder="https://yodata.io/profile/card#me"
+                                variant="outlined"
+                                color="secondary"
+                                fullWidth
+                                disabled
                                 size='small'
                                 InputProps={{
                                     classes: {
