@@ -105,7 +105,7 @@ function HeroUser(props) {
                             (
                                 <>
                                     <Grid item>
-                                        <Typography style={{ fontSize: '10px' }}>Enter Contact ID</Typography>
+                                        <Typography style={{ fontSize: '10px' }}>Enter Company or Contact ID</Typography>
                                         <TextField
                                             margin="dense"
                                             variant="outlined"
