@@ -4,7 +4,7 @@ const API = axios.create({
     responseType: 'json',
     headers: {
         "x-api-key": process.env.REACT_APP_HOSTKEY,
-        "Content-Type": "application/ld+json"
+        "Content-Type": "application/json"
     }
 });
 
@@ -14,7 +14,7 @@ const APIBase = axios.create({
     withCredentials: true,
     headers: {
         'x-api-key': process.env.REACT_APP_HOSTKEY,
-        'Content-Type': 'application/ld+json'
+        'Content-Type': 'application/json'
     }
 });
 
@@ -34,7 +34,7 @@ const APIGlobalSubs = axios.create({
     withCredentials: true,
     headers: {
         'x-api-key': process.env.REACT_APP_GLOBALSUBSKEY,
-        'Content-Type': 'application/ld+json'
+        'Content-Type': 'application/json'
     }
 });
 
