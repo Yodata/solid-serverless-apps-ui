@@ -140,22 +140,46 @@ function NewApp(props) {
                         }}
                         onChange={handleAppLogoChange}
                     />
-                    <Typography className={classes.padding}>POD Profile</Typography>
-                    <TextField
-                        id="profie-id"
-                        defaultValue={id}
-                        placeholder="https://yodata.io/profile/card#me"
-                        variant="outlined"
-                        color="secondary"
-                        fullWidth
-                        size='small'
-                        InputProps={{
-                            classes: {
-                                input: classes.resize,
-                            },
-                        }}
-                        onChange={handleAppIdChange}
-                    />
+                    {isAddNew ?
+                        <>
+                            <Typography className={classes.padding}>POD Profile</Typography>
+                            <TextField
+                                id="profie-id"
+                                defaultValue={id}
+                                placeholder="https://yodata.io/profile/card#me"
+                                variant="outlined"
+                                color="secondary"
+                                fullWidth
+                                size='small'
+                                InputProps={{
+                                    classes: {
+                                        input: classes.resize,
+                                    },
+                                }}
+                                onChange={handleAppIdChange}
+                            />
+                        </>
+                        :
+                        <>
+                            <Typography className={classes.padding}>POD Profile</Typography>
+                            <TextField
+                                id="profie-id"
+                                defaultValue={id}
+                                placeholder="https://yodata.io/profile/card#me"
+                                variant="outlined"
+                                color="secondary"
+                                fullWidth
+                                disabled
+                                size='small'
+                                InputProps={{
+                                    classes: {
+                                        input: classes.resize,
+                                    },
+                                }}
+                                onChange={handleAppIdChange}
+                            />
+                        </>
+                    }
                     <Typography className={classes.padding}>Display Name</Typography>
                     <TextField
                         id="app-title"
@@ -210,8 +234,6 @@ function NewApp(props) {
                     </Button>
                 </CardActions>
             </React.Fragment>
-                )
-
         </Card>
     );
 }

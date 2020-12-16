@@ -18,7 +18,7 @@ import { serviceEnabled, serviceUpdated } from '../../redux/slices/servicesSlice
 
 const styles = theme => ({
     root: {
-        paddingTop: 72,
+        // paddingTop: 72,
         paddingLeft: '2vw',
     },
     app: {
@@ -45,12 +45,12 @@ function AppCard(props) {
         // if (userList.some(ele => ele.contactId === userId && ele.roleName)) {
         //     userSubscriptions()
         // } else
-            if (franchiseList?.length > 0) {
-                setProfileId(franchiseList[0].contactId)
-                userSubscriptions()
-            } else {
-                userSubscriptions()
-            }
+        if (franchiseList?.length > 0) {
+            setProfileId(franchiseList[0].profileId)
+            userSubscriptions()
+        } else {
+            userSubscriptions()
+        }
     }, [userList, franchiseList]);
 
     const [isNew, setNew] = React.useState(false)

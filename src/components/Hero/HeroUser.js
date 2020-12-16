@@ -15,16 +15,16 @@ import Toast from '../Toast'
 
 const styles = theme => ({
     adminButton: {
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        paddingTop: 30,
-        paddingBottom: 10
+        // position: 'absolute',
+        // top: 0,
+        // right: 0,
+        // paddingTop: 30,
+        // paddingBottom: 10
     },
     switchUser: {
-        position: 'absolute',
-        top: 30,
-        right: 0
+        // position: 'absolute',
+        // top: 30,
+        // right: 0
     },
     switchButton: {
         position: 'absolute',
@@ -78,7 +78,7 @@ function HeroUser(props) {
     const handleSelect = e => {
         const value = e.target.value === '' ? state.franchiseList[0].contactId : e.target.value
         setFranchiseUser(e.target.value)
-        dispatch(setProfileId(value))
+        dispatch(setProfileId(state.franchiseList.find(franchise => value === franchise.contactId).profileId))
         dispatch(serviceEnabled(false))
         dispatch(serviceUpdated())
         dispatch(userSubscriptions())
@@ -92,7 +92,7 @@ function HeroUser(props) {
         <>
             <Paper elevation={0}>
                 <Grid container direction='column' className={classes.adminButton} alignItems='flex-end'>
-                    {state.userList.some(ele => ele.contactId === state.id) &&
+                    {state.userList.some(ele => ele.contactId === state.id && ele.roleName === 'AEA') &&
                         <Grid item>
                             <Button
                                 onClick={switchUI}>
@@ -105,7 +105,7 @@ function HeroUser(props) {
                             (
                                 <>
                                     <Grid item>
-                                        <Typography style={{ fontSize: '10px' }}>Enter Contact ID</Typography>
+                                        <Typography style={{ fontSize: '10px' }}>Enter Company or Contact ID</Typography>
                                         <TextField
                                             margin="dense"
                                             variant="outlined"
