@@ -42,4 +42,15 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 	 Production url: [forevercloud.appexchange.yodata.me](http://forevercloud.appexchange.yodata.me/)
 	 * To use it inside the iFrame i.e. we need to embed the express.js url which would redirect the code to respective url
 	 
-		 For production express url : [forevercloud.production.yodata.me](http://forevercloud.production.yodata.me/)
+	 	For production express url : [forevercloud.production.yodata.me](http://forevercloud.production.yodata.me/)
+	 
+## Environment Variable
+ 1. REACT_APP_GLOBALSUBSKEY
+ * It is the hostkey for accessing the global subscriptions
+ 
+ 2. REACT_APP_GLOBALSUBS
+ * It is the domain to access to global subscriptions [different for staging - staging.bhhs and production- bhhs]
+ 
+ 3. REACT_APP_HOSTNAME
+ * It is the domain for the staging and production pods [different for staging - bhhs.dev.yodata and production- bhhs]
+	 
