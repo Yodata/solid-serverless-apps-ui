@@ -33,13 +33,13 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 	 Push the code into the master branch of the repository to deploy the code into the staging environment
 	 Staging url: [solid-serverless-apps-ui.now.sh](https://solid-serverless-apps-ui.now.sh/)
 	 * To use it inside the iFrame i.e. we need to embed the express.js url which would redirect the code to respective url
+	 
 		 For staging express url:  [forevercloud.yodata.me](http://forevercloud.yodata.me/)
-
-RefreshEdit
 	 
  - Production
 	### `git push`
 	 Push the code into the production branch of the repository to deploy the code into the production environment
 	 Production url: [forevercloud.appexchange.yodata.me](http://forevercloud.appexchange.yodata.me/)
 	 To use it inside the iFrame i.e. we need to embed the express.js url which would redirect the code to respective url
+	 
 		 For production express url : [forevercloud.production.yodata.me](http://forevercloud.production.yodata.me/)
