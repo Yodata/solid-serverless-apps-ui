@@ -77,8 +77,8 @@ function AppCard(props) {
         value.group.push(tabIndex);
         const idArray = applications.map(app => {
             return Number.parseInt(Object.values(app.identifier)[0]);
-        });
-        const maxId = Math.max(...idArray);
+        });  
+        const maxId = idArray.length > 0 ? Math.max(...idArray) : 0;
         const idName = `${value.id.split("/")[2].split(".")[0]}_id`.toLowerCase();
         value.identifier[idName] = maxId + 1;
         addApp(value);
