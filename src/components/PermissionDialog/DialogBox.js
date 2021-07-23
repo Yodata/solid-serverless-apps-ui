@@ -177,11 +177,15 @@ function DialogBox(props) {
 
             // }
             // ).filter(Boolean)
+            console.log(application.id)
             const userSubsIdentifier = userSubs && userSubs.items ? userSubs.items.map(value => getSubsIdentifier(value, topic)).filter(Boolean) : []
-
+            console.log("global")
+            console.log(globalSubsIdentifier)
             const userFilteredSubs = userSubsIdentifier.filter(f=>
-                !globalSubsIdentifier.some(g=>g===f) // remove duplicate pods from global
+                !globalSubsIdentifier.some(g=>f.includes(g)) // remove duplicate pods from global
             )
+            console.log("user 1")
+            console.log(userFilteredSubs)
             const subsIdentifier = [...globalSubsIdentifier, ...userFilteredSubs]?.filter(f =>
             //const subsIdentifier = [...userSubsIdentifier]?.filter(f =>
                 !BlackListPods.some(b => b.pod === f) // remove internal services
@@ -190,6 +194,8 @@ function DialogBox(props) {
             ).sort((a, b) => {
                 return a.toUpperCase() > b.toUpperCase() ? 1 : -1
             })
+            console.log("user")
+            console.log(subsIdentifier)
             const connectedApplication = subsIdentifier?.map(sub => {
                 const selectedApp = (allApplications.find(ele => ele.id === `${sub.split('?')[0]}`))
                 return {
