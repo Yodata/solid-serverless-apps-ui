@@ -15,6 +15,8 @@ import Button from '@material-ui/core/Button';
 import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip'
 import Avatar from '@material-ui/core/Avatar';
+//const BlackListPods = require('../../utility/blacklist.json');
+import BlackListPods from '../../utility/blacklist.json'
 
 const styles = theme => ({
     root: {
@@ -175,11 +177,25 @@ function DialogBox(props) {
 
             // }
             // ).filter(Boolean)
+            console.log(application.id)
             const userSubsIdentifier = userSubs && userSubs.items ? userSubs.items.map(value => getSubsIdentifier(value, topic)).filter(Boolean) : []
-
-            const subsIdentifier = [...globalSubsIdentifier, ...userSubsIdentifier]?.sort((a, b) => {
+            console.log("global")
+            console.log(globalSubsIdentifier)
+            const userFilteredSubs = userSubsIdentifier.filter(f=>
+                !globalSubsIdentifier.some(g=>f.includes(g)) // remove duplicate pods from global
+            )
+            console.log("user 1")
+            console.log(userFilteredSubs)
+            const subsIdentifier = [...globalSubsIdentifier, ...userFilteredSubs]?.filter(f =>
+            //const subsIdentifier = [...userSubsIdentifier]?.filter(f =>
+                !BlackListPods.some(b => b.pod === f) // remove internal services
+            ).filter(s =>
+                s !== application.id //remove self
+            ).sort((a, b) => {
                 return a.toUpperCase() > b.toUpperCase() ? 1 : -1
             })
+            console.log("user")
+            console.log(subsIdentifier)
             const connectedApplication = subsIdentifier?.map(sub => {
                 const selectedApp = (allApplications.find(ele => ele.id === `${sub.split('?')[0]}`))
                 return {
