@@ -92,7 +92,7 @@ function DialogBox(props) {
     const onlyReadRole = ['bc', 'owner', 'broker of record', 'marketing director']
     Object.freeze(onlyReadRole)
 
-    const topicsToShow = ['Lead', 'Contact', 'Website']
+    const topicsToShow = ['Lead', 'Contact', 'MarketingPreferences', 'Website']
     Object.freeze(topicsToShow)
 
     const handleClose = () => {
