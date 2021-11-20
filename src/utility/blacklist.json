@@ -12,5 +12,5 @@
    ,{"pod": "https://graph-collector-svc.bhhs.dev.yodata.io/profile/card#me"}
    ,{"pod": "https://graph-collector-svc.bhhs.dev.yodata.io/profile/card#me?read"}
    ,{"pod": "https://graph-collector-svc.bhhs.dev.yodata.io/profile/card#me?write"}
-   ,{"pod": "https://bhhs.dev.yodta.io/profile/card#me"}
+   ,{"pod": "https://bhhs.dev.yodata.io/profile/card#me"}
 ]
