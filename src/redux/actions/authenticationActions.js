@@ -111,7 +111,7 @@ export const getParentOrgandRole = () => {
     return async (dispatch, getState) => {
         try {
             const response = await API.get(getState().auth.userData.profile_id)
-            console.log('response: '+JSON.stringify(response))
+            console.log('responseOrg: '+JSON.stringify(response))
             dispatch(setOrganisationRole(response.data))
         } catch (err) {
             console.log(err)

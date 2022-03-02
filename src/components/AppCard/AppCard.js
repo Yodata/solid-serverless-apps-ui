@@ -13,7 +13,7 @@ import {
   serviceEnabled,
   serviceUpdated,
 } from "../../redux/slices/servicesSlice";
-import ManageTopics from '../manageTopics'
+import ManageTopics from "../manageTopics";
 
 /**
  * @Component AppCard
@@ -46,7 +46,7 @@ const styles = (theme) => ({
     "&:hover": {
       backgroundColor: theme.palette.new.main,
     },
-  }
+  },
 });
 
 function AppCard(props) {
@@ -62,6 +62,8 @@ function AppCard(props) {
     franchiseList,
     userId,
     setProfileId,
+    localStore,
+    isFranchiseUser,
   } = props;
 
   React.useEffect(() => {
@@ -167,7 +169,13 @@ function AppCard(props) {
           )}
           {sortApplications().map((application) => (
             <>
-              {application.isVisible ? (
+              {application.isVisible &&
+              (isFranchiseUser ||
+                !localStore ||
+                (localStore &&
+                  (!localStore.find((x) => x.id === application.id) ||
+                    localStore.find((x) => x.id === application.id)
+                      .isFranchiseVisible))) ? (
                 <Grid className={classes.app} item key={application.name}>
                   <Card
                     application={application}
@@ -190,7 +198,7 @@ function AppCard(props) {
           ))}
         </Grid>
       </Grid>
-      <ManageTopics open={openManageTopics} applications={applications}/>
+      <ManageTopics open={openManageTopics} applications={applications} />
     </React.Fragment>
   );
 }
@@ -203,6 +211,8 @@ const mapStateToProps = (state) => {
     userList: state.auth.userList,
     franchiseList: state.auth.franchiseList,
     userId: state.auth.userId,
+    localStore: state.apps?.localStoreData?.application,
+    isFranchiseUser: state.auth.isFranchiseUser,
   };
 };
 

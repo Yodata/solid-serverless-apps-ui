@@ -123,7 +123,7 @@ function DialogBox(props) {
     writeLocalPermissions,
     handleWriteLocalPermissions,
     handleReadLocalPermissions,
-    handleUpdateLocalStore
+    handleUpdateLocalStore,
   } = props;
 
   const onlyReadRole = [
@@ -154,7 +154,7 @@ function DialogBox(props) {
       </Avatar>
     );
   };
-
+  console.log({ isFranchiseUser });
   const getSubsIdentifier = (value, topic) => {
     if (!value.publishes && !value.subscribes) {
       if (value.object.includes(topic.name.toLowerCase())) {
@@ -247,8 +247,8 @@ function DialogBox(props) {
         // ).filter(Boolean)
         console.log(application.id);
         console.log(application.accessLevel);
-        console.log(userSubs)
-        
+        console.log(userSubs);
+
         const userSubsIdentifier =
           userSubs && userSubs.items
             ? userSubs.items
@@ -296,8 +296,8 @@ function DialogBox(props) {
     })
     .filter(Boolean);
 
-    console.log({readLocalPermissions})
-    console.log({writeLocalPermissions})
+  console.log({ readLocalPermissions });
+  console.log({ writeLocalPermissions });
 
   return (
     <React.Fragment>
@@ -313,7 +313,7 @@ function DialogBox(props) {
               <img alt="app logo" src={application.logo.url} width="250" />
             </Paper>
           </Grid>
-          <Grid item className={classes.textSpacing}>
+          {/* <Grid item className={classes.textSpacing}>
             {type !== "Disconnect" ? (
               "REQUIRES ACCESS TO:"
             ) : (
@@ -322,7 +322,7 @@ function DialogBox(props) {
                 disconnect the application from the following:
               </Typography>
             )}
-          </Grid>
+          </Grid> */}
           <Grid item className={classes.textSpacing}>
             <TableContainer>
               <Table className={classes.table} size="small">
@@ -335,37 +335,42 @@ function DialogBox(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {application.permissions?.map((topic) => (
-                    <React.Fragment key={topic.name}>
-                      {/* {topicsToShow.includes(topic.name) && */}
-                      {topic.read && (
-                        <TableRow key={`${topic.name}--read`}>
-                          <TableCell component="th" scope="row">
-                            {topic.name === "Website"
-                              ? "Website Customer Activity"
-                              : topic.name}
-                          </TableCell>
-                          <TableCell>Receive</TableCell>
-                          <TableCell>
-                            <>
-                              <Grid
-                                container
-                                direction="row"
-                                alignItems="center"
-                              >
-                                {connectedApps &&
-                                  connectedApps.map((app) => {
-                                    if (
-                                      topic.name.toLowerCase() ===
-                                      Object.keys(app)[0].toLowerCase()
-                                    ) {
-                                      return (
-                                        app[topic.name.toLowerCase()] &&
-                                        app[topic.name.toLowerCase()].map(
-                                          (value) => (
-                                            <>
-                                              <Grid item>
-                                                {/* <Tooltip title={!value.type ?
+                  {(application.accessLevel === "both" ||
+                    (application.accessLevel === "franchisees" &&
+                      isFranchiseUser) ||
+                    (application.accessLevel === "agent" &&
+                      !isFranchiseUser)) &&
+                    application.permissions?.map((topic) => (
+                      <React.Fragment key={topic.name}>
+                        {/* {topicsToShow.includes(topic.name) && */}
+                        {topic.read && (
+                          <TableRow key={`${topic.name}--read`}>
+                            <TableCell component="th" scope="row">
+                              {topic.name === "Website"
+                                ? "Website Customer Activity"
+                                : topic.name}
+                            </TableCell>
+                            <TableCell>Receive</TableCell>
+                            <TableCell>
+                              <>
+                                <Grid
+                                  container
+                                  direction="row"
+                                  alignItems="center"
+                                >
+                                  {connectedApps &&
+                                    connectedApps.map((app) => {
+                                      if (
+                                        topic.name.toLowerCase() ===
+                                        Object.keys(app)[0].toLowerCase()
+                                      ) {
+                                        return (
+                                          app[topic.name.toLowerCase()] &&
+                                          app[topic.name.toLowerCase()].map(
+                                            (value) => (
+                                              <>
+                                                <Grid item>
+                                                  {/* <Tooltip title={!value.type ?
                                                                                                 (`${application.name}
                                                                                     ${(topic.read && topic.write) ?
                                                                                                         'sends and receives' : (
@@ -395,82 +400,92 @@ function DialogBox(props) {
                                                                                                 )
                                                                                             }
                                                                                                 arrow> */}
-                                                <Tooltip
-                                                  title={`${
-                                                    value.name
-                                                      ?.charAt(0)
-                                                      .toUpperCase() +
-                                                    value.name?.slice(1)
-                                                  }`}
-                                                  arrow
-                                                >
-                                                  {value.image ? (
-                                                    <img
-                                                      alt="connected application"
-                                                      src={value.image}
-                                                      width="70"
-                                                      name={value.name}
-                                                      onError={handleImageError}
-                                                    />
-                                                  ) : (
-                                                    <Avatar
-                                                      className={classes.avatar}
-                                                    >
-                                                      {value.name
+                                                  <Tooltip
+                                                    title={`${
+                                                      value.name
                                                         ?.charAt(0)
-                                                        .toUpperCase()}
-                                                    </Avatar>
-                                                  )}
-                                                </Tooltip>
-                                              </Grid>
-                                            </>
+                                                        .toUpperCase() +
+                                                      value.name?.slice(1)
+                                                    }`}
+                                                    arrow
+                                                  >
+                                                    {value.image ? (
+                                                      <img
+                                                        alt="connected application"
+                                                        src={value.image}
+                                                        width="70"
+                                                        name={value.name}
+                                                        onError={
+                                                          handleImageError
+                                                        }
+                                                      />
+                                                    ) : (
+                                                      <Avatar
+                                                        className={
+                                                          classes.avatar
+                                                        }
+                                                      >
+                                                        {value.name
+                                                          ?.charAt(0)
+                                                          .toUpperCase()}
+                                                      </Avatar>
+                                                    )}
+                                                  </Tooltip>
+                                                </Grid>
+                                              </>
+                                            )
                                           )
-                                        )
-                                      );
-                                    }
-                                    return null;
-                                  })}
-                              </Grid>
-                            </>
-                          </TableCell>
-                          <TableCell align="right">
-                            <TopicSwitch
-                              size="small"
-                              checked={readLocalPermissions?.includes(`realestate/${topic.name.toLowerCase()}`)}
-                              name={topic.name + "-write"}
-                              onChange={() => handleReadLocalPermissions(`realestate/${topic.name.toLowerCase()}`)}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      )}
-                      {topic.write && (
-                        <TableRow key={`${topic.name}--write`}>
-                          <TableCell component="th" scope="row">
-                            {topic.name === "Website"
-                              ? "Website Customer Activity"
-                              : topic.name}
-                          </TableCell>
-                          <TableCell>Send</TableCell>
-                          <TableCell>
-                            <>
-                              <Grid
-                                container
-                                direction="row"
-                                alignItems="center"
-                              >
-                                {connectedApps &&
-                                  connectedApps.map((app) => {
-                                    if (
-                                      topic.name.toLowerCase() ===
-                                      Object.keys(app)[0].toLowerCase()
-                                    ) {
-                                      return (
-                                        app[topic.name.toLowerCase()] &&
-                                        app[topic.name.toLowerCase()].map(
-                                          (value) => (
-                                            <>
-                                              <Grid item>
-                                                {/* <Tooltip title={!value.type ?
+                                        );
+                                      }
+                                      return null;
+                                    })}
+                                </Grid>
+                              </>
+                            </TableCell>
+                            <TableCell align="right">
+                              <TopicSwitch
+                                size="small"
+                                checked={readLocalPermissions?.includes(
+                                  `realestate/${topic.name.toLowerCase()}`
+                                )}
+                                name={topic.name + "-write"}
+                                onChange={() =>
+                                  handleReadLocalPermissions(
+                                    `realestate/${topic.name.toLowerCase()}`
+                                  )
+                                }
+                              />
+                            </TableCell>
+                          </TableRow>
+                        )}
+                        {topic.write && (
+                          <TableRow key={`${topic.name}--write`}>
+                            <TableCell component="th" scope="row">
+                              {topic.name === "Website"
+                                ? "Website Customer Activity"
+                                : topic.name}
+                            </TableCell>
+                            <TableCell>Send</TableCell>
+                            <TableCell>
+                              <>
+                                <Grid
+                                  container
+                                  direction="row"
+                                  alignItems="center"
+                                >
+                                  {connectedApps &&
+                                    connectedApps.map((app) => {
+                                      if (
+                                        topic.name.toLowerCase() ===
+                                        Object.keys(app)[0].toLowerCase()
+                                      ) {
+                                        return (
+                                          app[topic.name.toLowerCase()] &&
+                                          app[topic.name.toLowerCase()].map(
+                                            (value) => (
+                                              <>
+                                                <Grid item>
+                                                  {/* <Tooltip title={!value.type ?
                                                                                                     (`${application.name}
                                                                                         ${(topic.read && topic.write) ?
                                                                                                             'sends and receives' : (
@@ -500,56 +515,66 @@ function DialogBox(props) {
                                                                                                     )
                                                                                                 }
                                                                                                     arrow> */}
-                                                <Tooltip
-                                                  title={`${
-                                                    value.name
-                                                      ?.charAt(0)
-                                                      .toUpperCase() +
-                                                    value.name?.slice(1)
-                                                  }`}
-                                                  arrow
-                                                >
-                                                  {value.image ? (
-                                                    <img
-                                                      alt="connected application"
-                                                      src={value.image}
-                                                      width="70"
-                                                      name={value.name}
-                                                      onError={handleImageError}
-                                                    />
-                                                  ) : (
-                                                    <Avatar
-                                                      className={classes.avatar}
-                                                    >
-                                                      {value.name
+                                                  <Tooltip
+                                                    title={`${
+                                                      value.name
                                                         ?.charAt(0)
-                                                        .toUpperCase()}
-                                                    </Avatar>
-                                                  )}
-                                                </Tooltip>
-                                              </Grid>
-                                            </>
+                                                        .toUpperCase() +
+                                                      value.name?.slice(1)
+                                                    }`}
+                                                    arrow
+                                                  >
+                                                    {value.image ? (
+                                                      <img
+                                                        alt="connected application"
+                                                        src={value.image}
+                                                        width="70"
+                                                        name={value.name}
+                                                        onError={
+                                                          handleImageError
+                                                        }
+                                                      />
+                                                    ) : (
+                                                      <Avatar
+                                                        className={
+                                                          classes.avatar
+                                                        }
+                                                      >
+                                                        {value.name
+                                                          ?.charAt(0)
+                                                          .toUpperCase()}
+                                                      </Avatar>
+                                                    )}
+                                                  </Tooltip>
+                                                </Grid>
+                                              </>
+                                            )
                                           )
-                                        )
-                                      );
-                                    }
-                                    return null;
-                                  })}
-                              </Grid>
-                            </>
-                          </TableCell>
-                          <TableCell align="right">
-                            <TopicSwitch
-                              size="small"
-                              checked={writeLocalPermissions?.includes(`realestate/${topic.name.toLowerCase()}`)}
-                              name={topic.name + "-write"}
-                              onChange={() => handleWriteLocalPermissions(`realestate/${topic.name.toLowerCase()}`)}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </React.Fragment>
-                  ))}
+                                        );
+                                      }
+                                      return null;
+                                    })}
+                                </Grid>
+                              </>
+                            </TableCell>
+                            <TableCell align="right">
+                              <TopicSwitch
+                                size="small"
+                                checked={writeLocalPermissions?.includes(
+                                  `realestate/${topic.name.toLowerCase()}`
+                                )}
+                                name={topic.name + "-write"}
+                                onChange={() =>
+                                  handleWriteLocalPermissions(
+                                    `realestate/${topic.name.toLowerCase()}`
+                                  )
+                                }
+                              />
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </React.Fragment>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -565,25 +590,34 @@ function DialogBox(props) {
                 and return to the App Exchange to repeat this process.
               </Typography>
             )} */}
-            {isFranchiseUser && application.accessLevel !== 'agent' && (
-              <Grid container item direction='row' justifyContent="center" alignItems="baseline">
-                  <Grid item>
-                <Typography
-                  className={classes.firstMsg}
-                  align="center"
-                  variant="subtitle2"
-                >
-                  Show this app to agents/teams?
-                </Typography>
-              </Grid>
+            {isFranchiseUser && application.accessLevel !== "franchisees" && (
+              <Grid
+                container
+                item
+                direction="row"
+                justifyContent="center"
+                alignItems="baseline"
+              >
                 <Grid item>
-                <TopicSwitch
-                  size="small"
-                  checked={localApplication?.find(ele => ele.id === application.id)?.isFranchiseVisible ?? false}
-                  name={'show'}
-                  onChange={() => handleUpdateLocalStore(application.id)}
-                />
-              </Grid>
+                  <Typography
+                    className={classes.firstMsg}
+                    align="center"
+                    variant="subtitle2"
+                  >
+                    Show this app to agents/teams?
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <TopicSwitch
+                    size="small"
+                    checked={
+                      localApplication?.find((ele) => ele.id === application.id)
+                        ?.isFranchiseVisible ?? false
+                    }
+                    name={"show"}
+                    onChange={() => handleUpdateLocalStore(application.id)}
+                  />
+                </Grid>
               </Grid>
             )}
           </Grid>
@@ -654,11 +688,9 @@ function DialogBox(props) {
                   align="right"
                   variant="subtitle2"
                 >
-                  {`By clicking ${type} you agree to ${
-                    type !== "Disconnect" ? "enable" : "disable"
-                  }
-                                    data sharing between this vendor and the
-                                    connected applications depicted above.`}
+                  {`${
+                    isFranchiseUser ? "Franchisee" : "Your"
+                  } data will be shared (or not shared) between this vendor and connected applications per the selection above`}
                 </Typography>
               </Grid>
             </Grid>

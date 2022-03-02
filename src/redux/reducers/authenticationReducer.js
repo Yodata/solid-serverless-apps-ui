@@ -100,10 +100,11 @@ const authenticationReducer = (state = defaultState, action) => {
       const userProfile = action.profile;
       console.log({userProfile})
       const role = userProfile.type;
-      const parentOrg = role === 'RealEstateOrganzation' ? convertToFranchiseStore(userProfile.id) : convertToFranchiseStore(userProfile.parentOrganization[0])
+
+      const parentOrg = role === "RealEstateOrganization" ? convertToFranchiseStore(userProfile.id) : convertToFranchiseStore(userProfile.parentOrganization[0])
       return {
         ...state,
-        isFranchiseUser: role === 'RealEstateOrganzation' ? true : false,
+        isFranchiseUser: role === "RealEstateOrganization" ? true : false,
         parentOrg
       };
     case LOGOUT_USER:
