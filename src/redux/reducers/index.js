@@ -6,6 +6,7 @@ import applicationReducer from './applicationReducer';
 import authenticationReducer from './authenticationReducer';
 import subscriptionReducer from './subscriptionReducer'
 import toastReducer from '../slices/toastSlice'
+import topicLabelReducer from '../slices/topicSlice'
 
 const rootReducer = combineReducers({
     services: servicesReducer,
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
     groups: groupReducer,
     auth: authenticationReducer,
     subs: subscriptionReducer,
-    toast: toastReducer
+    toast: toastReducer,
+    topicLabel: topicLabelReducer
 })
 
 export default rootReducer;
