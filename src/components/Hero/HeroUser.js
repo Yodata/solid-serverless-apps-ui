@@ -5,7 +5,7 @@ import { withStyles, Button, Grid, Typography } from '@material-ui/core';
 import { history } from '../Authentication/history';
 import endpoint from '../../api/endpoints'
 import { useSelector, useDispatch } from 'react-redux'
-import { authorisedUserList, setProfileId } from '../../redux/actions/authenticationActions'
+import { authorisedUserList, setProfileId, getParentOrgandRole } from '../../redux/actions/authenticationActions'
 import { userSubscriptions } from '../../redux/actions/subscriptionAction'
 import TextField from '@material-ui/core/TextField'
 import Select from '@material-ui/core/Select'
@@ -69,6 +69,7 @@ function HeroUser(props) {
 
     const handleSubmit = () => {
         dispatch(setProfileId(`https://${user}.${process.env.REACT_APP_HOSTNAME}/${endpoint.profile}`))
+        dispatch(getParentOrgandRole())
         dispatch(serviceEnabled(false))
         dispatch(serviceUpdated())
         dispatch(userSubscriptions(user))

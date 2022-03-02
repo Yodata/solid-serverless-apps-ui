@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
@@ -23,7 +23,7 @@ import {
   serviceEnabled,
   serviceUpdated,
 } from "../../redux/slices/servicesSlice";
-import {updateLocalAppStore} from '../../redux/actions/applicationActions'
+import { updateLocalAppStore } from "../../redux/actions/applicationActions";
 import { Checkbox } from "@material-ui/core";
 import publishEvent from "../../api/publishEvents";
 
@@ -130,8 +130,8 @@ export function CardComponent(props) {
     updatedID,
     userData,
     userSubs,
-    localApplication,
-    updateLocalAppStore
+    localStore,
+    updateLocalAppStore,
   } = props;
   const [state, setState] = React.useState({
     isEditable: false,
@@ -161,6 +161,34 @@ export function CardComponent(props) {
       [],
   });
 
+  useEffect(() => {
+    setState({
+      ...state,
+      readLocalPermissions:
+        userSubs?.items?.find((ele) => ele.agent === application.id)
+          ?.subscribes ??
+        application.permissions
+          .map((value) => {
+            return (
+              value.read === true && `realestate/${value.name.toLowerCase()}`
+            );
+          })
+          .filter(Boolean) ??
+        [],
+      writeLocalPermissions:
+        userSubs?.items?.find((ele) => ele.agent === application.id)
+          ?.publishes ??
+        application.permissions
+          .map((value) => {
+            return (
+              value.write === true && `realestate/${value.name.toLowerCase()}`
+            );
+          })
+          .filter(Boolean) ??
+        [],
+    });
+  }, [userSubs]);
+
   const handleReadLocalPermissions = (topic) => {
     const newUserPermissions = state.readLocalPermissions.includes(topic)
       ? state.readLocalPermissions.filter((value) => value !== topic)
@@ -176,10 +204,22 @@ export function CardComponent(props) {
   };
 
   const handleUpdateLocalStore = (id) => {
-    const appObj = localApplication?.find(ele => ele.id === id)
-    const newLocalApp =  {...appObj, isFranchiseVisible: !appObj.isFranchiseVisible}
-    updateLocalAppStore(newLocalApp)
-  }
+    let newLocalApp = {}
+      const appObj = localStore?.find((ele) => ele.id === id);
+      if(appObj){
+      console.log({appObj: appObj})
+      newLocalApp = {
+        ...appObj,
+        isFranchiseVisible: !appObj.isFranchiseVisible,
+      };
+    } else {
+      newLocalApp = {
+        id,
+        isFranchiseVisible: true
+      }
+    }
+    updateLocalAppStore(newLocalApp);
+  };
 
   const handleEdit = () => {
     setState({ ...state, isEditable: true });
@@ -245,11 +285,13 @@ export function CardComponent(props) {
   const handleAuthorize = (type) => {
     const payload = generateData(type);
     if (type !== "Update") {
-      if(state.readLocalPermissions.length === 0 &&
-        state.readWritePermissions.length === 0){
-          enableService({id: application.id.toLowerCase(), connect: false});
-        }
-        enableService({id: application.id.toLowerCase(), connect: true});
+      if (
+        state.readLocalPermissions.length === 0 &&
+        state.readWritePermissions.length === 0
+      ) {
+        enableService({ id: application.id.toLowerCase(), connect: false });
+      }
+      enableService({ id: application.id.toLowerCase(), connect: true });
     } else {
       const newUpdateIDs = updatedID.slice();
       const index = newUpdateIDs.indexOf(application.id.toLowerCase());
@@ -284,11 +326,11 @@ export function CardComponent(props) {
       data: {
         type: `${
           type !== "Update"
-          ? state.readLocalPermissions.length === 0 &&
-            state.readWritePermissions.length === 0
-            ? "Revoke"
-            : "Authorize"
-          : "Update"
+            ? state.readLocalPermissions.length === 0 &&
+              state.readWritePermissions.length === 0
+              ? "Revoke"
+              : "Authorize"
+            : "Update"
         }Action`,
         agent: `${userData.profile_id}`,
         instrument: `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}`,
@@ -529,7 +571,7 @@ const mapStateToProps = (state) => {
     userData: state.auth.userData,
     userId: state.auth.userId,
     userSubs: state.subs.userSubs,
-    localApplication: state.apps?.localStoreData?.application,
+    localStore: state.apps?.localStoreData?.application,
   };
 };
 

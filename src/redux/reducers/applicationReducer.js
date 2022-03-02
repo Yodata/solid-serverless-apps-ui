@@ -3,7 +3,7 @@ import {
   ADD_APP,
   EDIT_APP,
   GET_LOCAL_APPS,
-  UPDATE_LOCAL_STORE
+  UPDATE_LOCAL_STORE,
 } from "../actions/applicationActions";
 
 const applicationReducer = (state = {}, action) => {
@@ -48,17 +48,24 @@ const applicationReducer = (state = {}, action) => {
         },
       };
     case UPDATE_LOCAL_STORE:
-      const index = state.localStoreData.application.findIndex(x => x.id === action.application.id)
-      const newLocalApp = { ...action.application };
-      const newLocalStoreData = state.localStoreData.application.slice();
-      newLocalStoreData.splice(index, 1, newLocalApp);
+      let newLocalStoreData = [];
+      if (state.localStoreData) {
+        const index = state.localStoreData.application.findIndex(
+          (x) => x.id === action.application.id
+        );
+        const newLocalApp = { ...action.application };
+        newLocalStoreData = state.localStoreData.application.slice();
+        newLocalStoreData.splice(index, 1, newLocalApp);
+      } else {
+        newLocalStoreData.push(action.application)
+      }
       return {
         ...state,
         localStoreData: {
           ...state.localStoreData,
-          application: [...newLocalStoreData]
-        }
-      }
+          application: [...newLocalStoreData],
+        },
+      };
     default:
       return state;
   }
