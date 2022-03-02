@@ -13,6 +13,7 @@ export const LOGOUT_USER = 'LOGOUT_USER';
 export const AUTHORISED_USER = 'AUTHORISED_USER'
 export const LIST_OF_ROLES = 'LIST_OF_ROLES'
 export const SET_PROFILE_ID = 'SET_PROFILE_ID'
+export const SET_ORGANISATION_ROLE = 'SET_ORGANISATION_ROLE'
 
 
 /**
@@ -33,6 +34,10 @@ const authorisedUser = payload => {
 
 const listOfRoles = payload => {
     return ({ type: LIST_OF_ROLES, profile: payload })
+}
+
+const setOrganisationRole = payload => {
+    return ({ type: SET_ORGANISATION_ROLE, profile: payload })
 }
 
 export const setProfileId = payload => {
@@ -81,6 +86,7 @@ export const authorisedUserList = () => {
         try {
             const response = await API.get(`https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.credentials}`)
             dispatch(authorisedUser(response.data.adminUsers))
+            dispatch(getParentOrgandRole())
         } catch (err) {
             console.log(err)
         } finally {
@@ -95,6 +101,18 @@ export const franchiseUserList = () => {
         try {
             const response = await API.get(getState().auth.userData.profile_id)
             dispatch(listOfRoles(response.data))
+        } catch (err) {
+            console.log(err)
+        }
+    }
+}
+
+export const getParentOrgandRole = () => {
+    return async (dispatch, getState) => {
+        try {
+            const response = await API.get(getState().auth.userData.profile_id)
+            console.log('response: '+JSON.stringify(response))
+            dispatch(setOrganisationRole(response.data))
         } catch (err) {
             console.log(err)
         }
