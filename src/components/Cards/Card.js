@@ -286,8 +286,8 @@ export function CardComponent(props) {
     const payload = generateData(type);
     if (type !== "Update") {
       if (
-        state.readLocalPermissions.length === 0 &&
-        state.readWritePermissions.length === 0
+        state.readLocalPermissions?.length === 0 &&
+        state.readWritePermissions?.length === 0
       ) {
         enableService({ id: application.id.toLowerCase(), connect: false });
       }
@@ -316,8 +316,8 @@ export function CardComponent(props) {
     return {
       topic: `yodata/subscription#${
         type !== "Update"
-          ? state.readLocalPermissions.length === 0 &&
-            state.readWritePermissions.length === 0
+          ? state.readLocalPermissions && state.readLocalPermissions?.length === 0 &&
+          state.readWritePermissions && state.readWritePermissions.length === 0
             ? "revoke"
             : "authorize"
           : "update"
@@ -326,8 +326,8 @@ export function CardComponent(props) {
       data: {
         type: `${
           type !== "Update"
-            ? state.readLocalPermissions.length === 0 &&
-              state.readWritePermissions.length === 0
+            ? state.readLocalPermissions?.length && state.readLocalPermissions?.length === 0 &&
+            state.readWritePermissions?.length && state.readWritePermissions?.length === 0
               ? "Revoke"
               : "Authorize"
             : "Update"
