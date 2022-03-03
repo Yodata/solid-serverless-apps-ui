@@ -53,11 +53,16 @@ const applicationReducer = (state = {}, action) => {
         const index = state.localStoreData.application.findIndex(
           (x) => x.id === action.application.id
         );
-        const newLocalApp = { ...action.application };
-        newLocalStoreData = state.localStoreData.application.slice();
-        newLocalStoreData.splice(index, 1, newLocalApp);
+        if (index !== -1) {
+          const newLocalApp = { ...action.application };
+          newLocalStoreData = state.localStoreData.application.slice();
+          newLocalStoreData.splice(index, 1, newLocalApp);
+        } else {
+          newLocalStoreData = state.localStoreData.application.slice();
+          newLocalStoreData.push(action.application);
+        }
       } else {
-        newLocalStoreData.push(action.application)
+        newLocalStoreData.push(action.application);
       }
       return {
         ...state,
