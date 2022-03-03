@@ -193,6 +193,7 @@ export function CardComponent(props) {
     const newUserPermissions = state.readLocalPermissions.includes(topic)
       ? state.readLocalPermissions.filter((value) => value !== topic)
       : [...state.readLocalPermissions, topic];
+      console.log({read: newUserPermissions})
     setState({ ...state, readLocalPermissions: newUserPermissions });
   };
 
@@ -200,14 +201,15 @@ export function CardComponent(props) {
     const newUserPermissions = state.writeLocalPermissions.includes(topic)
       ? state.writeLocalPermissions.filter((value) => value !== topic)
       : [...state.writeLocalPermissions, topic];
+      console.log({write: newUserPermissions})
     setState({ ...state, writeLocalPermissions: newUserPermissions });
   };
 
   const handleUpdateLocalStore = (id) => {
-    let newLocalApp = {}
-      const appObj = localStore?.find((ele) => ele.id === id);
-      if(appObj){
-      console.log({appObj: appObj})
+    let newLocalApp = {};
+    const appObj = localStore?.find((ele) => ele.id === id);
+    if (appObj) {
+      console.log({ appObj: appObj });
       newLocalApp = {
         ...appObj,
         isFranchiseVisible: !appObj.isFranchiseVisible,
@@ -215,8 +217,8 @@ export function CardComponent(props) {
     } else {
       newLocalApp = {
         id,
-        isFranchiseVisible: true
-      }
+        isFranchiseVisible: true,
+      };
     }
     updateLocalAppStore(newLocalApp);
   };
@@ -287,7 +289,7 @@ export function CardComponent(props) {
     if (type !== "Update") {
       if (
         state.readLocalPermissions?.length === 0 &&
-        state.readWritePermissions?.length === 0
+        state.writeLocalPermissions?.length === 0
       ) {
         enableService({ id: application.id.toLowerCase(), connect: false });
       }
@@ -301,7 +303,7 @@ export function CardComponent(props) {
     handleDialogClose();
     publishEvent(payload);
   };
-  console.log({ permis: application.permissions });
+
   const generateData = (type) => {
     // const readPermissions = application.permissions
     //   .map((value) => {
@@ -313,11 +315,14 @@ export function CardComponent(props) {
     //     return value.write === true && `realestate/${value.name.toLowerCase()}`;
     //   })
     //   .filter(Boolean);
+    console.log('hi')
+    console.log(state.readLocalPermissions)
+    console.log(state.writeLocalPermissions)
     return {
       topic: `yodata/subscription#${
         type !== "Update"
-          ? state.readLocalPermissions && state.readLocalPermissions?.length === 0 &&
-          state.readWritePermissions && state.readWritePermissions.length === 0
+          ? state.readLocalPermissions?.length === 0 &&
+            state.writeLocalPermissions?.length === 0
             ? "revoke"
             : "authorize"
           : "update"
@@ -326,8 +331,9 @@ export function CardComponent(props) {
       data: {
         type: `${
           type !== "Update"
-            ? state.readLocalPermissions?.length && state.readLocalPermissions?.length === 0 &&
-            state.readWritePermissions?.length && state.readWritePermissions?.length === 0
+            ? 
+              state.readLocalPermissions?.length === 0 &&
+              state.writeLocalPermissions?.length === 0
               ? "Revoke"
               : "Authorize"
             : "Update"

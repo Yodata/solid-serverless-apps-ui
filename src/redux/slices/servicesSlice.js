@@ -16,11 +16,12 @@ const serviceSlice = createSlice({
       console.log({action: action.payload})
       const newEnabledIDs = action.payload
         ? action.payload.connect
-          ? state.enabledID.includes(action.payload)
+          ? state.enabledID.includes(action.payload.id)
             ? [...state.enabledID]
             : [...state.enabledID, action.payload.id]
-          : state.enabledID.filter((value) => value !== action.payload)
+          : state.enabledID.filter((value) => value !== action.payload.id)
         : [];
+        console.log({newEnabledIDs})
       return {
         ...state,
         enabledID: newEnabledIDs,
