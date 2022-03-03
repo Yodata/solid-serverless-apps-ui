@@ -45,13 +45,14 @@ function HeroUser(props) {
     const { classes } = props
     const state = useSelector(state => ({
         id: state.auth.userId,
+        userData: state.auth.userData,
         userList: state.auth.userList,
         franchiseList: state.auth.franchiseList,
         success: state.toast.success
     }))
 
     const dispatch = useDispatch()
-    const [user, setUser] = React.useState(0)
+    const [user, setUser] = React.useState(state.userData.contact_id)
     const [franchiseUser, setFranchiseUser] = React.useState('')
     const [toastOpen, setToastOpen] = React.useState(false)
 
@@ -89,7 +90,6 @@ function HeroUser(props) {
     const handleToastClose = () => {
         setToastOpen(false)
     }
-
     return (
         <>
             <Paper elevation={0}>
@@ -113,7 +113,7 @@ function HeroUser(props) {
                                             variant="outlined"
                                             className={classes.userText}
                                             onChange={handleChange}
-                                            defaultValue={state.id}
+                                            defaultValue={user}
                                             InputProps={{
                                                 classes: {
                                                     input: classes.resize,
