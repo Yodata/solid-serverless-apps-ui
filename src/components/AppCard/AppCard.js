@@ -198,7 +198,7 @@ function AppCard(props) {
           ))}
         </Grid>
       </Grid>
-      <ManageTopics open={openManageTopics} applications={applications} />
+      <ManageTopics open={openManageTopics} applications={applications} handleDialog={setOpenManageTopics}/>
     </React.Fragment>
   );
 }

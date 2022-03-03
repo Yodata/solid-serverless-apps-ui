@@ -295,10 +295,7 @@ function DialogBox(props) {
       return null;
     })
     .filter(Boolean);
-
-  console.log({ readLocalPermissions });
-  console.log({ writeLocalPermissions });
-
+    console.log(connectedApps)
   return (
     <React.Fragment>
       <Dialog
@@ -350,7 +347,7 @@ function DialogBox(props) {
                                 ? "Website Customer Activity"
                                 : topic.name}
                             </TableCell>
-                            <TableCell>Receive</TableCell>
+                            <TableCell>Receive from</TableCell>
                             <TableCell>
                               <>
                                 <Grid
@@ -465,7 +462,7 @@ function DialogBox(props) {
                                 ? "Website Customer Activity"
                                 : topic.name}
                             </TableCell>
-                            <TableCell>Send</TableCell>
+                            <TableCell>Send to</TableCell>
                             <TableCell>
                               <>
                                 <Grid
