@@ -290,12 +290,16 @@ function DialogBox(props) {
             };
           })
           .filter(Boolean);
-        return { [topic.name.toLowerCase()]: connectedApplication };
+        return {
+          [topic.name.toLowerCase()]: connectedApplication.filter(
+            (v, i, a) => a.findIndex((x) => x.name === v.name) === i
+          ),
+        };
       }
       return null;
     })
     .filter(Boolean);
-    console.log(connectedApps)
+  console.log(connectedApps);
   return (
     <React.Fragment>
       <Dialog
@@ -364,10 +368,16 @@ function DialogBox(props) {
                                         return (
                                           app[topic.name.toLowerCase()] &&
                                           app[topic.name.toLowerCase()].map(
-                                            (value) => (
-                                              <>
-                                                <Grid item>
-                                                  {/* <Tooltip title={!value.type ?
+                                            (value) => {
+                                              if (
+                                                allApplications.find(
+                                                  (x) => x.name === value.name
+                                                )
+                                              ) {
+                                                return (
+                                                  <>
+                                                    <Grid item>
+                                                      {/* <Tooltip title={!value.type ?
                                                                                                 (`${application.name}
                                                                                     ${(topic.read && topic.write) ?
                                                                                                         'sends and receives' : (
@@ -397,40 +407,43 @@ function DialogBox(props) {
                                                                                                 )
                                                                                             }
                                                                                                 arrow> */}
-                                                  <Tooltip
-                                                    title={`${
-                                                      value.name
-                                                        ?.charAt(0)
-                                                        .toUpperCase() +
-                                                      value.name?.slice(1)
-                                                    }`}
-                                                    arrow
-                                                  >
-                                                    {value.image ? (
-                                                      <img
-                                                        alt="connected application"
-                                                        src={value.image}
-                                                        width="70"
-                                                        name={value.name}
-                                                        onError={
-                                                          handleImageError
-                                                        }
-                                                      />
-                                                    ) : (
-                                                      <Avatar
-                                                        className={
-                                                          classes.avatar
-                                                        }
+                                                      <Tooltip
+                                                        title={`${
+                                                          value.name
+                                                            ?.charAt(0)
+                                                            .toUpperCase() +
+                                                          value.name?.slice(1)
+                                                        }`}
+                                                        arrow
                                                       >
-                                                        {value.name
-                                                          ?.charAt(0)
-                                                          .toUpperCase()}
-                                                      </Avatar>
-                                                    )}
-                                                  </Tooltip>
-                                                </Grid>
-                                              </>
-                                            )
+                                                        {value.image ? (
+                                                          <img
+                                                            alt="connected application"
+                                                            src={value.image}
+                                                            width="70"
+                                                            name={value.name}
+                                                            onError={
+                                                              handleImageError
+                                                            }
+                                                          />
+                                                        ) : (
+                                                          <Avatar
+                                                            className={
+                                                              classes.avatar
+                                                            }
+                                                          >
+                                                            {value.name
+                                                              ?.charAt(0)
+                                                              .toUpperCase()}
+                                                          </Avatar>
+                                                        )}
+                                                      </Tooltip>
+                                                    </Grid>
+                                                  </>
+                                                );
+                                              }
+                                              return null;
+                                            }
                                           )
                                         );
                                       }

@@ -171,11 +171,11 @@ function AppCard(props) {
             <>
               {application.isVisible &&
               (isFranchiseUser ||
-                !localStore ||
+                // !localStore ||
                 (localStore &&
-                  (!localStore.find((x) => x.id === application.id) ||
+                  // (!localStore.find((x) => x.id === application.id) ||
                     localStore.find((x) => x.id === application.id)
-                      .isFranchiseVisible))) ? (
+                      ?.isFranchiseVisible)) ? (
                 <Grid className={classes.app} item key={application.name}>
                   <Card
                     application={application}
