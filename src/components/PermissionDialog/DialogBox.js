@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -25,10 +25,21 @@ const styles = (theme) => ({
     padding: 30,
     objectFit: "contain",
   },
+  connectedAppImage: {
+    objectFit: "contain",
+    // paddingLeft: 30,
+    // paddingRight: 30,
+    // marginBottom: 30,
+  },
   dialogPaper: {
     minWidth: "60vw",
     maxWidth: "60vw",
     overflowX: "hidden",
+  },
+  connectedAppDialog: {
+    maxWidth: "60vw",
+    overflowX: "hidden",
+    padding: 30,
   },
   textSpacing: {
     paddingBottom: 20,
@@ -81,6 +92,9 @@ const styles = (theme) => ({
     width: theme.spacing(3),
     height: theme.spacing(3),
   },
+  connectedCell: {
+    textDecoration: "underline",
+  },
 });
 
 const TopicSwitch = withStyles((theme) => ({
@@ -124,6 +138,7 @@ function DialogBox(props) {
     handleWriteLocalPermissions,
     handleReadLocalPermissions,
     handleUpdateLocalStore,
+    topicLabels,
   } = props;
 
   const onlyReadRole = [
@@ -137,6 +152,18 @@ function DialogBox(props) {
   const topicsToShow = ["Lead", "Contact", "MarketingPreferences", "Website"];
   Object.freeze(topicsToShow);
 
+  const [state, setState] = useState({
+    readPermissionArray: [],
+    writePermissionArray: [],
+    isConnectedApp: false,
+  });
+
+  useEffect(() => {
+    if (open) {
+      createPermissionsArray();
+    }
+  }, [open]);
+
   const handleClose = () => {
     handleDialog();
   };
@@ -145,161 +172,207 @@ function DialogBox(props) {
     handleAuthorize(type);
   };
 
-  const handleImageError = (e) => {
-    e.target.onerror = null;
-    const name = e.target.name;
-    return (
-      <Avatar className={classes.avatar}>
-        {name?.charAt(0).toUpperCase()}
-      </Avatar>
-    );
-  };
-  console.log({ isFranchiseUser });
-  const getSubsIdentifier = (value, topic) => {
-    if (!value.publishes && !value.subscribes) {
-      if (value.object.includes(topic.name.toLowerCase())) {
-        return `${value.agent}`;
-      }
-    } else {
-      if (topic.read && topic.write) {
-        if (
-          value.subscribes.find((value) =>
-            value.includes(topic.name.toLowerCase())
-          ) &&
-          value.publishes.find((value) =>
-            value.includes(topic.name.toLowerCase())
-          )
-        ) {
-          return `${value.agent}`;
-        } else if (
-          value.subscribes.find((value) =>
-            value.includes(topic.name.toLowerCase())
-          )
-        ) {
-          return `${value.agent}?read`;
-        } else if (
-          value.publishes.find((value) =>
-            value.includes(topic.name.toLowerCase())
-          )
-        ) {
-          return `${value.agent}?write`;
-        }
-      } else if (
-        topic.write &&
-        !topic.read &&
-        value.subscribes.length > 0 &&
-        value.subscribes.find((value) =>
-          value.includes(topic.name.toLowerCase())
-        )
-      ) {
-        return `${value.agent}`;
-      } else if (
-        topic.read &&
-        !topic.write &&
-        value.publishes.length > 0 &&
-        value.publishes.find((value) =>
-          value.includes(topic.name.toLowerCase())
-        )
-      ) {
-        return `${value.agent}`;
-      }
-    }
-  };
-
-  const connectedApps = application.permissions
-    .map((topic) => {
-      if (topic.read || topic.write) {
-        const globalSubsIdentifier =
-          globalSubs && globalSubs.items
-            ? globalSubs.items
-                .map((value) => getSubsIdentifier(value, topic))
-                .filter(Boolean)
-            : [];
-        //value => {
-        // if (!value.publishes && !value.subscribes) {
-        //     if (value.object.includes(topic.name.toLowerCase())) {
-        //         return `${value.agent}`
-        //     }
-        // } else {
-        //     if (topic.read && topic.write) {
-        //         if (value.subscribes.find(value => value.includes(topic.name.toLowerCase())) &&
-        //             value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
-        //             return `${value.agent}`
-        //         } else
-        //             if (value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
-        //                 return `${value.agent}?read`
-        //             } else
-        //                 if (value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
-        //                     return `${value.agent}?write`
-        //                 }
-        //     }
-        //     else
-        //         if (topic.write && !topic.read && value.subscribes.length > 0 &&
-        //             value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
-        //             return `${value.agent}`
-        //         } else
-        //             if (topic.read && !topic.write && value.publishes.length > 0 &&
-        //                 value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
-        //                 return `${value.agent}`
-        //             }
-
-        // }
-        // ).filter(Boolean)
-        console.log(application.id);
-        console.log(application.accessLevel);
-        console.log(userSubs);
-
-        const userSubsIdentifier =
-          userSubs && userSubs.items
-            ? userSubs.items
-                .map((value) => getSubsIdentifier(value, topic))
-                .filter(Boolean)
-            : [];
-        console.log("global");
-        console.log(globalSubsIdentifier);
-        const userFilteredSubs = userSubsIdentifier.filter(
-          (f) => !globalSubsIdentifier.some((g) => f.includes(g)) // remove duplicate pods from global
-        );
-        console.log("user 1");
-        console.log(userFilteredSubs);
-        const subsIdentifier = [...globalSubsIdentifier, ...userFilteredSubs]
-          ?.filter(
-            (f) =>
-              //const subsIdentifier = [...userSubsIdentifier]?.filter(f =>
-              !BlackListPods.some((b) => b.pod === f) // remove internal services
+  const getConnectedApps = (type, topic) => {
+    return userSubs && userSubs.items
+      ? userSubs.items
+          .map((value) => {
+            if (
+              value[type].map((value) => value.split("/")[1]).includes(topic)
+            ) {
+              const selectedApp = allApplications.find(
+                (x) => x.id === value.agent
+              );
+              return (
+                selectedApp && {
+                  //remove any app which is not in the store
+                  id: selectedApp.id,
+                  name: selectedApp.name
+                    ? selectedApp.name
+                    : value.agent.split("/")[2].split(".").shift(),
+                  image: selectedApp.logo?.url,
+                }
+              );
+            }
+          })
+          .filter(Boolean)
+          .filter(
+            (s) => s.id !== application.id //remove self
           )
           .filter(
-            (s) => s !== application.id //remove self
+            (v, i, a) => a.findIndex((x) => x.name === v.name) === i //remove same name and duplicates
           )
-          .sort((a, b) => {
-            return a.toUpperCase() > b.toUpperCase() ? 1 : -1;
-          });
-        console.log("user");
-        console.log(subsIdentifier);
-        const connectedApplication = subsIdentifier
-          ?.map((sub) => {
-            const selectedApp = allApplications.find(
-              (ele) => ele.id === `${sub.split("?")[0]}`
-            );
-            return {
-              name: selectedApp
-                ? selectedApp.name
-                : sub.split("/")[2].split(".").shift(),
-              image: selectedApp?.logo?.url,
-              type: sub.split("?")[1],
-            };
-          })
-          .filter(Boolean);
-        return {
-          [topic.name.toLowerCase()]: connectedApplication.filter(
-            (v, i, a) => a.findIndex((x) => x.name === v.name) === i
-          ),
-        };
+      : [];
+  };
+
+  const mergeTopics = (topicArray) => {
+    let seen = new Map();
+    const array = topicArray.filter(function (entry) {
+      let previous;
+      // Have we seen this label before?
+      // console.log({entry})
+      if (seen.hasOwnProperty(entry.label)) {
+        // Yes, grab it and add this data to it
+        previous = seen[entry.label];
+        previous.topics.push(...entry.topics);
+        previous.connectedApps.push(...entry.connectedApps);
+        // Don't keep this entry, we've merged it into the previous one
+        return false;
       }
-      return null;
-    })
-    .filter(Boolean);
-  console.log(connectedApps);
+      // Remember that we've seen it
+      seen[entry.label] = entry;
+      // Keep this one, we'll merge any others that match into it
+      return true;
+    });
+    // console.log({ array });
+    return array;
+  };
+
+  // const connectedApps = application.permissions
+  //   .map((topic) => {
+  //     if (topic.read || topic.write) {
+  //       const globalSubsIdentifier =
+  //         globalSubs && globalSubs.items
+  //           ? globalSubs.items
+  //               .map((value) => getSubsIdentifier(value, topic))
+  //               .filter(Boolean)
+  //           : [];
+  //       //value => {
+  //       // if (!value.publishes && !value.subscribes) {
+  //       //     if (value.object.includes(topic.name.toLowerCase())) {
+  //       //         return `${value.agent}`
+  //       //     }
+  //       // } else {
+  //       //     if (topic.read && topic.write) {
+  //       //         if (value.subscribes.find(value => value.includes(topic.name.toLowerCase())) &&
+  //       //             value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+  //       //             return `${value.agent}`
+  //       //         } else
+  //       //             if (value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
+  //       //                 return `${value.agent}?read`
+  //       //             } else
+  //       //                 if (value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+  //       //                     return `${value.agent}?write`
+  //       //                 }
+  //       //     }
+  //       //     else
+  //       //         if (topic.write && !topic.read && value.subscribes.length > 0 &&
+  //       //             value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
+  //       //             return `${value.agent}`
+  //       //         } else
+  //       //             if (topic.read && !topic.write && value.publishes.length > 0 &&
+  //       //                 value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
+  //       //                 return `${value.agent}`
+  //       //             }
+
+  //       // }
+  //       // ).filter(Boolean)
+
+  //       const userSubsIdentifier =
+  //         userSubs && userSubs.items
+  //           ? userSubs.items
+  //               .map((value) => getSubsIdentifier(value, topic))
+  //               .filter(Boolean)
+  //           : [];
+  //       const userFilteredSubs = userSubsIdentifier.filter(
+  //         (f) => !globalSubsIdentifier.some((g) => f.includes(g)) // remove duplicate pods from global
+  //       );
+  //       const subsIdentifier = [...globalSubsIdentifier, ...userFilteredSubs]
+  //         ?.filter(
+  //           (f) =>
+  //             //const subsIdentifier = [...userSubsIdentifier]?.filter(f =>
+  //             !BlackListPods.some((b) => b.pod === f) // remove internal services
+  //         )
+  //         .filter(
+  //           (s) => s !== application.id //remove self
+  //         )
+  //         .sort((a, b) => {
+  //           return a.toUpperCase() > b.toUpperCase() ? 1 : -1;
+  //         });
+  //         console.log({subsIdentifier})
+  //       const connectedApplication = subsIdentifier
+  //         ?.map((sub) => {
+  //           const selectedApp = allApplications.find(
+  //             (ele) => ele.id === `${sub.split("?")[0]}`
+  //           );
+  //           return {
+  //             name: selectedApp
+  //               ? selectedApp.name
+  //               : sub.split("/")[2].split(".").shift(),
+  //             image: selectedApp?.logo?.url,
+  //             type: sub.split("?")[1],
+  //           };
+  //         })
+  //         .filter(Boolean);
+  //       return {
+  //         [topic.name.toLowerCase()]: connectedApplication.filter(
+  //           (v, i, a) => a.findIndex((x) => x.name === v.name) === i
+  //         ),
+  //       };
+  //     }
+  //     return null;
+  //   })
+  //   .filter(Boolean);
+  // console.log(connectedApps);
+  // console.log({ topicLabels });
+
+  console.log({readLocalPermissions})
+
+  const createPermissionsArray = () => {
+    let readArray = application.permissions
+      .map((topic) => {
+        if (topic.read) {
+          const labelObject =
+            topicLabels[topic?.name?.toLowerCase().replaceAll(/\s/g, "")];
+          const label = labelObject?.isLabelEnabled
+            ? labelObject?.label
+            : labelObject?.name;
+          const connectedApps = getConnectedApps(
+            "publishes",
+            topic?.name?.toLowerCase()
+          );
+          console.log({ readApps: connectedApps });
+          return {
+            topics: [topic.name],
+            label,
+            connectedApps,
+            type: "read",
+          };
+        }
+      })
+      .filter(Boolean);
+    let writeArray = application.permissions
+      .map((topic) => {
+        if (topic.write) {
+          const labelObject =
+            topicLabels[topic?.name?.toLowerCase().replaceAll(/\s/g, "")];
+          const label = labelObject?.isLabelEnabled
+            ? labelObject?.label
+            : labelObject?.name;
+          const connectedApps = getConnectedApps(
+            "subscribes",
+            topic?.name?.toLowerCase()
+          );
+          console.log({ writeApps: connectedApps });
+          return {
+            topics: [topic.name],
+            label,
+            connectedApps,
+            type: "write",
+          };
+        }
+      })
+      .filter(Boolean);
+    // console.log({ before: readPermissionArray });
+    // console.log({ beforeWrite: writePermissionArray });
+    readArray = mergeTopics(readArray);
+    writeArray = mergeTopics(writeArray);
+    console.log({ write: writeArray });
+    setState({
+      readPermissionArray: readArray,
+      writePermissionArray: writeArray,
+    });
+  };
+
   return (
     <React.Fragment>
       <Dialog
@@ -341,250 +414,439 @@ function DialogBox(props) {
                       isFranchiseUser) ||
                     (application.accessLevel === "agent" &&
                       !isFranchiseUser)) &&
-                    application.permissions?.map((topic) => (
-                      <React.Fragment key={topic.name}>
-                        {/* {topicsToShow.includes(topic.name) && */}
-                        {topic.read && (
-                          <TableRow key={`${topic.name}--read`}>
-                            <TableCell component="th" scope="row">
-                              {topic.name === "Website"
-                                ? "Website Customer Activity"
-                                : topic.name}
-                            </TableCell>
-                            <TableCell>Receive from</TableCell>
-                            <TableCell>
-                              <>
-                                <Grid
-                                  container
-                                  direction="row"
-                                  alignItems="center"
-                                >
-                                  {connectedApps &&
-                                    connectedApps.map((app) => {
-                                      if (
-                                        topic.name.toLowerCase() ===
-                                        Object.keys(app)[0].toLowerCase()
-                                      ) {
-                                        return (
-                                          app[topic.name.toLowerCase()] &&
-                                          app[topic.name.toLowerCase()].map(
-                                            (value) => {
-                                              if (
-                                                allApplications.find(
-                                                  (x) => x.name === value.name
-                                                )
-                                              ) {
-                                                return (
-                                                  <>
-                                                    <Grid item>
-                                                      {/* <Tooltip title={!value.type ?
-                                                                                                (`${application.name}
-                                                                                    ${(topic.read && topic.write) ?
-                                                                                                        'sends and receives' : (
-                                                                                                            topic.write ?
-                                                                                                                'sends' :
-                                                                                                                'receives'
-                                                                                                        )}
-                                                                                    ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
-                                                                                    ${(topic.read && topic.write) ?
-                                                                                                        'to/from' : (
-                                                                                                            topic.write ?
-                                                                                                                'to' :
-                                                                                                                'from'
-                                                                                                        )}
-                                                                                    ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}`
-                                                                                                ) : (`${application.name}
-                                                                                                ${value.type === 'write' ?
-                                                                                                        'receives' :
-                                                                                                        'sends'
-                                                                                                    }
-                                                                                                ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
-                                                                                                ${value.type === 'write' ?
-                                                                                                        'from' :
-                                                                                                        'to'
-                                                                                                    }
-                                                                                                ${value.name?.charAt(0).toUpperCase() + value.name?.slice(1)}`
-                                                                                                )
-                                                                                            }
-                                                                                                arrow> */}
-                                                      <Tooltip
-                                                        title={`${
-                                                          value.name
-                                                            ?.charAt(0)
-                                                            .toUpperCase() +
-                                                          value.name?.slice(1)
-                                                        }`}
-                                                        arrow
-                                                      >
-                                                        {value.image ? (
-                                                          <img
-                                                            alt="connected application"
-                                                            src={value.image}
-                                                            width="70"
-                                                            name={value.name}
-                                                            onError={
-                                                              handleImageError
-                                                            }
-                                                          />
-                                                        ) : (
-                                                          <Avatar
-                                                            className={
-                                                              classes.avatar
-                                                            }
-                                                          >
-                                                            {value.name
-                                                              ?.charAt(0)
-                                                              .toUpperCase()}
-                                                          </Avatar>
-                                                        )}
-                                                      </Tooltip>
-                                                    </Grid>
-                                                  </>
-                                                );
-                                              }
-                                              return null;
-                                            }
-                                          )
-                                        );
-                                      }
-                                      return null;
-                                    })}
-                                </Grid>
-                              </>
-                            </TableCell>
-                            <TableCell align="right">
-                              <TopicSwitch
-                                size="small"
-                                checked={readLocalPermissions?.includes(
-                                  `realestate/${topic.name.toLowerCase()}`
-                                )}
-                                name={topic.name + "-write"}
-                                onChange={() =>
-                                  handleReadLocalPermissions(
-                                    `realestate/${topic.name.toLowerCase()}`
+                    state.readPermissionArray.map((read) => (
+                      <React.Fragment key={`${read.label}-read--fragment`}>
+                        <TableRow key={`${read.label}-read--row`}>
+                          <TableCell component="th" scope="row">
+                            {read.label}
+                          </TableCell>
+                          <TableCell>Receive from</TableCell>
+                          <TableCell
+                            className={classes.connectedCell}
+                            onClick={() =>
+                              setState({
+                                ...state,
+                                isConnectedApp: true,
+                                connectedAppContent: read,
+                              })
+                            }
+                          >
+                            {`${read?.connectedApps?.length} connected applications`}
+                          </TableCell>
+                          <TableCell align="right">
+                            <TopicSwitch
+                              size="small"
+                              checked={read.topics.some((x) =>
+                                readLocalPermissions?.includes(
+                                  `realestate/${x.toLowerCase()}`
+                                )
+                              )}
+                              onChange={() => {
+                                handleReadLocalPermissions(
+                                  read.topics.map(
+                                    (x) => `realestate/${x.toLowerCase()}`
                                   )
-                                }
-                              />
-                            </TableCell>
-                          </TableRow>
-                        )}
-                        {topic.write && (
-                          <TableRow key={`${topic.name}--write`}>
-                            <TableCell component="th" scope="row">
-                              {topic.name === "Website"
-                                ? "Website Customer Activity"
-                                : topic.name}
-                            </TableCell>
-                            <TableCell>Send to</TableCell>
-                            <TableCell>
-                              <>
-                                <Grid
-                                  container
-                                  direction="row"
-                                  alignItems="center"
-                                >
-                                  {connectedApps &&
-                                    connectedApps.map((app) => {
-                                      if (
-                                        topic.name.toLowerCase() ===
-                                        Object.keys(app)[0].toLowerCase()
-                                      ) {
-                                        return (
-                                          app[topic.name.toLowerCase()] &&
-                                          app[topic.name.toLowerCase()].map(
-                                            (value) => (
-                                              <>
-                                                <Grid item>
-                                                  {/* <Tooltip title={!value.type ?
-                                                                                                    (`${application.name}
-                                                                                        ${(topic.read && topic.write) ?
-                                                                                                            'sends and receives' : (
-                                                                                                                topic.write ?
-                                                                                                                    'sends' :
-                                                                                                                    'receives'
-                                                                                                            )}
-                                                                                        ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
-                                                                                        ${(topic.read && topic.write) ?
-                                                                                                            'to/from' : (
-                                                                                                                topic.write ?
-                                                                                                                    'to' :
-                                                                                                                    'from'
-                                                                                                            )}
-                                                                                        ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}`
-                                                                                                    ) : (`${application.name}
-                                                                                                    ${value.type === 'write' ?
-                                                                                                            'receives' :
-                                                                                                            'sends'
-                                                                                                        }
-                                                                                                    ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data 
-                                                                                                    ${value.type === 'write' ?
-                                                                                                            'from' :
-                                                                                                            'to'
-                                                                                                        }
-                                                                                                    ${value.name?.charAt(0).toUpperCase() + value.name?.slice(1)}`
-                                                                                                    )
-                                                                                                }
-                                                                                                    arrow> */}
-                                                  <Tooltip
-                                                    title={`${
-                                                      value.name
-                                                        ?.charAt(0)
-                                                        .toUpperCase() +
-                                                      value.name?.slice(1)
-                                                    }`}
-                                                    arrow
-                                                  >
-                                                    {value.image ? (
-                                                      <img
-                                                        alt="connected application"
-                                                        src={value.image}
-                                                        width="70"
-                                                        name={value.name}
-                                                        onError={
-                                                          handleImageError
-                                                        }
-                                                      />
-                                                    ) : (
-                                                      <Avatar
-                                                        className={
-                                                          classes.avatar
-                                                        }
-                                                      >
-                                                        {value.name
-                                                          ?.charAt(0)
-                                                          .toUpperCase()}
-                                                      </Avatar>
-                                                    )}
-                                                  </Tooltip>
-                                                </Grid>
-                                              </>
-                                            )
-                                          )
-                                        );
-                                      }
-                                      return null;
-                                    })}
-                                </Grid>
-                              </>
-                            </TableCell>
-                            <TableCell align="right">
-                              <TopicSwitch
-                                size="small"
-                                checked={writeLocalPermissions?.includes(
-                                  `realestate/${topic.name.toLowerCase()}`
-                                )}
-                                name={topic.name + "-write"}
-                                onChange={() =>
-                                  handleWriteLocalPermissions(
-                                    `realestate/${topic.name.toLowerCase()}`
-                                  )
-                                }
-                              />
-                            </TableCell>
-                          </TableRow>
-                        )}
+                                );
+                              }}
+                            />
+                          </TableCell>
+                        </TableRow>
                       </React.Fragment>
                     ))}
+                  {
+                    (application.accessLevel === "both" ||
+                      (application.accessLevel === "franchisees" &&
+                        isFranchiseUser) ||
+                      (application.accessLevel === "agent" &&
+                        !isFranchiseUser)) &&
+                      state.writePermissionArray.map((write) => (
+                        <React.Fragment key={`${write.label}-write--fragment`}>
+                          <TableRow key={`${write.label}-write--row`}>
+                            <TableCell component="th" scope="row">
+                              {write.label}
+                            </TableCell>
+                            <TableCell>Send to</TableCell>
+                            <TableCell
+                              className={classes.connectedCell}
+                              onClick={() =>
+                                setState({
+                                  ...state,
+                                  isConnectedApp: true,
+                                  connectedAppContent: write,
+                                })
+                              }
+                            >
+                              {`${write?.connectedApps?.length} connected applications`}
+                            </TableCell>
+                            <TableCell align="right">
+                              <TopicSwitch
+                                size="small"
+                                checked={write.topics.some((x) =>
+                                  writeLocalPermissions?.includes(
+                                    `realestate/${x.toLowerCase()}`
+                                  )
+                                )}
+                                onChange={() =>
+                                  write.topics.forEach((x) =>
+                                    handleWriteLocalPermissions(
+                                      `realestate/${x.toLowerCase()}`
+                                    )
+                                  )
+                                }
+                              />
+                            </TableCell>
+                          </TableRow>
+                        </React.Fragment>
+                      ))
+                    // application.permissions?.map((topic) => {
+                    //   return (
+                    //     <></>
+                    //     // <React.Fragment key={topic.name}>
+                    //     //   {!(topicsDisplayed.includes(topic.name))&& topic.read && (
+                    //     //     <TableRow key={`${topic.name}--read`}>
+                    //     //       <TableCell component="th" scope="row">
+                    //     //         {topicLabels[
+                    //     //           topic?.name
+                    //     //             ?.toLowerCase()
+                    //     //             .replaceAll(/\s/g, "")
+                    //     //         ]?.isLabelEnabled
+                    //     //           ? topicLabels[
+                    //     //               topic?.name
+                    //     //                 ?.toLowerCase()
+                    //     //                 .replaceAll(/\s/g, "")
+                    //     //             ]?.label
+                    //     //           : topicLabels[
+                    //     //               topic?.name
+                    //     //                 ?.toLowerCase()
+                    //     //                 .replaceAll(/\s/g, "")
+                    //     //             ]?.name}
+                    //     //       </TableCell>
+                    //     //       <TableCell>Receive from</TableCell>
+                    //     //       <TableCell>
+                    //     //         <>
+                    //     //           <Grid
+                    //     //             container
+                    //     //             direction="row"
+                    //     //             alignItems="center"
+                    //     //           >
+                    //     //             {connectedApps &&
+                    //     //               connectedApps.map((app) => {
+                    //     //                 if (
+                    //     //                   !topicLabels[
+                    //     //                     topic?.name
+                    //     //                       ?.toLowerCase()
+                    //     //                       .replaceAll(/\s/g, "")
+                    //     //                   ]?.isLabelEnabled
+                    //     //                 ) {
+
+                    //     //                   if (
+                    //     //                     topic.name.toLowerCase() ===
+                    //     //                     Object.keys(app)[0].toLowerCase()
+                    //     //                   ) {
+                    //     //                     setTopicsDisplayed(
+                    //     //                       [...topicsDisplayed, topic.name]
+                    //     //                     );
+                    //     //                     return (
+                    //     //                       app[topic.name.toLowerCase()] &&
+                    //     //                       app[topic.name.toLowerCase()].map(
+                    //     //                         (value) => {
+                    //     //                           if (
+                    //     //                             allApplications.find(
+                    //     //                               (x) =>
+                    //     //                                 x.name === value.name
+                    //     //                             )
+                    //     //                           ) {
+                    //     //                             return (
+                    //     //                               <>
+                    //     //                                 <Grid item>
+                    //     //                                   <Tooltip
+                    //     //                                     title={`${
+                    //     //                                       value.name
+                    //     //                                         ?.charAt(0)
+                    //     //                                         .toUpperCase() +
+                    //     //                                       value.name?.slice(
+                    //     //                                         1
+                    //     //                                       )
+                    //     //                                     }`}
+                    //     //                                     arrow
+                    //     //                                   >
+                    //     //                                     {value.image ? (
+                    //     //                                       <img
+                    //     //                                         alt="connected application"
+                    //     //                                         src={
+                    //     //                                           value.image
+                    //     //                                         }
+                    //     //                                         width="70"
+                    //     //                                         name={
+                    //     //                                           value.name
+                    //     //                                         }
+                    //     //                                         onError={
+                    //     //                                           handleImageError
+                    //     //                                         }
+                    //     //                                       />
+                    //     //                                     ) : (
+                    //     //                                       <Avatar
+                    //     //                                         className={
+                    //     //                                           classes.avatar
+                    //     //                                         }
+                    //     //                                       >
+                    //     //                                         {value.name
+                    //     //                                           ?.charAt(0)
+                    //     //                                           .toUpperCase()}
+                    //     //                                       </Avatar>
+                    //     //                                     )}
+                    //     //                                   </Tooltip>
+                    //     //                                 </Grid>
+                    //     //                               </>
+                    //     //                             );
+                    //     //                           }
+                    //     //                           return null;
+                    //     //                         }
+                    //     //                       )
+                    //     //                     );
+                    //     //                   }
+                    //     //                 } else {
+                    //     //                   Object.values(topicLabels).map(
+                    //     //                     (obj) => {
+                    //     //                       if (
+                    //     //                         obj.label ===
+                    //     //                           topicLabels[
+                    //     //                             topic?.name
+                    //     //                               ?.toLowerCase()
+                    //     //                               .replaceAll(/\s/g, "")
+                    //     //                           ]?.label &&
+                    //     //                         obj.isLabelEnabled
+                    //     //                       ) {
+
+                    //     //                         if (
+                    //     //                           topic.name.toLowerCase() ===
+                    //     //                           Object.keys(
+                    //     //                             app
+                    //     //                           )[0].toLowerCase()
+                    //     //                         ) {
+                    //     //                           setTopicsDisplayed(
+                    //     //                             [...topicsDisplayed, topic?.name]
+                    //     //                            );
+                    //     //                           return (
+                    //     //                             app[
+                    //     //                               topic.name.toLowerCase()
+                    //     //                             ] &&
+                    //     //                             app[
+                    //     //                               topic.name.toLowerCase()
+                    //     //                             ].map((value) => {
+                    //     //                               if (
+                    //     //                                 allApplications.find(
+                    //     //                                   (x) =>
+                    //     //                                     x.name ===
+                    //     //                                     value.name
+                    //     //                                 )
+                    //     //                               ) {
+                    //     //                                 return (
+                    //     //                                   <>
+                    //     //                                     <Grid item>
+                    //     //                                       <Tooltip
+                    //     //                                         title={`${
+                    //     //                                           value.name
+                    //     //                                             ?.charAt(0)
+                    //     //                                             .toUpperCase() +
+                    //     //                                           value.name?.slice(
+                    //     //                                             1
+                    //     //                                           )
+                    //     //                                         }`}
+                    //     //                                         arrow
+                    //     //                                       >
+                    //     //                                         {value.image ? (
+                    //     //                                           <img
+                    //     //                                             alt="connected application"
+                    //     //                                             src={
+                    //     //                                               value.image
+                    //     //                                             }
+                    //     //                                             width="70"
+                    //     //                                             name={
+                    //     //                                               value.name
+                    //     //                                             }
+                    //     //                                             onError={
+                    //     //                                               handleImageError
+                    //     //                                             }
+                    //     //                                           />
+                    //     //                                         ) : (
+                    //     //                                           <Avatar
+                    //     //                                             className={
+                    //     //                                               classes.avatar
+                    //     //                                             }
+                    //     //                                           >
+                    //     //                                             {value.name
+                    //     //                                               ?.charAt(
+                    //     //                                                 0
+                    //     //                                               )
+                    //     //                                               .toUpperCase()}
+                    //     //                                           </Avatar>
+                    //     //                                         )}
+                    //     //                                       </Tooltip>
+                    //     //                                     </Grid>
+                    //     //                                   </>
+                    //     //                                 );
+                    //     //                               }
+                    //     //                               return null;
+                    //     //                             })
+                    //     //                           );
+                    //     //                         }
+                    //     //                       }
+                    //     //                     }
+                    //     //                   );
+                    //     //                 }
+                    //     //                 return null;
+                    //     //               })}
+                    //     //           </Grid>
+                    //     //         </>
+                    //     //       </TableCell>
+                    //     //       <TableCell align="right">
+                    //     //         <TopicSwitch
+                    //     //           size="small"
+                    //     //           checked={readLocalPermissions?.includes(
+                    //     //             `realestate/${topic.name.toLowerCase()}`
+                    //     //           )}
+                    //     //           name={topic.name + "-write"}
+                    //     //           onChange={() =>
+                    //     //             handleReadLocalPermissions(
+                    //     //               `realestate/${topic.name.toLowerCase()}`
+                    //     //             )
+                    //     //           }
+                    //     //         />
+                    //     //       </TableCell>
+                    //     //     </TableRow>
+                    //     //   )}
+                    //     //   {topic.write && (
+                    //     //     <TableRow key={`${topic.name}--write`}>
+                    //     //       <TableCell component="th" scope="row">
+                    //     //         {topicLabels[
+                    //     //           topic?.name
+                    //     //             ?.toLowerCase()
+                    //     //             .replaceAll(/\s/g, "")
+                    //     //         ]?.isLabelEnabled
+                    //     //           ? topicLabels[
+                    //     //               topic?.name
+                    //     //                 ?.toLowerCase()
+                    //     //                 .replaceAll(/\s/g, "")
+                    //     //             ]?.label
+                    //     //           : topicLabels[
+                    //     //               topic?.name
+                    //     //                 ?.toLowerCase()
+                    //     //                 .replaceAll(/\s/g, "")
+                    //     //             ]?.name}
+                    //     //       </TableCell>
+                    //     //       <TableCell>Send to</TableCell>
+                    //     //       <TableCell>
+                    //     //         <>
+                    //     //           <Grid
+                    //     //             container
+                    //     //             direction="row"
+                    //     //             alignItems="center"
+                    //     //           >
+                    //     //             {connectedApps &&
+                    //     //               connectedApps.map((app) => {
+                    //     //                 if (
+                    //     //                   topic.name.toLowerCase() ===
+                    //     //                   Object.keys(app)[0].toLowerCase()
+                    //     //                 ) {
+                    //     //                   return (
+                    //     //                     app[topic.name.toLowerCase()] &&
+                    //     //                     app[topic.name.toLowerCase()].map(
+                    //     //                       (value) => (
+                    //     //                         <>
+                    //     //                           <Grid item>
+                    //     //                             {/* <Tooltip title={!value.type ?
+                    //     //                                                                             (`${application.name}
+                    //     //                                                                 ${(topic.read && topic.write) ?
+                    //     //                                                                                     'sends and receives' : (
+                    //     //                                                                                         topic.write ?
+                    //     //                                                                                             'sends' :
+                    //     //                                                                                             'receives'
+                    //     //                                                                                     )}
+                    //     //                                                                 ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data
+                    //     //                                                                 ${(topic.read && topic.write) ?
+                    //     //                                                                                     'to/from' : (
+                    //     //                                                                                         topic.write ?
+                    //     //                                                                                             'to' :
+                    //     //                                                                                             'from'
+                    //     //                                                                                     )}
+                    //     //                                                                 ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}`
+                    //     //                                                                             ) : (`${application.name}
+                    //     //                                                                             ${value.type === 'write' ?
+                    //     //                                                                                     'receives' :
+                    //     //                                                                                     'sends'
+                    //     //                                                                                 }
+                    //     //                                                                             ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data
+                    //     //                                                                             ${value.type === 'write' ?
+                    //     //                                                                                     'from' :
+                    //     //                                                                                     'to'
+                    //     //                                                                                 }
+                    //     //                                                                             ${value.name?.charAt(0).toUpperCase() + value.name?.slice(1)}`
+                    //     //                                                                             )
+                    //     //                                                                         }
+                    //     //                                                                             arrow> */}
+                    //     //                             <Tooltip
+                    //     //                               title={`${
+                    //     //                                 value.name
+                    //     //                                   ?.charAt(0)
+                    //     //                                   .toUpperCase() +
+                    //     //                                 value.name?.slice(1)
+                    //     //                               }`}
+                    //     //                               arrow
+                    //     //                             >
+                    //     //                               {value.image ? (
+                    //     //                                 <img
+                    //     //                                   alt="connected application"
+                    //     //                                   src={value.image}
+                    //     //                                   width="70"
+                    //     //                                   name={value.name}
+                    //     //                                   onError={
+                    //     //                                     handleImageError
+                    //     //                                   }
+                    //     //                                 />
+                    //     //                               ) : (
+                    //     //                                 <Avatar
+                    //     //                                   className={
+                    //     //                                     classes.avatar
+                    //     //                                   }
+                    //     //                                 >
+                    //     //                                   {value.name
+                    //     //                                     ?.charAt(0)
+                    //     //                                     .toUpperCase()}
+                    //     //                                 </Avatar>
+                    //     //                               )}
+                    //     //                             </Tooltip>
+                    //     //                           </Grid>
+                    //     //                         </>
+                    //     //                       )
+                    //     //                     )
+                    //     //                   );
+                    //     //                 }
+                    //     //                 return null;
+                    //     //               })}
+                    //     //           </Grid>
+                    //     //         </>
+                    //     //       </TableCell>
+                    //     //       <TableCell align="right">
+                    //     //         <TopicSwitch
+                    //     //           size="small"
+                    //     //           checked={writeLocalPermissions?.includes(
+                    //     //             `realestate/${topic.name.toLowerCase()}`
+                    //     //           )}
+                    //     //           name={topic.name + "-write"}
+                    //     //           onChange={() =>
+                    //     //             handleWriteLocalPermissions(
+                    //     //               `realestate/${topic.name.toLowerCase()}`
+                    //     //             )
+                    //     //           }
+                    //     //         />
+                    //     //       </TableCell>
+                    //     //     </TableRow>
+                    //     //   )}
+                    //     // </React.Fragment>
+                    //   );
+                    // })
+                  }
                 </TableBody>
               </Table>
             </TableContainer>
@@ -706,6 +968,41 @@ function DialogBox(props) {
             </Grid>
           </Grid>
         </Grid>
+        <Dialog
+          open={state.isConnectedApp}
+          onClose={() => setState({ ...state, isConnectedApp: false })}
+          classes={{ paper: classes.connectedAppDialog }}
+          scroll="paper"
+        >
+          <Grid
+            container
+            direction="column"
+            justify="center"
+            alignItems="center"
+          >
+            <Grid item xs={12}>
+              <Paper elevation={0} className={classes.connectedAppImage}>
+                <img alt="app logo" src={application.logo.url} width="250" />
+              </Paper>
+            </Grid>
+            <Grid item>
+              {`${
+                state?.connectedAppContent?.type === "write"
+                  ? "Send"
+                  : "Recieve"
+              } ${state.connectedAppContent?.label} ${
+                state?.connectedAppContent?.type === "write" ? "to" : "from"
+              }`}
+            </Grid>
+            {state?.connectedAppContent?.connectedApps.map((value) => (
+              <Grid item xs={12}>
+                <Paper elevation={0} className={classes.connectedAppImage}>
+                  <img alt={value.name} src={value.image} width="250" />
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </Dialog>
       </Dialog>
     </React.Fragment>
   );
@@ -722,6 +1019,7 @@ const mapStateToProps = (state) => {
     isFranchiseUser: state.auth.isFranchiseUser,
     userId: state.auth.userId,
     userData: state.auth.userData,
+    topicLabels: state.topic.topicLabels,
   };
 };
 

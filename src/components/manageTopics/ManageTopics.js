@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
+import { connect, useSelector, useDispatch } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
@@ -12,6 +12,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { Switch, Button, Dialog } from "@material-ui/core";
 import isEqual from "lodash.isequalwith";
+import { setTopicLabel } from "../../redux/slices/topicSlice";
+import { updateStoreWithTopic } from "../../redux/actions/applicationActions";
 
 const styles = (theme) => ({
   image: {
@@ -81,11 +83,48 @@ function ManageTopics(props) {
   const { classes, permissions, handleDialog, open, logo, applications } =
     props;
   console.log(applications);
+  const state = useSelector((state) => ({
+    topicLabels: state.topic.topicLabels,
+  }));
 
-  const [state, setState] = React.useState({
-    // localPermission: JSON.parse(JSON.stringify(applications && applications[0]?.permissions))
-    localPermission: applications.length > 1 ? JSON.parse(JSON.stringify(applications[0].permissions)) : []
-  });
+  const dispatch = useDispatch();
+  console.log(state.topicLabels)
+  const handleToggleChange = (e) => {
+    const type = e.target.name;
+    const newTopicLabels = {
+      topic: {
+        ...state.topicLabels,
+        [type]: {
+          ...state.topicLabels[type],
+          isLabelEnabled: !state.topicLabels[type].isLabelEnabled,
+        },
+      },
+    };
+    dispatch(setTopicLabel(newTopicLabels));
+  };
+
+  const handleLabelChange = (e) => {
+    const type = e.target.name;
+    const value = e.target.value;
+    const newTopicLabels = {
+      topic: {
+        ...state.topicLabels,
+        [type]: {
+          ...state.topicLabels[type],
+          label: value,
+        },
+      },
+    };
+    dispatch(setTopicLabel(newTopicLabels));
+  };
+
+  // const [state, setState] = React.useState({
+  //   // localPermission: JSON.parse(JSON.stringify(applications && applications[0]?.permissions))
+  //   localPermission:
+  //     applications.length > 1
+  //       ? JSON.parse(JSON.stringify(applications[0].permissions))
+  //       : [],
+  // });
 
   // const handleChange = e => {
   //     const type = e.target.name.split('-')
@@ -143,7 +182,7 @@ function ManageTopics(props) {
                     <TableCell></TableCell>
                     <TableCell align="right">
                       <Button
-                        variant="clear"
+                        variant="text"
                         disabled
                         disableRipple
                         className={classes.new}
@@ -153,7 +192,7 @@ function ManageTopics(props) {
                     </TableCell>
                     <TableCell align="center">
                       <Button
-                        variant="clear"
+                        variant="text"
                         disabled
                         disableRipple
                         className={classes.new}
@@ -164,23 +203,28 @@ function ManageTopics(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {state.localPermission?.map((topic) => (
-                    <TableRow key={topic.name}>
-                      <TableCell>{topic.name}</TableCell>
+                  {Object.entries(state.topicLabels).map((topic) => (
+                    <TableRow key={topic[0]}>
+                      <TableCell>{topic[1].name}</TableCell>
                       <TableCell align="center">
                         <TopicSwitch
                           size="small"
-                          checked={topic.write}
-                          name={topic.name + "-write"}
-                          onChange={() => {}}
+                          checked={topic[1].isLabelEnabled}
+                          name={topic[0]}
+                          onChange={handleToggleChange}
                         />
                       </TableCell>
                       <TableCell align="right">
                         <TextField
-                        size="small"
-                        variant="outlined"
-                        hiddenLabel
-                        style={{paddingTop: 0}}
+                        className={classes.new}
+                          disabled={!topic[1].isLabelEnabled}
+                          size="small"
+                          variant="outlined"
+                          hiddenLabel
+                          style={{ paddingTop: 0 }}
+                          name={topic[0]}
+                          onChange={handleLabelChange}
+                          value={topic[1].label}
                         />
                       </TableCell>
                     </TableRow>
@@ -211,7 +255,7 @@ function ManageTopics(props) {
               <Button
                 className={classes.toggleSwitch}
                 name="save"
-                onClick={() => {}}
+                onClick={() => dispatch(updateStoreWithTopic())}
                 disableElevation
               >
                 Save
