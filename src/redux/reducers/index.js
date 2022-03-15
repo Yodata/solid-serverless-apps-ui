@@ -15,7 +15,7 @@ const rootReducer = combineReducers({
     auth: authenticationReducer,
     subs: subscriptionReducer,
     toast: toastReducer,
-    topicLabel: topicLabelReducer
+    topic: topicLabelReducer
 })
 
 export default rootReducer;

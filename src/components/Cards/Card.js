@@ -187,21 +187,33 @@ export function CardComponent(props) {
           .filter(Boolean) ??
         [],
     });
-  }, [userSubs]);
+  }, [userSubs, state.isDialogOpen]);
 
-  const handleReadLocalPermissions = (topic) => {
-    const newUserPermissions = state.readLocalPermissions.includes(topic)
-      ? state.readLocalPermissions.filter((value) => value !== topic)
-      : [...state.readLocalPermissions, topic];
-      console.log({read: newUserPermissions})
-    setState({ ...state, readLocalPermissions: newUserPermissions });
+  const handleReadLocalPermissions = (topicArr) => {
+    console.log({topicArr})
+    const newArray = state.readLocalPermissions.slice()
+    console.log({newArray})
+    const newUserPermissions = topicArr.map((topic) =>{
+      //remove all if any of matches in topic Arr
+      //if none matches then add all
+      const test = state.readLocalPermissions?.includes(topic)
+        ? state.readLocalPermissions?.filter((value) => value !== topic)
+        : [...state.readLocalPermissions, topic]
+      console.log({test})
+      return test
+    });
+    // const newUserPermissions = state.readLocalPermissions?.includes(topic)
+    //   ? state.readLocalPermissions?.filter((value) => value !== topic)
+    //   : [...state.readLocalPermissions, topic];
+    console.log({ read: newUserPermissions[0] });
+    setState({ ...state, readLocalPermissions: newUserPermissions[0] });
   };
 
   const handleWriteLocalPermissions = (topic) => {
-    const newUserPermissions = state.writeLocalPermissions.includes(topic)
-      ? state.writeLocalPermissions.filter((value) => value !== topic)
+    const newUserPermissions = state.writeLocalPermissions?.includes(topic)
+      ? state.writeLocalPermissions?.filter((value) => value !== topic)
       : [...state.writeLocalPermissions, topic];
-      console.log({write: newUserPermissions})
+    console.log({ write: newUserPermissions });
     setState({ ...state, writeLocalPermissions: newUserPermissions });
   };
 
@@ -315,9 +327,9 @@ export function CardComponent(props) {
     //     return value.write === true && `realestate/${value.name.toLowerCase()}`;
     //   })
     //   .filter(Boolean);
-    console.log('hi')
-    console.log(state.readLocalPermissions)
-    console.log(state.writeLocalPermissions)
+    console.log("hi");
+    console.log(state.readLocalPermissions);
+    console.log(state.writeLocalPermissions);
     return {
       topic: `yodata/subscription#${
         type !== "Update"
@@ -331,8 +343,7 @@ export function CardComponent(props) {
       data: {
         type: `${
           type !== "Update"
-            ? 
-              state.readLocalPermissions?.length === 0 &&
+            ? state.readLocalPermissions?.length === 0 &&
               state.writeLocalPermissions?.length === 0
               ? "Revoke"
               : "Authorize"

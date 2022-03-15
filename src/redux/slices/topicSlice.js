@@ -3,13 +3,14 @@ import { createSlice } from '@reduxjs/toolkit';
 const topicLabelSlice = createSlice({
     name: 'topicLabel',
     initialState: {
-        
+        topicLabels: {}
     },
     reducers: {
         setTopicLabel: (state, action) => {
+            console.log({action})
             return{
                 ...state,
-                tabIndex: action.payload
+                topicLabels: {...action.payload.topic}
             };
         }
     }
