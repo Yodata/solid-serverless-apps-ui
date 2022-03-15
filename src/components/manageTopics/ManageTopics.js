@@ -248,7 +248,7 @@ function ManageTopics(props) {
                 onClick={() => handleDialog(false)}
                 disableElevation
               >
-                cancel
+                CANCEL
               </Button>
             </Grid>
             <Grid item>

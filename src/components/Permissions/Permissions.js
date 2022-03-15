@@ -319,7 +319,7 @@ function Permissions(props) {
                 onClick={handleCancel}
                 disableElevation
               >
-                cancel
+                CANCEL
               </Button>
             </Grid>
             <Grid item>
