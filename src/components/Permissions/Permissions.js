@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -62,7 +63,7 @@ const styles = (theme) => ({
   },
   radioLabelHeader: {
     fontWeight: "bold",
-    paddingRight: 10
+    paddingRight: 10,
   },
   new: {
     backgroundColor: theme.palette.new.main,
@@ -102,6 +103,10 @@ function Permissions(props) {
     handlePermissionChanged,
     applicationAccessLevel = "both",
   } = props;
+
+  const reduxState = useSelector((state) => ({
+    topicLabels: state.topic.topicLabels,
+  }));
 
   const [state, setState] = React.useState({
     localPermission: JSON.parse(JSON.stringify(permissions)),
@@ -145,7 +150,7 @@ function Permissions(props) {
     const newPermissions = updateVersion();
     handlePermissionChanged(newPermissions, accessLevel);
   };
-
+  console.log({topicLabel: reduxState.topicLabels})
   return (
     <>
       <Dialog
@@ -271,27 +276,30 @@ function Permissions(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {state.localPermission.map((topic) => (
-                    <TableRow key={topic.name}>
-                      <TableCell>{topic.name}</TableCell>
-                      <TableCell align="right">
-                        <TopicSwitch
-                          size="small"
-                          checked={topic.write}
-                          name={topic.name + "-write"}
-                          onChange={handleChange}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <TopicSwitch
-                          size="small"
-                          checked={topic.read}
-                          name={topic.name + "-read"}
-                          onChange={handleChange}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {state.localPermission.map((topic) => {
+                    if(reduxState.topicLabels[topic?.name?.toLowerCase().replaceAll(/\s/g, "")]?.isLabelEnabled){
+                    return (
+                      <TableRow key={topic.name}>
+                        <TableCell>{topic.name}</TableCell>
+                        <TableCell align="right">
+                          <TopicSwitch
+                            size="small"
+                            checked={topic.write}
+                            name={topic.name + "-write"}
+                            onChange={handleChange}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          <TopicSwitch
+                            size="small"
+                            checked={topic.read}
+                            name={topic.name + "-read"}
+                            onChange={handleChange}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    )};
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>

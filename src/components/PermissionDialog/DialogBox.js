@@ -315,7 +315,7 @@ function DialogBox(props) {
   // console.log(connectedApps);
   // console.log({ topicLabels });
 
-  console.log({readLocalPermissions})
+  console.log({ readLocalPermissions });
 
   const createPermissionsArray = () => {
     let readArray = application.permissions
@@ -323,7 +323,7 @@ function DialogBox(props) {
         if (topic.read) {
           const labelObject =
             topicLabels[topic?.name?.toLowerCase().replaceAll(/\s/g, "")];
-          const label = labelObject?.isLabelEnabled
+          const label = labelObject?.label
             ? labelObject?.label
             : labelObject?.name;
           const connectedApps = getConnectedApps(
@@ -345,7 +345,7 @@ function DialogBox(props) {
         if (topic.write) {
           const labelObject =
             topicLabels[topic?.name?.toLowerCase().replaceAll(/\s/g, "")];
-          const label = labelObject?.isLabelEnabled
+          const label = labelObject?.label
             ? labelObject?.label
             : labelObject?.name;
           const connectedApps = getConnectedApps(

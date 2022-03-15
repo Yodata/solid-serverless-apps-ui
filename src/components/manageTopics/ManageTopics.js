@@ -22,7 +22,7 @@ const styles = (theme) => ({
   },
   dialogPaper: {
     minWidth: "40vw",
-    maxWidth: "40vw",
+    maxWidth: "60vw",
     minHeight: "70vh",
     maxHeight: "70vh",
   },
