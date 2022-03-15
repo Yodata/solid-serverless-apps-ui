@@ -88,7 +88,7 @@ function ManageTopics(props) {
   }));
 
   const dispatch = useDispatch();
-  console.log(state.topicLabels)
+  console.log(state.topicLabels);
   const handleToggleChange = (e) => {
     const type = e.target.name;
     const newTopicLabels = {
@@ -216,7 +216,7 @@ function ManageTopics(props) {
                       </TableCell>
                       <TableCell align="right">
                         <TextField
-                        className={classes.new}
+                          className={classes.new}
                           disabled={!topic[1].isLabelEnabled}
                           size="small"
                           variant="outlined"
@@ -255,7 +255,10 @@ function ManageTopics(props) {
               <Button
                 className={classes.toggleSwitch}
                 name="save"
-                onClick={() => dispatch(updateStoreWithTopic())}
+                onClick={() => {
+                  dispatch(updateStoreWithTopic());
+                  handleDialog(false);
+                }}
                 disableElevation
               >
                 Save

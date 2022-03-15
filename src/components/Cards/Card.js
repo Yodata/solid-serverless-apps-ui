@@ -190,29 +190,21 @@ export function CardComponent(props) {
   }, [userSubs, state.isDialogOpen]);
 
   const handleReadLocalPermissions = (topicArr) => {
-    console.log({topicArr})
-    const newArray = state.readLocalPermissions.slice()
-    console.log({newArray})
-    const newUserPermissions = topicArr.map((topic) =>{
-      //remove all if any of matches in topic Arr
-      //if none matches then add all
-      const test = state.readLocalPermissions?.includes(topic)
-        ? state.readLocalPermissions?.filter((value) => value !== topic)
-        : [...state.readLocalPermissions, topic]
-      console.log({test})
-      return test
-    });
-    // const newUserPermissions = state.readLocalPermissions?.includes(topic)
-    //   ? state.readLocalPermissions?.filter((value) => value !== topic)
-    //   : [...state.readLocalPermissions, topic];
-    console.log({ read: newUserPermissions[0] });
-    setState({ ...state, readLocalPermissions: newUserPermissions[0] });
+    console.log({ topicArr });
+    const newArray = state.readLocalPermissions.slice();
+    console.log({ newArray });
+    const newUserPermissions = topicArr.some((x) => newArray.includes(x))
+      ? newArray.filter((el) => !topicArr.includes(el))
+      : [...newArray, ...topicArr];
+    console.log({ read: newUserPermissions });
+    setState({ ...state, readLocalPermissions: newUserPermissions });
   };
 
-  const handleWriteLocalPermissions = (topic) => {
-    const newUserPermissions = state.writeLocalPermissions?.includes(topic)
-      ? state.writeLocalPermissions?.filter((value) => value !== topic)
-      : [...state.writeLocalPermissions, topic];
+  const handleWriteLocalPermissions = (topicArr) => {
+    const newArray = state.writeLocalPermissions.slice();
+    const newUserPermissions = topicArr.some((x) => newArray.includes(x))
+      ? newArray.filter((el) => !topicArr.includes(el))
+      : [...newArray, ...topicArr];
     console.log({ write: newUserPermissions });
     setState({ ...state, writeLocalPermissions: newUserPermissions });
   };
