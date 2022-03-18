@@ -8,7 +8,9 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
+import Tooltip from "@material-ui/core/Tooltip";
 import TableRow from "@material-ui/core/TableRow";
+import WarningIcon from "@material-ui/icons/Warning";
 import {
   Switch,
   Button,
@@ -29,8 +31,8 @@ const styles = (theme) => ({
     objectFit: "contain",
   },
   dialogPaper: {
-    minWidth: "40vw",
-    maxWidth: "40vw",
+    minWidth: "45vw",
+    maxWidth: "45vw",
     minHeight: "70vh",
     maxHeight: "70vh",
   },
@@ -71,6 +73,9 @@ const styles = (theme) => ({
     "&:disabled": {
       color: "black",
     },
+  },
+  warning: {
+    color: theme.palette.warning.main,
   },
 });
 
@@ -150,7 +155,6 @@ function Permissions(props) {
     const newPermissions = updateVersion();
     handlePermissionChanged(newPermissions, accessLevel);
   };
-  console.log({topicLabel: reduxState.topicLabels})
   return (
     <>
       <Dialog
@@ -168,7 +172,7 @@ function Permissions(props) {
         >
           <Grid item xs={12}>
             <Paper elevation={0} className={classes.image}>
-              <img alt="app logo" src={logo} width="150" />
+              <img alt="app logo" src={logo} width="250" />
             </Paper>
           </Grid>
           <Grid
@@ -277,28 +281,61 @@ function Permissions(props) {
                 </TableHead>
                 <TableBody>
                   {state.localPermission.map((topic) => {
-                    if(reduxState.topicLabels[topic?.name?.toLowerCase().replaceAll(/\s/g, "")]?.isLabelEnabled){
-                    return (
-                      <TableRow key={topic.name}>
-                        <TableCell>{topic.name}</TableCell>
-                        <TableCell align="right">
-                          <TopicSwitch
-                            size="small"
-                            checked={topic.write}
-                            name={topic.name + "-write"}
-                            onChange={handleChange}
-                          />
-                        </TableCell>
-                        <TableCell align="right">
-                          <TopicSwitch
-                            size="small"
-                            checked={topic.read}
-                            name={topic.name + "-read"}
-                            onChange={handleChange}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    )};
+                    if (
+                      reduxState.topicLabels[
+                        topic?.name?.toLowerCase().replaceAll(/\s/g, "")
+                      ]?.isLabelEnabled ||
+                      (!reduxState.topicLabels[
+                        topic?.name?.toLowerCase().replaceAll(/\s/g, "")
+                      ]?.isLabelEnabled &&
+                        (topic.read || topic.write))
+                    ) {
+                      return (
+                        <TableRow key={topic.name}>
+                          <TableCell>
+                            <Grid
+                              container
+                              direction="row"
+                              wrap="nowrap"
+                              spacing={1}
+                            >
+                              <Grid item>
+                                <Typography>{topic.name}</Typography>
+                              </Grid>
+                              <Grid item>
+                                {!reduxState.topicLabels[
+                                  topic?.name
+                                    ?.toLowerCase()
+                                    .replaceAll(/\s/g, "")
+                                ]?.isLabelEnabled && (
+                                  <Tooltip
+                                    title={`This app is configured to send|receive events on a hidden topic. The topic will be visible to users who authorize this app.`}
+                                  >
+                                    <WarningIcon className={classes.warning} />
+                                  </Tooltip>
+                                )}
+                              </Grid>
+                            </Grid>
+                          </TableCell>
+                          <TableCell align="right">
+                            <TopicSwitch
+                              size="small"
+                              checked={topic.write}
+                              name={topic.name + "-write"}
+                              onChange={handleChange}
+                            />
+                          </TableCell>
+                          <TableCell align="right">
+                            <TopicSwitch
+                              size="small"
+                              checked={topic.read}
+                              name={topic.name + "-read"}
+                              onChange={handleChange}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    }
                   })}
                 </TableBody>
               </Table>

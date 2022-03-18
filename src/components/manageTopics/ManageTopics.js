@@ -21,8 +21,8 @@ const styles = (theme) => ({
     objectFit: "contain",
   },
   dialogPaper: {
-    minWidth: "60vw",
-    maxWidth: "60vw",
+    minWidth: "50vw",
+    maxWidth: "50vw",
     minHeight: "70vh",
     maxHeight: "70vh",
   },
@@ -58,6 +58,9 @@ const styles = (theme) => ({
       fontWeight: "bold",
     },
   },
+  label: {
+    width: 150
+  }
 });
 
 const TopicSwitch = withStyles((theme) => ({
@@ -216,7 +219,7 @@ function ManageTopics(props) {
                       </TableCell>
                       <TableCell align="right">
                         <TextField
-                          className={classes.new}
+                          className={[classes.new, classes.label]}
                           disabled={!topic[1].isLabelEnabled}
                           size="small"
                           variant="outlined"
