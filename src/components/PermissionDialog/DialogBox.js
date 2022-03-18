@@ -215,7 +215,7 @@ function DialogBox(props) {
         previous = seen[entry.label];
         previous.topics.push(...entry.topics);
         previous.connectedApps.push(...entry.connectedApps);
-        // Don't keep this entry, we've merged it into the previous one
+        // Don't keep this entry, we've merged it into the previous one.filter(
         return false;
       }
       // Remember that we've seen it
@@ -223,7 +223,13 @@ function DialogBox(props) {
       // Keep this one, we'll merge any others that match into it
       return true;
     });
-    // console.log({ array });
+    const newArray = array?.forEach((z) => {
+      const a = z.connectedApps.filter(
+        (v, i, a) => a.findIndex((x) => x.name === v.name) === i
+        //remove same name and duplicates
+      );
+      z.connectedApps = a;
+    });
     return array;
   };
 

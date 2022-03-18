@@ -21,7 +21,7 @@ const styles = (theme) => ({
     objectFit: "contain",
   },
   dialogPaper: {
-    minWidth: "40vw",
+    minWidth: "60vw",
     maxWidth: "60vw",
     minHeight: "70vh",
     maxHeight: "70vh",
