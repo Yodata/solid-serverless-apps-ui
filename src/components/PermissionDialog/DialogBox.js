@@ -13,10 +13,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
 import { Typography } from "@material-ui/core";
-import Tooltip from "@material-ui/core/Tooltip";
-import Avatar from "@material-ui/core/Avatar";
-//const BlackListPods = require('../../utility/blacklist.json');
-import BlackListPods from "../../utility/blacklist.json";
 import { Switch } from "@material-ui/core";
 
 const styles = (theme) => ({
@@ -27,9 +23,6 @@ const styles = (theme) => ({
   },
   connectedAppImage: {
     objectFit: "contain",
-    // paddingLeft: 30,
-    // paddingRight: 30,
-    // marginBottom: 30,
   },
   dialogPaper: {
     minWidth: "60vw",
@@ -83,6 +76,12 @@ const styles = (theme) => ({
     fontSize: "1em",
     maxWidth: 250,
     lineHeight: "1em",
+  },
+  secondMsg1: {
+    fontSize: "1em",
+    maxWidth: 250,
+    lineHeight: "1em",
+    paddingTop: 24
   },
   typeButton: {
     maxWidth: "60%",
@@ -402,16 +401,6 @@ function DialogBox(props) {
             </TableContainer>
           </Grid>
           <Grid item>
-            {/* {type !== "Disconnect" && (
-              <Typography
-                className={classes.firstMsg}
-                align="center"
-                variant="subtitle2"
-              >
-                To add additional Connected Applications, authorize this vendor
-                and return to the App Exchange to repeat this process.
-              </Typography>
-            )} */}
             {isFranchiseUser && application.accessLevel !== "franchisees" && (
               <Grid
                 container
@@ -532,7 +521,7 @@ function DialogBox(props) {
           >
             <Grid item xs={12}>
               <Paper elevation={0} className={classes.connectedAppImage}>
-                <img alt="app logo" src={application.logo.url} width="250" />
+                <img alt="app logo" src={application.logo.url} width="150" />
               </Paper>
             </Grid>
             <Grid item>
@@ -551,7 +540,7 @@ function DialogBox(props) {
               .map((value) => (
                 <Grid item xs={12}>
                   <Typography
-                    className={classes.secondMsg}
+                    className={classes.secondMsg1}
                     align="right"
                     variant="subtitle2"
                   >
