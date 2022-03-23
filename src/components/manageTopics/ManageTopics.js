@@ -59,8 +59,8 @@ const styles = (theme) => ({
     },
   },
   label: {
-    width: 150
-  }
+    width: 150,
+  },
 });
 
 const TopicSwitch = withStyles((theme) => ({
@@ -119,44 +119,6 @@ function ManageTopics(props) {
     dispatch(setTopicLabel(newTopicLabels));
   };
 
-  // const [state, setState] = React.useState({
-  //   // localPermission: JSON.parse(JSON.stringify(applications && applications[0]?.permissions))
-  //   localPermission:
-  //     applications.length > 1
-  //       ? JSON.parse(JSON.stringify(applications[0].permissions))
-  //       : [],
-  // });
-
-  // const handleChange = e => {
-  //     const type = e.target.name.split('-')
-  //     const newPermissions = JSON.parse(JSON.stringify(state.localPermission))
-  //     const index = newPermissions.findIndex(ele => ele.name === type[0])
-  //     if (type[1] === 'read') {
-  //         newPermissions[index].read = !newPermissions[index].read
-  //         setState({ ...state, localPermission: newPermissions })
-  //     }
-  //     else {
-  //         newPermissions[index].write = !newPermissions[index].write
-  //         setState({ ...state, localPermission: newPermissions })
-  //     }
-  // }
-
-  // const updateVersion = () => {
-  //     const newPermissions = JSON.parse(JSON.stringify(state.localPermission))
-  //     for (let i = 0; i < permissions.length; i++) {
-  //         if (!isEqual(state.localPermission[i], permissions[i])) {
-  //             newPermissions[i].version++
-  //         }
-  //     }
-  //     setState({ ...state, localPermission: newPermissions })
-  //     return newPermissions
-  // }
-
-  // const handleSave = () => {
-  //     const newPermissions = updateVersion()
-  //     handlePermissionChanged(newPermissions)
-  // }
-
   return (
     <>
       <Dialog
@@ -172,9 +134,6 @@ function ManageTopics(props) {
           justify="center"
           alignItems="center"
         >
-          {/* <Grid item className={classes.textSpacing}>
-                        Manage Topics
-                    </Grid> */}
           <Grid item className={classes.textSpacing}>
             <TableContainer>
               <Table className={classes.table} size="small">
@@ -204,32 +163,34 @@ function ManageTopics(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Object.entries(state.topicLabels).map((topic) => (
-                    <TableRow key={topic[0]}>
-                      <TableCell>{topic[1].name}</TableCell>
-                      <TableCell align="center">
-                        <TopicSwitch
-                          size="small"
-                          checked={topic[1].isLabelEnabled}
-                          name={topic[0]}
-                          onChange={handleToggleChange}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <TextField
-                          className={[classes.new, classes.label]}
-                          disabled={!topic[1].isLabelEnabled}
-                          size="small"
-                          variant="outlined"
-                          hiddenLabel
-                          style={{ paddingTop: 0 }}
-                          name={topic[0]}
-                          onChange={handleLabelChange}
-                          value={topic[1].label}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {Object.entries(state.topicLabels)
+                    .sort((a, b) => a[0].localeCompare(b[0]))
+                    .map((topic) => (
+                      <TableRow key={topic[0]}>
+                        <TableCell>{topic[1].name}</TableCell>
+                        <TableCell align="center">
+                          <TopicSwitch
+                            size="small"
+                            checked={topic[1].isLabelEnabled}
+                            name={topic[0]}
+                            onChange={handleToggleChange}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          <TextField
+                            className={[classes.new, classes.label]}
+                            disabled={!topic[1].isLabelEnabled}
+                            size="small"
+                            variant="outlined"
+                            hiddenLabel
+                            style={{ paddingTop: 0 }}
+                            name={topic[0]}
+                            onChange={handleLabelChange}
+                            value={topic[1].label}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -266,21 +227,10 @@ function ManageTopics(props) {
               </Button>
             </Grid>
           </Grid>
-          {/* <Grid container item justify='center'>
-                        <Button className={classes.cancelButton} name="cancel" onClick={handleCancel} disableElevation>
-                            Deactivate & remove vendor
-                        </Button>
-                    </Grid> */}
         </Grid>
       </Dialog>
     </>
   );
 }
-
-// const mapStateToProps = (state) => {
-//     return {
-//       applications: state.apps?.storeData && state.apps?.storeData?.application,
-//     };
-//   };
 
 export default withStyles(styles)(ManageTopics);
