@@ -513,7 +513,7 @@ export function CardComponent(props) {
               >
                 {!application.connected && (
                   <Grid item>
-                    {application.permissions.some((topic) => {
+                    {!application.permissions.some((topic) => {
                       if (topic.read || topic.write) {
                         return !topicLabels[
                           topic?.name?.toLowerCase().replaceAll(/\s/g, "")
