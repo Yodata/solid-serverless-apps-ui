@@ -90,6 +90,15 @@ const styles = (theme) => ({
       backgroundColor: theme.palette.error.main,
     },
   },
+  updatePermission: {
+    paddingLeft: 1.5,
+    paddingRight: 1.5,
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.white.main,
+    "&:hover": {
+      backgroundColor: theme.palette.error.main,
+    },
+  },
   update: {
     color: theme.palette.update.main,
   },
@@ -132,6 +141,7 @@ export function CardComponent(props) {
     userSubs,
     localStore,
     updateLocalAppStore,
+    topicLabels,
   } = props;
   const [state, setState] = React.useState({
     isEditable: false,
@@ -190,13 +200,10 @@ export function CardComponent(props) {
   }, [userSubs, state.isDialogOpen]);
 
   const handleReadLocalPermissions = (topicArr) => {
-    console.log({ topicArr });
     const newArray = state.readLocalPermissions.slice();
-    console.log({ newArray });
     const newUserPermissions = topicArr.some((x) => newArray.includes(x))
       ? newArray.filter((el) => !topicArr.includes(el))
       : [...newArray, ...topicArr];
-    console.log({ read: newUserPermissions });
     setState({ ...state, readLocalPermissions: newUserPermissions });
   };
 
@@ -205,7 +212,6 @@ export function CardComponent(props) {
     const newUserPermissions = topicArr.some((x) => newArray.includes(x))
       ? newArray.filter((el) => !topicArr.includes(el))
       : [...newArray, ...topicArr];
-    console.log({ write: newUserPermissions });
     setState({ ...state, writeLocalPermissions: newUserPermissions });
   };
 
@@ -213,7 +219,6 @@ export function CardComponent(props) {
     let newLocalApp = {};
     const appObj = localStore?.find((ele) => ele.id === id);
     if (appObj) {
-      console.log({ appObj: appObj });
       newLocalApp = {
         ...appObj,
         isFranchiseVisible: !appObj.isFranchiseVisible,
@@ -309,19 +314,6 @@ export function CardComponent(props) {
   };
 
   const generateData = (type) => {
-    // const readPermissions = application.permissions
-    //   .map((value) => {
-    //     return value.read === true && `realestate/${value.name.toLowerCase()}`;
-    //   })
-    //   .filter(Boolean);
-    // const writePermissions = application.permissions
-    //   .map((value) => {
-    //     return value.write === true && `realestate/${value.name.toLowerCase()}`;
-    //   })
-    //   .filter(Boolean);
-    console.log("hi");
-    console.log(state.readLocalPermissions);
-    console.log(state.writeLocalPermissions);
     return {
       topic: `yodata/subscription#${
         type !== "Update"
@@ -521,13 +513,30 @@ export function CardComponent(props) {
               >
                 {!application.connected && (
                   <Grid item>
-                    <Button
-                      className={classes.adminButtons}
-                      variant="contained"
-                      onClick={handlePermission}
-                    >
-                      Edit Permission
-                    </Button>
+                    {application.permissions.some((topic) => {
+                      if (topic.read || topic.write) {
+                        return !topicLabels[
+                          topic?.name?.toLowerCase().replaceAll(/\s/g, "")
+                        ]?.isLabelEnabled;
+                      }
+                      return false;
+                    }) ? (
+                      <Button
+                        className={classes.adminButtons}
+                        variant="contained"
+                        onClick={handlePermission}
+                      >
+                        Edit Permission
+                      </Button>
+                    ) : (
+                      <Button
+                        className={classes.updatePermission}
+                        variant="contained"
+                        onClick={handlePermission}
+                      >
+                        Update Permission
+                      </Button>
+                    )}
                   </Grid>
                 )}
                 <Grid item>
@@ -581,6 +590,7 @@ const mapStateToProps = (state) => {
     userId: state.auth.userId,
     userSubs: state.subs.userSubs,
     localStore: state.apps?.localStoreData?.application,
+    topicLabels: state.topic.topicLabels,
   };
 };
 

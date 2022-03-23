@@ -7,7 +7,6 @@ const topicLabelSlice = createSlice({
     },
     reducers: {
         setTopicLabel: (state, action) => {
-            console.log({action})
             return{
                 ...state,
                 topicLabels: {...action.payload.topic}

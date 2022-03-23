@@ -66,6 +66,8 @@ const authenticationReducer = (state = defaultState, action) => {
             value.roleName.toLowerCase() === "marketing director" ||
             value.roleName.toLowerCase() === "broker of record" ||
             value.roleName.toLowerCase() === "owner" ||
+            value.roleName.toLowerCase() === "teamadmin" ||
+            value.roleName.toLowerCase() === "teamlead" ||
             value.roleName.toLowerCase() === "app exchange admin"
           ) {
             return {
@@ -98,7 +100,6 @@ const authenticationReducer = (state = defaultState, action) => {
       };
     case SET_ORGANISATION_ROLE:
       const userProfile = action.profile;
-      console.log({userProfile})
       const role = userProfile.type;
 
       const parentOrg = role === "RealEstateOrganization" ? convertToFranchiseStore(userProfile.id) : convertToFranchiseStore(userProfile.parentOrganization[0])
