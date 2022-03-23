@@ -47,17 +47,6 @@ export const getAllApps = () => {
       );
       dispatch(getApps(response.data));
       dispatch(setTopicLabel(response.data));
-      const parentOrg = getState().auth?.parentOrg;
-      if (parentOrg) {
-        const userResponse = await API.get(
-          `https://${parentOrg}.${process.env.REACT_APP_HOSTNAME}/${endpoint.allApps}`
-        );
-        console.log("hi");
-        console.log({ userResponse });
-        if (userResponse) {
-          dispatch(getLocalApps(userResponse.data));
-        }
-      }
       const subs = getState().subs?.userSubs?.items;
       if (subs) {
         const updatedIDs = getState()
@@ -74,6 +63,15 @@ export const getAllApps = () => {
           })
           .filter(Boolean);
         dispatch(serviceUpdated(updatedIDs));
+      }
+      const parentOrg = getState().auth?.parentOrg;
+      if (parentOrg) {
+        const userResponse = await API.get(
+          `https://${parentOrg}.${process.env.REACT_APP_HOSTNAME}/${endpoint.allApps}`
+        );
+        if (userResponse) {
+          dispatch(getLocalApps(userResponse.data));
+        }
       }
     } catch (err) {
       console.log(`error: ${err}`);
@@ -125,15 +123,18 @@ export const updateLocalAppStore = (value) => {
 };
 
 export const updateStoreWithTopic = (value) => {
-    return async (dispatch, getState) => {
-      try {
-          const updateData = {...getState().apps.storeData, topic: getState().topic.topicLabels}
-        await API.put(
-          `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.allApps}`,
-          updateData
-        );
-      } catch (err) {
-        throw err;
-      }
-    };
+  return async (dispatch, getState) => {
+    try {
+      const updateData = {
+        ...getState().apps.storeData,
+        topic: getState().topic.topicLabels,
+      };
+      await API.put(
+        `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.allApps}`,
+        updateData
+      );
+    } catch (err) {
+      throw err;
+    }
   };
+};

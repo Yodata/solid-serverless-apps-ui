@@ -209,7 +209,6 @@ function DialogBox(props) {
     const array = topicArray.filter(function (entry) {
       let previous;
       // Have we seen this label before?
-      // console.log({entry})
       if (seen.hasOwnProperty(entry.label)) {
         // Yes, grab it and add this data to it
         previous = seen[entry.label];
@@ -233,96 +232,6 @@ function DialogBox(props) {
     return array;
   };
 
-  // const connectedApps = application.permissions
-  //   .map((topic) => {
-  //     if (topic.read || topic.write) {
-  //       const globalSubsIdentifier =
-  //         globalSubs && globalSubs.items
-  //           ? globalSubs.items
-  //               .map((value) => getSubsIdentifier(value, topic))
-  //               .filter(Boolean)
-  //           : [];
-  //       //value => {
-  //       // if (!value.publishes && !value.subscribes) {
-  //       //     if (value.object.includes(topic.name.toLowerCase())) {
-  //       //         return `${value.agent}`
-  //       //     }
-  //       // } else {
-  //       //     if (topic.read && topic.write) {
-  //       //         if (value.subscribes.find(value => value.includes(topic.name.toLowerCase())) &&
-  //       //             value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
-  //       //             return `${value.agent}`
-  //       //         } else
-  //       //             if (value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
-  //       //                 return `${value.agent}?read`
-  //       //             } else
-  //       //                 if (value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
-  //       //                     return `${value.agent}?write`
-  //       //                 }
-  //       //     }
-  //       //     else
-  //       //         if (topic.write && !topic.read && value.subscribes.length > 0 &&
-  //       //             value.subscribes.find(value => value.includes(topic.name.toLowerCase()))) {
-  //       //             return `${value.agent}`
-  //       //         } else
-  //       //             if (topic.read && !topic.write && value.publishes.length > 0 &&
-  //       //                 value.publishes.find(value => value.includes(topic.name.toLowerCase()))) {
-  //       //                 return `${value.agent}`
-  //       //             }
-
-  //       // }
-  //       // ).filter(Boolean)
-
-  //       const userSubsIdentifier =
-  //         userSubs && userSubs.items
-  //           ? userSubs.items
-  //               .map((value) => getSubsIdentifier(value, topic))
-  //               .filter(Boolean)
-  //           : [];
-  //       const userFilteredSubs = userSubsIdentifier.filter(
-  //         (f) => !globalSubsIdentifier.some((g) => f.includes(g)) // remove duplicate pods from global
-  //       );
-  //       const subsIdentifier = [...globalSubsIdentifier, ...userFilteredSubs]
-  //         ?.filter(
-  //           (f) =>
-  //             //const subsIdentifier = [...userSubsIdentifier]?.filter(f =>
-  //             !BlackListPods.some((b) => b.pod === f) // remove internal services
-  //         )
-  //         .filter(
-  //           (s) => s !== application.id //remove self
-  //         )
-  //         .sort((a, b) => {
-  //           return a.toUpperCase() > b.toUpperCase() ? 1 : -1;
-  //         });
-  //         console.log({subsIdentifier})
-  //       const connectedApplication = subsIdentifier
-  //         ?.map((sub) => {
-  //           const selectedApp = allApplications.find(
-  //             (ele) => ele.id === `${sub.split("?")[0]}`
-  //           );
-  //           return {
-  //             name: selectedApp
-  //               ? selectedApp.name
-  //               : sub.split("/")[2].split(".").shift(),
-  //             image: selectedApp?.logo?.url,
-  //             type: sub.split("?")[1],
-  //           };
-  //         })
-  //         .filter(Boolean);
-  //       return {
-  //         [topic.name.toLowerCase()]: connectedApplication.filter(
-  //           (v, i, a) => a.findIndex((x) => x.name === v.name) === i
-  //         ),
-  //       };
-  //     }
-  //     return null;
-  //   })
-  //   .filter(Boolean);
-  // console.log(connectedApps);
-  // console.log({ topicLabels });
-
-  console.log({ readLocalPermissions });
-
   const createPermissionsArray = () => {
     let readArray = application.permissions
       .map((topic) => {
@@ -336,7 +245,6 @@ function DialogBox(props) {
             "publishes",
             topic?.name?.toLowerCase()
           );
-          console.log({ readApps: connectedApps });
           return {
             topics: [topic.name],
             label,
@@ -358,7 +266,6 @@ function DialogBox(props) {
             "subscribes",
             topic?.name?.toLowerCase()
           );
-          console.log({ writeApps: connectedApps });
           return {
             topics: [topic.name],
             label,
@@ -368,11 +275,8 @@ function DialogBox(props) {
         }
       })
       .filter(Boolean);
-    // console.log({ before: readPermissionArray });
-    // console.log({ beforeWrite: writePermissionArray });
     readArray = mergeTopics(readArray);
     writeArray = mergeTopics(writeArray);
-    console.log({ write: writeArray });
     setState({
       readPermissionArray: readArray,
       writePermissionArray: writeArray,
@@ -393,16 +297,6 @@ function DialogBox(props) {
               <img alt="app logo" src={application.logo.url} width="250" />
             </Paper>
           </Grid>
-          {/* <Grid item className={classes.textSpacing}>
-            {type !== "Disconnect" ? (
-              "REQUIRES ACCESS TO:"
-            ) : (
-              <Typography align="center" variant="body2">
-                Revoking data access permissions for this application will
-                disconnect the application from the following:
-              </Typography>
-            )}
-          </Grid> */}
           <Grid item className={classes.textSpacing}>
             <TableContainer>
               <Table className={classes.table} size="small">
@@ -459,400 +353,50 @@ function DialogBox(props) {
                         </TableRow>
                       </React.Fragment>
                     ))}
-                  {
-                    (application.accessLevel === "both" ||
-                      (application.accessLevel === "franchisees" &&
-                        isFranchiseUser) ||
-                      (application.accessLevel === "agent" &&
-                        !isFranchiseUser)) &&
-                      state.writePermissionArray.map((write) => (
-                        <React.Fragment key={`${write.label}-write--fragment`}>
-                          <TableRow key={`${write.label}-write--row`}>
-                            <TableCell component="th" scope="row">
-                              {write.label}
-                            </TableCell>
-                            <TableCell>Send to</TableCell>
-                            <TableCell
-                              className={classes.connectedCell}
-                              onClick={() =>
-                                setState({
-                                  ...state,
-                                  isConnectedApp: true,
-                                  connectedAppContent: write,
-                                })
-                              }
-                            >
-                              {`${write?.connectedApps?.length} connected applications`}
-                            </TableCell>
-                            <TableCell align="right">
-                              <TopicSwitch
-                                size="small"
-                                checked={write.topics.some((x) =>
-                                  writeLocalPermissions?.includes(
+                  {(application.accessLevel === "both" ||
+                    (application.accessLevel === "franchisees" &&
+                      isFranchiseUser) ||
+                    (application.accessLevel === "agent" &&
+                      !isFranchiseUser)) &&
+                    state.writePermissionArray.map((write) => (
+                      <React.Fragment key={`${write.label}-write--fragment`}>
+                        <TableRow key={`${write.label}-write--row`}>
+                          <TableCell component="th" scope="row">
+                            {write.label}
+                          </TableCell>
+                          <TableCell>Send to</TableCell>
+                          <TableCell
+                            className={classes.connectedCell}
+                            onClick={() =>
+                              setState({
+                                ...state,
+                                isConnectedApp: true,
+                                connectedAppContent: write,
+                              })
+                            }
+                          >
+                            {`${write?.connectedApps?.length} connected applications`}
+                          </TableCell>
+                          <TableCell align="right">
+                            <TopicSwitch
+                              size="small"
+                              checked={write.topics.some((x) =>
+                                writeLocalPermissions?.includes(
+                                  `realestate/${x.toLowerCase()}`
+                                )
+                              )}
+                              onChange={() =>
+                                write.topics.forEach((x) =>
+                                  handleWriteLocalPermissions(
                                     `realestate/${x.toLowerCase()}`
                                   )
-                                )}
-                                onChange={() =>
-                                  write.topics.forEach((x) =>
-                                    handleWriteLocalPermissions(
-                                      `realestate/${x.toLowerCase()}`
-                                    )
-                                  )
-                                }
-                              />
-                            </TableCell>
-                          </TableRow>
-                        </React.Fragment>
-                      ))
-                    // application.permissions?.map((topic) => {
-                    //   return (
-                    //     <></>
-                    //     // <React.Fragment key={topic.name}>
-                    //     //   {!(topicsDisplayed.includes(topic.name))&& topic.read && (
-                    //     //     <TableRow key={`${topic.name}--read`}>
-                    //     //       <TableCell component="th" scope="row">
-                    //     //         {topicLabels[
-                    //     //           topic?.name
-                    //     //             ?.toLowerCase()
-                    //     //             .replaceAll(/\s/g, "")
-                    //     //         ]?.isLabelEnabled
-                    //     //           ? topicLabels[
-                    //     //               topic?.name
-                    //     //                 ?.toLowerCase()
-                    //     //                 .replaceAll(/\s/g, "")
-                    //     //             ]?.label
-                    //     //           : topicLabels[
-                    //     //               topic?.name
-                    //     //                 ?.toLowerCase()
-                    //     //                 .replaceAll(/\s/g, "")
-                    //     //             ]?.name}
-                    //     //       </TableCell>
-                    //     //       <TableCell>Receive from</TableCell>
-                    //     //       <TableCell>
-                    //     //         <>
-                    //     //           <Grid
-                    //     //             container
-                    //     //             direction="row"
-                    //     //             alignItems="center"
-                    //     //           >
-                    //     //             {connectedApps &&
-                    //     //               connectedApps.map((app) => {
-                    //     //                 if (
-                    //     //                   !topicLabels[
-                    //     //                     topic?.name
-                    //     //                       ?.toLowerCase()
-                    //     //                       .replaceAll(/\s/g, "")
-                    //     //                   ]?.isLabelEnabled
-                    //     //                 ) {
-
-                    //     //                   if (
-                    //     //                     topic.name.toLowerCase() ===
-                    //     //                     Object.keys(app)[0].toLowerCase()
-                    //     //                   ) {
-                    //     //                     setTopicsDisplayed(
-                    //     //                       [...topicsDisplayed, topic.name]
-                    //     //                     );
-                    //     //                     return (
-                    //     //                       app[topic.name.toLowerCase()] &&
-                    //     //                       app[topic.name.toLowerCase()].map(
-                    //     //                         (value) => {
-                    //     //                           if (
-                    //     //                             allApplications.find(
-                    //     //                               (x) =>
-                    //     //                                 x.name === value.name
-                    //     //                             )
-                    //     //                           ) {
-                    //     //                             return (
-                    //     //                               <>
-                    //     //                                 <Grid item>
-                    //     //                                   <Tooltip
-                    //     //                                     title={`${
-                    //     //                                       value.name
-                    //     //                                         ?.charAt(0)
-                    //     //                                         .toUpperCase() +
-                    //     //                                       value.name?.slice(
-                    //     //                                         1
-                    //     //                                       )
-                    //     //                                     }`}
-                    //     //                                     arrow
-                    //     //                                   >
-                    //     //                                     {value.image ? (
-                    //     //                                       <img
-                    //     //                                         alt="connected application"
-                    //     //                                         src={
-                    //     //                                           value.image
-                    //     //                                         }
-                    //     //                                         width="70"
-                    //     //                                         name={
-                    //     //                                           value.name
-                    //     //                                         }
-                    //     //                                         onError={
-                    //     //                                           handleImageError
-                    //     //                                         }
-                    //     //                                       />
-                    //     //                                     ) : (
-                    //     //                                       <Avatar
-                    //     //                                         className={
-                    //     //                                           classes.avatar
-                    //     //                                         }
-                    //     //                                       >
-                    //     //                                         {value.name
-                    //     //                                           ?.charAt(0)
-                    //     //                                           .toUpperCase()}
-                    //     //                                       </Avatar>
-                    //     //                                     )}
-                    //     //                                   </Tooltip>
-                    //     //                                 </Grid>
-                    //     //                               </>
-                    //     //                             );
-                    //     //                           }
-                    //     //                           return null;
-                    //     //                         }
-                    //     //                       )
-                    //     //                     );
-                    //     //                   }
-                    //     //                 } else {
-                    //     //                   Object.values(topicLabels).map(
-                    //     //                     (obj) => {
-                    //     //                       if (
-                    //     //                         obj.label ===
-                    //     //                           topicLabels[
-                    //     //                             topic?.name
-                    //     //                               ?.toLowerCase()
-                    //     //                               .replaceAll(/\s/g, "")
-                    //     //                           ]?.label &&
-                    //     //                         obj.isLabelEnabled
-                    //     //                       ) {
-
-                    //     //                         if (
-                    //     //                           topic.name.toLowerCase() ===
-                    //     //                           Object.keys(
-                    //     //                             app
-                    //     //                           )[0].toLowerCase()
-                    //     //                         ) {
-                    //     //                           setTopicsDisplayed(
-                    //     //                             [...topicsDisplayed, topic?.name]
-                    //     //                            );
-                    //     //                           return (
-                    //     //                             app[
-                    //     //                               topic.name.toLowerCase()
-                    //     //                             ] &&
-                    //     //                             app[
-                    //     //                               topic.name.toLowerCase()
-                    //     //                             ].map((value) => {
-                    //     //                               if (
-                    //     //                                 allApplications.find(
-                    //     //                                   (x) =>
-                    //     //                                     x.name ===
-                    //     //                                     value.name
-                    //     //                                 )
-                    //     //                               ) {
-                    //     //                                 return (
-                    //     //                                   <>
-                    //     //                                     <Grid item>
-                    //     //                                       <Tooltip
-                    //     //                                         title={`${
-                    //     //                                           value.name
-                    //     //                                             ?.charAt(0)
-                    //     //                                             .toUpperCase() +
-                    //     //                                           value.name?.slice(
-                    //     //                                             1
-                    //     //                                           )
-                    //     //                                         }`}
-                    //     //                                         arrow
-                    //     //                                       >
-                    //     //                                         {value.image ? (
-                    //     //                                           <img
-                    //     //                                             alt="connected application"
-                    //     //                                             src={
-                    //     //                                               value.image
-                    //     //                                             }
-                    //     //                                             width="70"
-                    //     //                                             name={
-                    //     //                                               value.name
-                    //     //                                             }
-                    //     //                                             onError={
-                    //     //                                               handleImageError
-                    //     //                                             }
-                    //     //                                           />
-                    //     //                                         ) : (
-                    //     //                                           <Avatar
-                    //     //                                             className={
-                    //     //                                               classes.avatar
-                    //     //                                             }
-                    //     //                                           >
-                    //     //                                             {value.name
-                    //     //                                               ?.charAt(
-                    //     //                                                 0
-                    //     //                                               )
-                    //     //                                               .toUpperCase()}
-                    //     //                                           </Avatar>
-                    //     //                                         )}
-                    //     //                                       </Tooltip>
-                    //     //                                     </Grid>
-                    //     //                                   </>
-                    //     //                                 );
-                    //     //                               }
-                    //     //                               return null;
-                    //     //                             })
-                    //     //                           );
-                    //     //                         }
-                    //     //                       }
-                    //     //                     }
-                    //     //                   );
-                    //     //                 }
-                    //     //                 return null;
-                    //     //               })}
-                    //     //           </Grid>
-                    //     //         </>
-                    //     //       </TableCell>
-                    //     //       <TableCell align="right">
-                    //     //         <TopicSwitch
-                    //     //           size="small"
-                    //     //           checked={readLocalPermissions?.includes(
-                    //     //             `realestate/${topic.name.toLowerCase()}`
-                    //     //           )}
-                    //     //           name={topic.name + "-write"}
-                    //     //           onChange={() =>
-                    //     //             handleReadLocalPermissions(
-                    //     //               `realestate/${topic.name.toLowerCase()}`
-                    //     //             )
-                    //     //           }
-                    //     //         />
-                    //     //       </TableCell>
-                    //     //     </TableRow>
-                    //     //   )}
-                    //     //   {topic.write && (
-                    //     //     <TableRow key={`${topic.name}--write`}>
-                    //     //       <TableCell component="th" scope="row">
-                    //     //         {topicLabels[
-                    //     //           topic?.name
-                    //     //             ?.toLowerCase()
-                    //     //             .replaceAll(/\s/g, "")
-                    //     //         ]?.isLabelEnabled
-                    //     //           ? topicLabels[
-                    //     //               topic?.name
-                    //     //                 ?.toLowerCase()
-                    //     //                 .replaceAll(/\s/g, "")
-                    //     //             ]?.label
-                    //     //           : topicLabels[
-                    //     //               topic?.name
-                    //     //                 ?.toLowerCase()
-                    //     //                 .replaceAll(/\s/g, "")
-                    //     //             ]?.name}
-                    //     //       </TableCell>
-                    //     //       <TableCell>Send to</TableCell>
-                    //     //       <TableCell>
-                    //     //         <>
-                    //     //           <Grid
-                    //     //             container
-                    //     //             direction="row"
-                    //     //             alignItems="center"
-                    //     //           >
-                    //     //             {connectedApps &&
-                    //     //               connectedApps.map((app) => {
-                    //     //                 if (
-                    //     //                   topic.name.toLowerCase() ===
-                    //     //                   Object.keys(app)[0].toLowerCase()
-                    //     //                 ) {
-                    //     //                   return (
-                    //     //                     app[topic.name.toLowerCase()] &&
-                    //     //                     app[topic.name.toLowerCase()].map(
-                    //     //                       (value) => (
-                    //     //                         <>
-                    //     //                           <Grid item>
-                    //     //                             {/* <Tooltip title={!value.type ?
-                    //     //                                                                             (`${application.name}
-                    //     //                                                                 ${(topic.read && topic.write) ?
-                    //     //                                                                                     'sends and receives' : (
-                    //     //                                                                                         topic.write ?
-                    //     //                                                                                             'sends' :
-                    //     //                                                                                             'receives'
-                    //     //                                                                                     )}
-                    //     //                                                                 ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data
-                    //     //                                                                 ${(topic.read && topic.write) ?
-                    //     //                                                                                     'to/from' : (
-                    //     //                                                                                         topic.write ?
-                    //     //                                                                                             'to' :
-                    //     //                                                                                             'from'
-                    //     //                                                                                     )}
-                    //     //                                                                 ${value.name.charAt(0).toUpperCase() + value.name.slice(1)}`
-                    //     //                                                                             ) : (`${application.name}
-                    //     //                                                                             ${value.type === 'write' ?
-                    //     //                                                                                     'receives' :
-                    //     //                                                                                     'sends'
-                    //     //                                                                                 }
-                    //     //                                                                             ${topic.name === 'Website' ? 'Website Customer Activity' : topic.name} data
-                    //     //                                                                             ${value.type === 'write' ?
-                    //     //                                                                                     'from' :
-                    //     //                                                                                     'to'
-                    //     //                                                                                 }
-                    //     //                                                                             ${value.name?.charAt(0).toUpperCase() + value.name?.slice(1)}`
-                    //     //                                                                             )
-                    //     //                                                                         }
-                    //     //                                                                             arrow> */}
-                    //     //                             <Tooltip
-                    //     //                               title={`${
-                    //     //                                 value.name
-                    //     //                                   ?.charAt(0)
-                    //     //                                   .toUpperCase() +
-                    //     //                                 value.name?.slice(1)
-                    //     //                               }`}
-                    //     //                               arrow
-                    //     //                             >
-                    //     //                               {value.image ? (
-                    //     //                                 <img
-                    //     //                                   alt="connected application"
-                    //     //                                   src={value.image}
-                    //     //                                   width="70"
-                    //     //                                   name={value.name}
-                    //     //                                   onError={
-                    //     //                                     handleImageError
-                    //     //                                   }
-                    //     //                                 />
-                    //     //                               ) : (
-                    //     //                                 <Avatar
-                    //     //                                   className={
-                    //     //                                     classes.avatar
-                    //     //                                   }
-                    //     //                                 >
-                    //     //                                   {value.name
-                    //     //                                     ?.charAt(0)
-                    //     //                                     .toUpperCase()}
-                    //     //                                 </Avatar>
-                    //     //                               )}
-                    //     //                             </Tooltip>
-                    //     //                           </Grid>
-                    //     //                         </>
-                    //     //                       )
-                    //     //                     )
-                    //     //                   );
-                    //     //                 }
-                    //     //                 return null;
-                    //     //               })}
-                    //     //           </Grid>
-                    //     //         </>
-                    //     //       </TableCell>
-                    //     //       <TableCell align="right">
-                    //     //         <TopicSwitch
-                    //     //           size="small"
-                    //     //           checked={writeLocalPermissions?.includes(
-                    //     //             `realestate/${topic.name.toLowerCase()}`
-                    //     //           )}
-                    //     //           name={topic.name + "-write"}
-                    //     //           onChange={() =>
-                    //     //             handleWriteLocalPermissions(
-                    //     //               `realestate/${topic.name.toLowerCase()}`
-                    //     //             )
-                    //     //           }
-                    //     //         />
-                    //     //       </TableCell>
-                    //     //     </TableRow>
-                    //     //   )}
-                    //     // </React.Fragment>
-                    //   );
-                    // })
-                  }
+                                )
+                              }
+                            />
+                          </TableCell>
+                        </TableRow>
+                      </React.Fragment>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -1000,13 +544,21 @@ function DialogBox(props) {
                 state?.connectedAppContent?.type === "write" ? "to" : "from"
               }`}
             </Grid>
-            {state?.connectedAppContent?.connectedApps.map((value) => (
-              <Grid item xs={12}>
-                <Paper elevation={0} className={classes.connectedAppImage}>
-                  <img alt={value.name} src={value.image} width="250" />
-                </Paper>
-              </Grid>
-            ))}
+            {state?.connectedAppContent?.connectedApps
+              .sort((a, b) =>
+                a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+              )
+              .map((value) => (
+                <Grid item xs={12}>
+                  <Typography
+                    className={classes.secondMsg}
+                    align="right"
+                    variant="subtitle2"
+                  >
+                    {value.name}
+                  </Typography>
+                </Grid>
+              ))}
           </Grid>
         </Dialog>
       </Dialog>

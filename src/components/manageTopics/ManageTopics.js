@@ -85,13 +85,11 @@ const TopicSwitch = withStyles((theme) => ({
 function ManageTopics(props) {
   const { classes, permissions, handleDialog, open, logo, applications } =
     props;
-  console.log(applications);
   const state = useSelector((state) => ({
     topicLabels: state.topic.topicLabels,
   }));
 
   const dispatch = useDispatch();
-  console.log(state.topicLabels);
   const handleToggleChange = (e) => {
     const type = e.target.name;
     const newTopicLabels = {
