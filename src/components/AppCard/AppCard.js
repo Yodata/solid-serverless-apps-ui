@@ -32,7 +32,6 @@ const styles = (theme) => ({
   new: {
     paddingRight: "40px",
     paddingLeft: "40px",
-    // marginBottom: "20px",
     backgroundColor: theme.palette.new.main,
     "&:hover": {
       backgroundColor: theme.palette.new.main,
@@ -67,9 +66,6 @@ function AppCard(props) {
   } = props;
 
   React.useEffect(() => {
-    // if (userList.some(ele => ele.contactId === userId && ele.roleName)) {
-    //     userSubscriptions()
-    // } else
     if (franchiseList?.length > 0) {
       setProfileId(franchiseList[0].profileId);
       userSubscriptions();
@@ -80,18 +76,6 @@ function AppCard(props) {
 
   const [isNew, setNew] = React.useState(false);
   const [openManageTopics, setOpenManageTopics] = React.useState(false);
-  // const getApplications = (group = 'featured') => {
-  //     return applications ? applications.filter(function (app) {
-  //         let result = false
-  //         if (app && app.group) {
-  //             result = app.group.includes(group);
-  //             if(!admin){
-  //                 result = app.group.includes(group) && app.isVisible
-  //             }
-  //         }
-  //         return result
-  //     }) : [];
-  // };
 
   const sortApplications = () => {
     return [...applications].sort((a, b) => {
@@ -121,10 +105,6 @@ function AppCard(props) {
   const handleCancel = () => {
     setNew(false);
   };
-
-  // const handleManageTopics = () => {
-
-  // }
 
   return (
     <React.Fragment>

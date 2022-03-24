@@ -4,10 +4,10 @@ import {
   AUTHORISED_USER,
   LIST_OF_ROLES,
   SET_PROFILE_ID,
-  SET_ORGANISATION_ROLE
+  SET_ORGANISATION_ROLE,
 } from "../actions/authenticationActions";
 import endpoint from "../../api/endpoints";
-import {convertToFranchiseStore} from '../../utility'
+import { convertToFranchiseStore } from "../../utility";
 
 const defaultState = {
   isLoggedIn: false,
@@ -20,7 +20,7 @@ const defaultState = {
   userList: [],
   franchiseList: [],
   isFranchiseUser: false,
-  parentOrg: ''
+  parentOrg: "",
 };
 
 const authenticationReducer = (state = defaultState, action) => {
@@ -85,7 +85,14 @@ const authenticationReducer = (state = defaultState, action) => {
       });
       return {
         ...state,
-        franchiseList: removeDuplicates,
+        franchiseList: [
+          ...removeDuplicates,
+          {
+            contactId: state.userData.contact_id,
+            profileId: state.userData.profile_id,
+            roleName: "agent",
+          },
+        ],
       };
     case SET_PROFILE_ID:
       const profileId = action.profileId;
@@ -102,11 +109,14 @@ const authenticationReducer = (state = defaultState, action) => {
       const userProfile = action.profile;
       const role = userProfile.type;
 
-      const parentOrg = role === "RealEstateOrganization" ? convertToFranchiseStore(userProfile.id) : convertToFranchiseStore(userProfile.parentOrganization[0])
+      const parentOrg =
+        role === "RealEstateOrganization"
+          ? convertToFranchiseStore(userProfile.id)
+          : convertToFranchiseStore(userProfile.parentOrganization[0]);
       return {
         ...state,
         isFranchiseUser: role === "RealEstateOrganization" ? true : false,
-        parentOrg
+        parentOrg,
       };
     case LOGOUT_USER:
       return {
