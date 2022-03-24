@@ -106,7 +106,7 @@ function Permissions(props) {
     open,
     logo,
     handlePermissionChanged,
-    applicationAccessLevel = "both",
+    applicationAccessLevel,
   } = props;
 
   const reduxState = useSelector((state) => ({
@@ -118,10 +118,6 @@ function Permissions(props) {
   });
 
   const [accessLevel, setAccessLevel] = React.useState(applicationAccessLevel);
-
-  //   const handleAccessLevelChange = (event) => {
-  //     setValue(event.target.value);
-  //   };
 
   const handleCancel = () => {
     handleDialog();
