@@ -12,8 +12,10 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
-import { Typography } from "@material-ui/core";
+import { IconButton, Typography } from "@material-ui/core";
 import { Switch } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Clear";
+
 
 const styles = (theme) => ({
   root: {},
@@ -32,7 +34,9 @@ const styles = (theme) => ({
   connectedAppDialog: {
     maxWidth: "60vw",
     overflowX: "hidden",
-    padding: 30,
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingBottom: 30,
   },
   textSpacing: {
     paddingBottom: 20,
@@ -93,7 +97,14 @@ const styles = (theme) => ({
   },
   connectedCell: {
     textDecoration: "underline",
+    color: 'blue'
   },
+  closeIcon: {
+    width: 20,
+    padding: 0,
+    alignSelf: 'flex-end',
+    left: 25
+  }
 });
 
 const TopicSwitch = withStyles((theme) => ({
@@ -330,7 +341,7 @@ function DialogBox(props) {
                               })
                             }
                           >
-                            {`${read?.connectedApps?.length} connected applications`}
+                            {`View ${read?.connectedApps?.length} connected applications`}
                           </TableCell>
                           <TableCell align="right">
                             <TopicSwitch
@@ -374,7 +385,7 @@ function DialogBox(props) {
                               })
                             }
                           >
-                            {`${write?.connectedApps?.length} connected applications`}
+                            {`View ${write?.connectedApps?.length} connected applications`}
                           </TableCell>
                           <TableCell align="right">
                             <TopicSwitch
@@ -513,6 +524,9 @@ function DialogBox(props) {
           classes={{ paper: classes.connectedAppDialog }}
           scroll="paper"
         >
+          <IconButton className={classes.closeIcon} onClick={() => setState({ ...state, isConnectedApp: false })}>
+            <CloseIcon />
+          </IconButton>
           <Grid
             container
             direction="column"
@@ -528,9 +542,9 @@ function DialogBox(props) {
               {`${
                 state?.connectedAppContent?.type === "write"
                   ? "Send"
-                  : "Recieve"
+                  : "Receive"
               } ${state.connectedAppContent?.label} ${
-                state?.connectedAppContent?.type === "write" ? "to" : "from"
+                state?.connectedAppContent?.type === "write" ? "to:" : "from:"
               }`}
             </Grid>
             {state?.connectedAppContent?.connectedApps
