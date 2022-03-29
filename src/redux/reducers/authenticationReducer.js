@@ -71,8 +71,8 @@ const authenticationReducer = (state = defaultState, action) => {
             value.roleName.toLowerCase() === "app exchange admin"
           ) {
             return {
-              profileId: value.memberOf.id,
-              contactId: value.memberOf.id.split("//").pop().split(".").shift(),
+              profileId: value.memberOf?.id ?? value.memberOf,
+              contactId: value.memberOf?.id?.split("//").pop().split(".").shift() ?? value.memberOf?.split("//").pop().split(".").shift(),
               roleName: value.roleName,
             };
           }
