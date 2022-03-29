@@ -66,7 +66,6 @@ export const authorisedUserList = () => {
         try {
             const response = await API.get(`https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.credentials}`)
             dispatch(authorisedUser(response.data.adminUsers))
-            dispatch(getParentOrgandRole())
         } catch (err) {
             console.log(err)
         } finally {

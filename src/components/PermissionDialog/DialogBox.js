@@ -465,12 +465,13 @@ function DialogBox(props) {
               alignItems="flex-end"
             >
               <Grid item>
-                {userId === userData.contact_id ||
+                {/* {userId === userData.contact_id ||
                 franchiseList.some(
                   (ele) =>
                     ele.contactId === userData.contact_id &&
                     ele.roleName.toLowerCase() === "app exchange admin"
-                ) ||
+                ) 
+                ||
                 !(
                   adminList.some(
                     (ele) =>
@@ -482,16 +483,9 @@ function DialogBox(props) {
                       ele.contactId === userData.contact_id &&
                       onlyReadRole.includes(ele.roleName.toLowerCase())
                   )
-                ) ? (
-                  <Button
-                    className={classes.actionButton}
-                    name="submit"
-                    variant="contained"
-                    onClick={handleType}
-                    disableElevation
-                  >
-                    Save
-                  </Button>
+                ) 
+                ? (
+                  
                 ) : (
                   <Button
                     disabled
@@ -502,7 +496,16 @@ function DialogBox(props) {
                   >
                     Save
                   </Button>
-                )}
+                )} */}
+                <Button
+                    className={classes.actionButton}
+                    name="submit"
+                    variant="contained"
+                    onClick={handleType}
+                    disableElevation
+                  >
+                    Save
+                  </Button>
               </Grid>
               <Grid item>
                 <Typography
