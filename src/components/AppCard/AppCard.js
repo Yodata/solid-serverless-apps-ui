@@ -150,7 +150,7 @@ function AppCard(props) {
           {sortApplications().map((application) => (
             <>
               {application.isVisible &&
-              ((isFranchiseUser && application.accessLevel !== 'agent') ||
+              (isFranchiseUser ||
                 (localStore &&
                   (application.accessLevel !== 'franchisees') &&
                     localStore.find((x) => x.id === application.id)
