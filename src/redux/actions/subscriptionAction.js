@@ -2,6 +2,7 @@ import { API, APIGlobalSubs } from '../../api/apiRequest'
 import endpoint from '../../api/endpoints'
 import { serviceEnabled } from '../slices/servicesSlice'
 import { getAllApps } from '../../redux/actions/applicationActions';
+import { getParentOrgandRole } from '../../redux/actions/authenticationActions';
 import { toastSuccess } from '../slices/toastSlice'
 
 
@@ -54,6 +55,7 @@ export const userSubscriptions = id => {
       dispatch(toastSuccess(false))
     } finally {
       dispatch(getAllApps())
+      dispatch(getParentOrgandRole())
     }
   }
 }

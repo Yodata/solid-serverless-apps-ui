@@ -150,10 +150,9 @@ function AppCard(props) {
           {sortApplications().map((application) => (
             <>
               {application.isVisible &&
-              (isFranchiseUser ||
-                // !localStore ||
+              ((isFranchiseUser && application.accessLevel !== 'agent') ||
                 (localStore &&
-                  // (!localStore.find((x) => x.id === application.id) ||
+                  (application.accessLevel !== 'franchisees') &&
                     localStore.find((x) => x.id === application.id)
                       ?.isFranchiseVisible)) ? (
                 <Grid className={classes.app} item key={application.name}>
