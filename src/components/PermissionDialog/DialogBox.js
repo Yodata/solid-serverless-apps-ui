@@ -395,13 +395,13 @@ function DialogBox(props) {
                                   `realestate/${x.toLowerCase()}`
                                 )
                               )}
-                              onChange={() =>
-                                write.topics.forEach((x) =>
-                                  handleWriteLocalPermissions(
-                                    `realestate/${x.toLowerCase()}`
+                              onChange={() =>{
+                                handleWriteLocalPermissions(
+                                  write.topics.map(
+                                    (x) => `realestate/${x.toLowerCase()}`
                                   )
-                                )
-                              }
+                                );
+                              }}
                             />
                           </TableCell>
                         </TableRow>
