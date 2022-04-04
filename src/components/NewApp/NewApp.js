@@ -66,7 +66,6 @@ function NewApp(props) {
 
     const handleEdit = () => {
         const editedApplication = JSON.parse(JSON.stringify(application));
-        editedApplication.id = state.newId.trim();
         editedApplication.name = state.newTitle.trim();
         editedApplication.description = state.newDescription.trim();
         editedApplication.logo.url = state.newLogo;
@@ -176,7 +175,6 @@ function NewApp(props) {
                                         input: classes.resize,
                                     },
                                 }}
-                                onChange={handleAppIdChange}
                             />
                         </>
                     }
