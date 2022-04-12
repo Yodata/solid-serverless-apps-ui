@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../../theme';
-import { Router } from 'react-router-dom';
+import { Router, useLocation } from 'react-router-dom';
 import Routes from '../route';
 import { history } from '../../components/Authentication/history';
 import queryString from 'query-string'
@@ -13,9 +13,10 @@ import queryString from 'query-string'
  */
 
 function App() {
+  let location = useLocation();
 
   useEffect(() => {{
-    let queries = queryString.parse(this.props.location.search)
+    let queries = queryString.parse(location.pathname)
     console.log(queries)
   }}, [])
 
