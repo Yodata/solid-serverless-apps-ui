@@ -14,6 +14,7 @@ import queryString from 'query-string'
 
 function App() {
   let location = useLocation();
+  console.log(location);
 
   useEffect(() => {{
     let queries = queryString.parse(location.pathname)
