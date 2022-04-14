@@ -59,6 +59,7 @@ function HeroUser(props) {
     userList: state.auth.userList,
     franchiseList: state.auth.franchiseList,
     success: state.toast.success,
+    roleName: state.role.roleName,
   }));
 
   const dispatch = useDispatch();
@@ -166,26 +167,50 @@ function HeroUser(props) {
                 >
                   <MenuItem value="">
                     <Typography>
-                      {state.franchiseList[0].contactId
-                        .split("//")
-                        .pop()
-                        .split(".")
-                        .shift()
-                        .toUpperCase()}
+                      {state.roleName === "self"
+                        ? state.franchiseList[
+                            state.franchiseList?.length - 1
+                          ].contactId
+                            .split("//")
+                            .pop()
+                            .split(".")
+                            .shift()
+                            .toUpperCase()
+                        : state.franchiseList[0].contactId
+                            .split("//")
+                            .pop()
+                            .split(".")
+                            .shift()
+                            .toUpperCase()}
                     </Typography>
                   </MenuItem>
                   {state.franchiseList.map((ele, index) => {
-                    if (index > 0) {
-                      const value = ele.contactId
-                        .split("//")
-                        .pop()
-                        .split(".")
-                        .shift();
-                      return (
-                        <MenuItem value={value}>
-                          <Typography>{value.toUpperCase()}</Typography>
-                        </MenuItem>
-                      );
+                    if (state.roleName === "self") {
+                      if (index !== state.franchiseList.length - 1) {
+                        const value = ele.contactId
+                          .split("//")
+                          .pop()
+                          .split(".")
+                          .shift();
+                        return (
+                          <MenuItem value={value}>
+                            <Typography>{value.toUpperCase()}</Typography>
+                          </MenuItem>
+                        );
+                      }
+                    } else {
+                      if (index > 0) {
+                        const value = ele.contactId
+                          .split("//")
+                          .pop()
+                          .split(".")
+                          .shift();
+                        return (
+                          <MenuItem value={value}>
+                            <Typography>{value.toUpperCase()}</Typography>
+                          </MenuItem>
+                        );
+                      }
                     }
                   })}
                 </Select>

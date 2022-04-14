@@ -4,6 +4,8 @@ import { HeroUser } from "../../components/Hero";
 import AppCard from "../../components/AppCard";
 import Paper from "@material-ui/core/Paper";
 import { useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setRoleName } from "../../redux/slices/roleSlice";
 
 /**
  * @Component Client
@@ -12,14 +14,10 @@ import { useLocation } from "react-router-dom";
 
 function Client() {
   let location = useLocation();
-  console.log(location);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    {
-      console.log(location);
-      // let queries = queryString.parse(location.pathname)
-      // console.log(queries)
-    }
+    dispatch(setRoleName(location.search?.split("=")[1]));
   }, []);
   return (
     <React.Fragment>

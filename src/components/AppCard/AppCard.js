@@ -63,11 +63,16 @@ function AppCard(props) {
     setProfileId,
     localStore,
     isFranchiseUser,
+    roleName,
   } = props;
 
   React.useEffect(() => {
     if (franchiseList?.length > 0) {
-      setProfileId(franchiseList[0].profileId);
+      if (roleName === "self") {
+        setProfileId(franchiseList[franchiseList.length - 1].profileId);
+      } else {
+        setProfileId(franchiseList[0].profileId);
+      }
       userSubscriptions();
     } else {
       userSubscriptions();
@@ -152,9 +157,9 @@ function AppCard(props) {
               {application.isVisible &&
               (isFranchiseUser ||
                 (localStore &&
-                  (application.accessLevel !== 'franchisees') &&
-                    localStore.find((x) => x.id === application.id)
-                      ?.isFranchiseVisible)) ? (
+                  application.accessLevel !== "franchisees" &&
+                  localStore.find((x) => x.id === application.id)
+                    ?.isFranchiseVisible)) ? (
                 <Grid className={classes.app} item key={application.name}>
                   <Card
                     application={application}
@@ -177,7 +182,11 @@ function AppCard(props) {
           ))}
         </Grid>
       </Grid>
-      <ManageTopics open={openManageTopics} applications={applications} handleDialog={setOpenManageTopics}/>
+      <ManageTopics
+        open={openManageTopics}
+        applications={applications}
+        handleDialog={setOpenManageTopics}
+      />
     </React.Fragment>
   );
 }
@@ -192,6 +201,7 @@ const mapStateToProps = (state) => {
     userId: state.auth.userId,
     localStore: state.apps?.localStoreData?.application,
     isFranchiseUser: state.auth.isFranchiseUser,
+    roleName: state.role.roleName,
   };
 };
 
