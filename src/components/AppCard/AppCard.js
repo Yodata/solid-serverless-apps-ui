@@ -14,6 +14,7 @@ import {
   serviceUpdated,
 } from "../../redux/slices/servicesSlice";
 import ManageTopics from "../manageTopics";
+import { Typography } from "@material-ui/core";
 
 /**
  * @Component AppCard
@@ -46,6 +47,10 @@ const styles = (theme) => ({
       backgroundColor: theme.palette.new.main,
     },
   },
+  noAppsText: {
+    color: 'red',
+    marginLeft: 'calc(100% / 4)',
+  },
 });
 
 function AppCard(props) {
@@ -65,6 +70,8 @@ function AppCard(props) {
     isFranchiseUser,
     roleName,
   } = props;
+
+  let count = 0;
 
   React.useEffect(() => {
     if (franchiseList?.length > 0) {
@@ -152,14 +159,17 @@ function AppCard(props) {
               />
             </Grid>
           )}
-          {sortApplications().map((application) => (
-            <>
-              {application.isVisible &&
+          {sortApplications().map((application) => {
+            if (
+              application.isVisible &&
               (isFranchiseUser ||
                 (localStore &&
                   application.accessLevel !== "franchisees" &&
                   localStore.find((x) => x.id === application.id)
-                    ?.isFranchiseVisible)) ? (
+                    ?.isFranchiseVisible))
+            ) {
+              count++;
+              return (
                 <Grid className={classes.app} item key={application.name}>
                   <Card
                     application={application}
@@ -167,7 +177,9 @@ function AppCard(props) {
                     updateApplication={updateApplication}
                   />
                 </Grid>
-              ) : (
+              );
+            } else {
+              return (
                 isAdmin && (
                   <Grid className={classes.app} item key={application.name}>
                     <Card
@@ -177,9 +189,43 @@ function AppCard(props) {
                     />
                   </Grid>
                 )
-              )}
-            </>
-          ))}
+              );
+            }
+            // return (
+            //   <>
+            //     {application.isVisible &&
+            //     (isFranchiseUser ||
+            //       (localStore &&
+            //         application.accessLevel !== "franchisees" &&
+            //         localStore.find((x) => x.id === application.id)
+            //           ?.isFranchiseVisible)) ? (
+            //       <Grid className={classes.app} item key={application.name}>
+            //         <Card
+            //           application={application}
+            //           isAdmin={isAdmin}
+            //           updateApplication={updateApplication}
+            //         />
+            //       </Grid>
+            //     ) : (
+            //       isAdmin && (
+            //         <Grid className={classes.app} item key={application.name}>
+            //           <Card
+            //             application={application}
+            //             isAdmin={isAdmin}
+            //             updateApplication={updateApplication}
+            //           />
+            //         </Grid>
+            //       )
+            //     )}
+            //   </>
+            // );
+          })}
+          {count === 0 && (
+            <Typography className={classes.noAppsText}>
+              Oh no, your broker hasn't selected any apps yet for the App
+              Exchange. Please contact your Office Manager for assistance.
+            </Typography>
+          )}
         </Grid>
       </Grid>
       <ManageTopics
