@@ -16,7 +16,6 @@ import { IconButton, Typography } from "@material-ui/core";
 import { Switch } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Clear";
 
-
 const styles = (theme) => ({
   root: {},
   image: {
@@ -85,7 +84,7 @@ const styles = (theme) => ({
     fontSize: "1em",
     maxWidth: 250,
     lineHeight: "1em",
-    paddingTop: 24
+    paddingTop: 24,
   },
   typeButton: {
     maxWidth: "60%",
@@ -97,14 +96,14 @@ const styles = (theme) => ({
   },
   connectedCell: {
     textDecoration: "underline",
-    color: 'blue'
+    color: "blue",
   },
   closeIcon: {
     width: 20,
     padding: 0,
-    alignSelf: 'flex-end',
-    left: 25
-  }
+    alignSelf: "flex-end",
+    left: 25,
+  },
 });
 
 const TopicSwitch = withStyles((theme) => ({
@@ -173,8 +172,22 @@ function DialogBox(props) {
     handleDialog();
   };
 
+  const getDisabledTopicsArray = (array) => {
+    return array
+      ?.map((x) => x.topics)
+      ?.flat()
+      ?.map((y) => `realestate/${y?.toLowerCase()}`);
+  };
+
   const handleType = () => {
-    handleAuthorize(type);
+    handleAuthorize(type, {
+      read: getDisabledTopicsArray(
+        state.readPermissionArray?.filter((e) => !e.enabled)
+      ),
+      write: getDisabledTopicsArray(
+        state.writePermissionArray?.filter((e) => !e.enabled)
+      ),
+    });
   };
 
   const getConnectedApps = (type, topic) => {
@@ -238,9 +251,21 @@ function DialogBox(props) {
   };
 
   const createPermissionsArray = () => {
+    const subSubscribes =
+      userSubs &&
+      userSubs.items &&
+      userSubs.items
+        .find((e) => e.agent === application.id)
+        ?.subscribes?.map((y) => y.split("/")[1]);
+    const subPublishes =
+      userSubs &&
+      userSubs.items &&
+      userSubs.items
+        .find((e) => e.agent === application.id)
+        ?.publishes?.map((y) => y.split("/")[1]);
     let readArray = application.permissions
       .map((topic) => {
-        if (topic.read) {
+        if (topic.read || subSubscribes?.includes(topic.name.toLowerCase())) {
           const labelObject =
             topicLabels[topic?.name?.toLowerCase().replaceAll(/\s/g, "")];
           const label = labelObject?.label
@@ -255,13 +280,14 @@ function DialogBox(props) {
             label,
             connectedApps,
             type: "read",
+            enabled: topic.read ? true : false,
           };
         }
       })
       .filter(Boolean);
     let writeArray = application.permissions
       .map((topic) => {
-        if (topic.write) {
+        if (topic.write || subPublishes?.includes(topic.name.toLowerCase())) {
           const labelObject =
             topicLabels[topic?.name?.toLowerCase().replaceAll(/\s/g, "")];
           const label = labelObject?.label
@@ -276,6 +302,7 @@ function DialogBox(props) {
             label,
             connectedApps,
             type: "write",
+            enabled: topic.write ? true : false,
           };
         }
       })
@@ -341,11 +368,14 @@ function DialogBox(props) {
                           <TableCell align="right">
                             <TopicSwitch
                               size="small"
-                              checked={read.topics.some((x) =>
-                                readLocalPermissions?.includes(
-                                  `realestate/${x.toLowerCase()}`
-                                )
-                              )}
+                              disabled={!read.enabled}
+                              checked={
+                                read.topics.some((x) =>
+                                  readLocalPermissions?.includes(
+                                    `realestate/${x.toLowerCase()}`
+                                  )
+                                ) && read.enabled
+                              }
                               onChange={() => {
                                 handleReadLocalPermissions(
                                   read.topics.map(
@@ -385,12 +415,15 @@ function DialogBox(props) {
                           <TableCell align="right">
                             <TopicSwitch
                               size="small"
-                              checked={write.topics.some((x) =>
-                                writeLocalPermissions?.includes(
-                                  `realestate/${x.toLowerCase()}`
-                                )
-                              )}
-                              onChange={() =>{
+                              disabled={!write.enabled}
+                              checked={
+                                write.topics.some((x) =>
+                                  writeLocalPermissions?.includes(
+                                    `realestate/${x.toLowerCase()}`
+                                  )
+                                ) && write.enabled
+                              }
+                              onChange={() => {
                                 handleWriteLocalPermissions(
                                   write.topics.map(
                                     (x) => `realestate/${x.toLowerCase()}`
@@ -493,14 +526,14 @@ function DialogBox(props) {
                   </Button>
                 )} */}
                 <Button
-                    className={classes.actionButton}
-                    name="submit"
-                    variant="contained"
-                    onClick={handleType}
-                    disableElevation
-                  >
-                    Save
-                  </Button>
+                  className={classes.actionButton}
+                  name="submit"
+                  variant="contained"
+                  onClick={handleType}
+                  disableElevation
+                >
+                  Save
+                </Button>
               </Grid>
               <Grid item>
                 <Typography
@@ -522,7 +555,10 @@ function DialogBox(props) {
           classes={{ paper: classes.connectedAppDialog }}
           scroll="paper"
         >
-          <IconButton className={classes.closeIcon} onClick={() => setState({ ...state, isConnectedApp: false })}>
+          <IconButton
+            className={classes.closeIcon}
+            onClick={() => setState({ ...state, isConnectedApp: false })}
+          >
             <CloseIcon />
           </IconButton>
           <Grid

@@ -293,8 +293,8 @@ export function CardComponent(props) {
     setState({ ...state, editPermission: false });
   };
 
-  const handleAuthorize = (type) => {
-    const payload = generateData(type);
+  const handleAuthorize = (type, disabledTopics) => {
+    const payload = generateData(type, disabledTopics);
     if (type !== "Update") {
       if (
         state.readLocalPermissions?.length === 0 &&
@@ -313,7 +313,7 @@ export function CardComponent(props) {
     publishEvent(payload);
   };
 
-  const generateData = (type) => {
+  const generateData = (type, disabledTopics) => {
     return {
       topic: `yodata/subscription#${
         type !== "Update"
@@ -341,8 +341,8 @@ export function CardComponent(props) {
           agent: `${application.id}`,
           instrument: `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}`,
           host: `https://${userData.contact_id}${userData.userDomain}`,
-          subscribes: state.readLocalPermissions,
-          publishes: state.writeLocalPermissions,
+          subscribes: state.readLocalPermissions.filter(x => !disabledTopics.read.includes(x)),
+          publishes: state.writeLocalPermissions.filter(x => !disabledTopics.write.includes(x)),
         },
       },
     };
