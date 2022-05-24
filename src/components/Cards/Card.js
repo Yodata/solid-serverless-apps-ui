@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
@@ -143,61 +143,56 @@ export function CardComponent(props) {
     updateLocalAppStore,
     topicLabels,
   } = props;
+
+  const [subscribedPermissions, setSubscribedPermissions] = useState({
+    read: userSubs?.items?.find((ele) => ele.agent === application.id)
+      ?.subscribes,
+    write: userSubs?.items?.find((ele) => ele.agent === application.id)
+      ?.publishes,
+  });
+
   const [state, setState] = React.useState({
     isEditable: false,
     isDialogOpen: false,
     isConnected: false,
     editPermission: false,
-    readLocalPermissions:
-      userSubs?.items?.find((ele) => ele.agent === application.id)
-        ?.subscribes ??
-      application.permissions
-        .map((value) => {
-          return (
-            value.read === true && `realestate/${value.name.toLowerCase()}`
-          );
-        })
-        .filter(Boolean) ??
-      [],
-    writeLocalPermissions:
-      userSubs?.items?.find((ele) => ele.agent === application.id)?.publishes ??
-      application.permissions
-        .map((value) => {
-          return (
-            value.write === true && `realestate/${value.name.toLowerCase()}`
-          );
-        })
-        .filter(Boolean) ??
-      [],
+    readLocalPermissions: subscribedPermissions.read,
+    writeLocalPermissions: subscribedPermissions.write,
   });
-
+  useEffect(() => {
+    setSubscribedPermissions({
+      ...state,
+      read:
+        userSubs?.items?.find((ele) => ele.agent === application.id)
+          ?.subscribes ??
+        // application.permissions
+        //   .map((value) => {
+        //     return (
+        //       value.read === true && `realestate/${value.name.toLowerCase()}`
+        //     );
+        //   })
+        //   .filter(Boolean) ??
+        [],
+      write:
+        userSubs?.items?.find((ele) => ele.agent === application.id)
+          ?.publishes ??
+        // application.permissions
+        //   .map((value) => {
+        //     return (
+        //       value.write === true && `realestate/${value.name.toLowerCase()}`
+        //     );
+        //   })
+        //   .filter(Boolean) ??
+        [],
+    });
+  }, [userSubs]);
   useEffect(() => {
     setState({
       ...state,
-      readLocalPermissions:
-        userSubs?.items?.find((ele) => ele.agent === application.id)
-          ?.subscribes ??
-        application.permissions
-          .map((value) => {
-            return (
-              value.read === true && `realestate/${value.name.toLowerCase()}`
-            );
-          })
-          .filter(Boolean) ??
-        [],
-      writeLocalPermissions:
-        userSubs?.items?.find((ele) => ele.agent === application.id)
-          ?.publishes ??
-        application.permissions
-          .map((value) => {
-            return (
-              value.write === true && `realestate/${value.name.toLowerCase()}`
-            );
-          })
-          .filter(Boolean) ??
-        [],
+      readLocalPermissions: subscribedPermissions.read,
+      writeLocalPermissions: subscribedPermissions.write,
     });
-  }, [userSubs, state.isDialogOpen]);
+  }, [subscribedPermissions, state.isDialogOpen]);
 
   const handleReadLocalPermissions = (topicArr) => {
     const newArray = state.readLocalPermissions.slice();
@@ -294,6 +289,10 @@ export function CardComponent(props) {
   };
 
   const handleAuthorize = (type, disabledTopics) => {
+    setSubscribedPermissions({
+      read: state.readLocalPermissions,
+      write: state.writeLocalPermissions
+    })
     const payload = generateData(type, disabledTopics);
     if (type !== "Update") {
       if (
@@ -341,8 +340,12 @@ export function CardComponent(props) {
           agent: `${application.id}`,
           instrument: `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}`,
           host: `https://${userData.contact_id}${userData.userDomain}`,
-          subscribes: state.readLocalPermissions.filter(x => !disabledTopics.read.includes(x)),
-          publishes: state.writeLocalPermissions.filter(x => !disabledTopics.write.includes(x)),
+          subscribes: state.readLocalPermissions.filter(
+            (x) => !disabledTopics.read.includes(x)
+          ),
+          publishes: state.writeLocalPermissions.filter(
+            (x) => !disabledTopics.write.includes(x)
+          ),
         },
       },
     };
@@ -569,6 +572,7 @@ export function CardComponent(props) {
             handleUpdateLocalStore={handleUpdateLocalStore}
             handleReadLocalPermissions={handleReadLocalPermissions}
             handleWriteLocalPermissions={handleWriteLocalPermissions}
+            subscribedPermissions={subscribedPermissions}
             type={
               enabledID?.includes(application.id.toLowerCase())
                 ? !updatedID?.includes(application.id.toLowerCase())

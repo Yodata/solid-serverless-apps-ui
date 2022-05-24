@@ -143,6 +143,7 @@ function DialogBox(props) {
     handleReadLocalPermissions,
     handleUpdateLocalStore,
     topicLabels,
+    subscribedPermissions,
   } = props;
 
   const onlyReadRole = [
