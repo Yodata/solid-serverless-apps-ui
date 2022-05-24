@@ -10,7 +10,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { Switch, Button, Dialog } from "@material-ui/core";
+import { Switch, Button, Dialog, Typography } from "@material-ui/core";
 import isEqual from "lodash.isequalwith";
 import { setTopicLabel } from "../../redux/slices/topicSlice";
 import { updateStoreWithTopic } from "../../redux/actions/applicationActions";
@@ -194,6 +194,18 @@ function ManageTopics(props) {
                 </TableBody>
               </Table>
             </TableContainer>
+          </Grid>
+          <Grid
+            className={classes.textSpacing}
+            item
+            container
+            direction="row"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography className={classes.textSpacing}>
+            Topics that share the same label will be displayed in the App Exchange as a single entry.
+            </Typography>
           </Grid>
           <Grid
             className={classes.textSpacing}
