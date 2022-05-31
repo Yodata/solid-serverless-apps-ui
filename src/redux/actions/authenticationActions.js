@@ -14,6 +14,7 @@ export const AUTHORISED_USER = 'AUTHORISED_USER'
 export const LIST_OF_ROLES = 'LIST_OF_ROLES'
 export const SET_PROFILE_ID = 'SET_PROFILE_ID'
 export const SET_ORGANISATION_ROLE = 'SET_ORGANISATION_ROLE'
+export const SET_NAME = 'SET_NAME'
 
 
 /**
@@ -42,6 +43,10 @@ const setOrganisationRole = payload => {
 
 export const setProfileId = payload => {
     return ({ type: SET_PROFILE_ID, profileId: payload })
+}
+
+export const setName = payload => {
+    return ({ type: SET_NAME, name: payload })
 }
 
 export const currentUser = () => {
@@ -90,7 +95,10 @@ export const getParentOrgandRole = () => {
     return async (dispatch, getState) => {
         try {
             const response = await API.get(getState().auth.userData.profile_id)
+            console.log(response.data)
             dispatch(setOrganisationRole(response.data))
+            const name = `${response.data.familyName}, ${response.data.givenName}`
+            dispatch(setName(name))
         } catch (err) {
             console.log(err)
         }

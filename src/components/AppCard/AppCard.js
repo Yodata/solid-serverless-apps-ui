@@ -14,6 +14,7 @@ import {
   serviceUpdated,
 } from "../../redux/slices/servicesSlice";
 import ManageTopics from "../manageTopics";
+import Reports from "../Reports";
 import { Typography } from "@material-ui/core";
 
 /**
@@ -41,7 +42,15 @@ const styles = (theme) => ({
   manageTopics: {
     paddingRight: 62,
     paddingLeft: 62,
-    marginBottom: "20px",
+    backgroundColor: theme.palette.new.main,
+    "&:hover": {
+      backgroundColor: theme.palette.new.main,
+    },
+  },
+  reports: {
+    paddingRight: 86.1,
+    paddingLeft: 86.1,
+    marginBottom: 20,
     backgroundColor: theme.palette.new.main,
     "&:hover": {
       backgroundColor: theme.palette.new.main,
@@ -69,6 +78,7 @@ function AppCard(props) {
     localStore,
     isFranchiseUser,
     roleName,
+    name
   } = props;
 
   let count = 0;
@@ -88,6 +98,7 @@ function AppCard(props) {
 
   const [isNew, setNew] = React.useState(false);
   const [openManageTopics, setOpenManageTopics] = React.useState(false);
+  const [openReports, setOpenReports] = React.useState(false);
 
   const sortApplications = () => {
     return [...applications].sort((a, b) => {
@@ -144,6 +155,16 @@ function AppCard(props) {
                   MANAGE TOPICS
                 </Button>
               </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  disableElevation
+                  className={classes.reports}
+                  onClick={() => setOpenReports(true)}
+                >
+                  REPORTS
+                </Button>
+              </Grid>
             </Grid>
           )}
         </Grid>
@@ -156,6 +177,7 @@ function AppCard(props) {
                 application={{}}
                 addNewApp={addNewApplication}
                 handleCancel={handleCancel}
+                username={name}
               />
             </Grid>
           )}
@@ -233,6 +255,11 @@ function AppCard(props) {
         applications={applications}
         handleDialog={setOpenManageTopics}
       />
+      <Reports
+        open={openReports}
+        applications={applications}
+        handleDialog={setOpenReports}
+      />
     </React.Fragment>
   );
 }
@@ -248,6 +275,7 @@ const mapStateToProps = (state) => {
     localStore: state.apps?.localStoreData?.application,
     isFranchiseUser: state.auth.isFranchiseUser,
     roleName: state.role.roleName,
+    name: state.auth.name
   };
 };
 

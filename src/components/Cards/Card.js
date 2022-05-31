@@ -142,6 +142,7 @@ export function CardComponent(props) {
     localStore,
     updateLocalAppStore,
     topicLabels,
+    name: username
   } = props;
 
   const [subscribedPermissions, setSubscribedPermissions] = useState({
@@ -239,6 +240,8 @@ export function CardComponent(props) {
     if (application.connected === false) {
       const editedApplication = JSON.parse(JSON.stringify(application));
       editedApplication.isVisible = !application.isVisible;
+      editedApplication.modifiedBy = username
+      editedApplication.modifiedDate = Date.now()
       editApplication(editedApplication);
     }
   };
@@ -266,6 +269,8 @@ export function CardComponent(props) {
     const editedApplication = JSON.parse(JSON.stringify(application));
     editedApplication.connected = !application.connected;
     editedApplication.isVisible = !editedApplication.connected;
+    editedApplication.modifiedBy = username
+    editedApplication.modifiedDate = Date.now()
     editApplication(editedApplication);
   };
 
@@ -314,24 +319,22 @@ export function CardComponent(props) {
 
   const generateData = (type, disabledTopics) => {
     return {
-      topic: `yodata/subscription#${
-        type !== "Update"
-          ? state.readLocalPermissions?.length === 0 &&
-            state.writeLocalPermissions?.length === 0
-            ? "revoke"
-            : "authorize"
-          : "update"
-      }`,
+      topic: `yodata/subscription#${type !== "Update"
+        ? state.readLocalPermissions?.length === 0 &&
+          state.writeLocalPermissions?.length === 0
+          ? "revoke"
+          : "authorize"
+        : "update"
+        }`,
       recipient: `${userData.profile_id}`,
       data: {
-        type: `${
-          type !== "Update"
-            ? state.readLocalPermissions?.length === 0 &&
-              state.writeLocalPermissions?.length === 0
-              ? "Revoke"
-              : "Authorize"
-            : "Update"
-        }Action`,
+        type: `${type !== "Update"
+          ? state.readLocalPermissions?.length === 0 &&
+            state.writeLocalPermissions?.length === 0
+            ? "Revoke"
+            : "Authorize"
+          : "Update"
+          }Action`,
         agent: `${userData.profile_id}`,
         instrument: `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}`,
         object: {
@@ -451,10 +454,10 @@ export function CardComponent(props) {
                           {enabledID?.includes(
                             application.id.toLowerCase()
                           ) && (
-                            <Typography className={classes.success}>
-                              Connected
-                            </Typography>
-                          )}
+                              <Typography className={classes.success}>
+                                Connected
+                              </Typography>
+                            )}
                         </Grid>
                         <Grid item>
                           {enabledID?.includes(application.id.toLowerCase()) &&
@@ -591,6 +594,7 @@ const mapStateToProps = (state) => {
     enabledID: state.services.enabledID,
     updatedID: state.services.updatedID,
     userData: state.auth.userData,
+    name: state.auth.name,
     userId: state.auth.userId,
     userSubs: state.subs.userSubs,
     localStore: state.apps?.localStoreData?.application,
