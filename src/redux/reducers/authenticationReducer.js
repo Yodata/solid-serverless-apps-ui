@@ -5,6 +5,7 @@ import {
   LIST_OF_ROLES,
   SET_PROFILE_ID,
   SET_ORGANISATION_ROLE,
+  SET_NAME
 } from "../actions/authenticationActions";
 import endpoint from "../../api/endpoints";
 import { convertToFranchiseStore } from "../../utility";
@@ -21,6 +22,7 @@ const defaultState = {
   franchiseList: [],
   isFranchiseUser: false,
   parentOrg: "",
+  name: ""
 };
 
 const authenticationReducer = (state = defaultState, action) => {
@@ -104,6 +106,12 @@ const authenticationReducer = (state = defaultState, action) => {
           profile_id: profileId,
           contact_id: newUserId,
         },
+      };
+      case SET_NAME:
+      const name = action.name
+      return {
+        ...state,
+        name
       };
     case SET_ORGANISATION_ROLE:
       const userProfile = action.profile;

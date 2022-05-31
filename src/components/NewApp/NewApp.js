@@ -36,7 +36,7 @@ function NewApp(props) {
 
     const { classes, isAddNew,
         application: { logo: { url = '' } = {}, name = '', description = '', id = '' },
-        application = {}, editApplication, addNewApp, handleCancel } = props
+        application = {}, editApplication, addNewApp, handleCancel, username='' } = props
     const [state, setState] = React.useState({
         newId: id,
         newTitle: name,
@@ -94,6 +94,10 @@ function NewApp(props) {
         editedApplication.description = state.newDescription.trim();
         editedApplication.logo.url = state.newLogo;
         editedApplication.permissions = createPermissions()
+        editedApplication.createdBy = username
+        editedApplication.creationDate = Date.now()
+        editedApplication.modifiedBy = username
+        editedApplication.modifiedDate = Date.now()
         addNewApp(editedApplication);
         handleCancel();
     }
