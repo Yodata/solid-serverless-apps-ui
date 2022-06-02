@@ -108,7 +108,12 @@ const authenticationReducer = (state = defaultState, action) => {
         },
       };
       case SET_NAME:
-      const name = action.name
+      let name
+      if(state.name.length > 0){
+        name = state.name
+      } else {
+        name = action.name
+      }
       return {
         ...state,
         name

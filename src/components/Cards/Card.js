@@ -316,7 +316,6 @@ export function CardComponent(props) {
     handleDialogClose();
     publishEvent(payload);
   };
-
   const generateData = (type, disabledTopics) => {
     return {
       topic: `yodata/subscription#${type !== "Update"
@@ -339,6 +338,8 @@ export function CardComponent(props) {
         instrument: `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}`,
         object: {
           type: "Subscription",
+          lastModifiedDate: `${Date.now()}`,
+          lastModifiedBy: username,
           version: `${application.version}`,
           agent: `${application.id}`,
           instrument: `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}`,
