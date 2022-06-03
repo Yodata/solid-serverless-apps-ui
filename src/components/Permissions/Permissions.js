@@ -107,6 +107,8 @@ function Permissions(props) {
     logo,
     handlePermissionChanged,
     applicationAccessLevel,
+    application,
+    username
   } = props;
 
   const reduxState = useSelector((state) => ({
@@ -118,8 +120,20 @@ function Permissions(props) {
   });
 
   const [accessLevel, setAccessLevel] = React.useState(applicationAccessLevel);
+  const [accessLevelInfo, setAccessLevelInfo] = React.useState({
+    modifiedBy: application.accessModifiedBy,
+    lastModified: application?.accessModifiedDate
+  });
 
   const handleCancel = () => {
+    setState({
+      localPermission: JSON.parse(JSON.stringify(permissions))
+    })
+    setAccessLevel(applicationAccessLevel)
+    setAccessLevelInfo({
+      modifiedBy: application.accessModifiedBy,
+      lastModified: application?.accessModifiedDate
+    })
     handleDialog();
   };
 
@@ -149,7 +163,7 @@ function Permissions(props) {
 
   const handleSave = () => {
     const newPermissions = updateVersion();
-    handlePermissionChanged(newPermissions, accessLevel);
+    handlePermissionChanged(newPermissions, accessLevel, accessLevelInfo);
   };
   return (
     <>
@@ -195,7 +209,12 @@ function Permissions(props) {
                   color="black"
                   name="controlled-radio-buttons-group"
                   value={accessLevel}
-                  onChange={(event) => setAccessLevel(event.target.value)}
+                  onChange={(event) => {
+                    setAccessLevelInfo({
+                      modifiedBy: username,
+                      lastModified: Date.now()
+                    })
+                    setAccessLevel(event.target.value)}}
                 >
                   <FormControlLabel
                     size="small"
@@ -304,12 +323,12 @@ function Permissions(props) {
                                     ?.toLowerCase()
                                     .replaceAll(/\s/g, "")
                                 ]?.isLabelEnabled && (
-                                  <Tooltip
-                                    title={`This app is configured to send|receive events on a hidden topic. The topic will be visible to users who authorize this app.`}
-                                  >
-                                    <WarningIcon className={classes.warning} />
-                                  </Tooltip>
-                                )}
+                                    <Tooltip
+                                      title={`This app is configured to send|receive events on a hidden topic. The topic will be visible to users who authorize this app.`}
+                                    >
+                                      <WarningIcon className={classes.warning} />
+                                    </Tooltip>
+                                  )}
                               </Grid>
                             </Grid>
                           </TableCell>

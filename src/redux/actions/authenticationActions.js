@@ -97,7 +97,12 @@ export const getParentOrgandRole = () => {
             const response = await API.get(getState().auth.userData.profile_id)
             console.log(response.data)
             dispatch(setOrganisationRole(response.data))
-            const name = `${response.data.familyName}, ${response.data.givenName}`
+            let name
+            if(response.data.familyName || response.data.givenName){
+                name = `${response.data.familyName}, ${response.data.givenName}`
+            } else {
+                name = getState()?.auth?.userData?.contact_id
+            }
             dispatch(setName(name))
         } catch (err) {
             console.log(err)
