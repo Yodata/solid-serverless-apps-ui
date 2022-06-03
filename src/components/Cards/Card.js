@@ -282,10 +282,12 @@ export function CardComponent(props) {
     setState({ ...state, editPermission: false });
   };
 
-  const handlePermissionChanged = (permissions, accessLevel) => {
+  const handlePermissionChanged = (permissions, accessLevel, accessLevelInfo) => {
     const editedApplication = JSON.parse(JSON.stringify(application));
     editedApplication.permissions = permissions;
     editedApplication.accessLevel = accessLevel;
+    editedApplication.accessModifiedBy = accessLevelInfo.modifiedBy
+    editedApplication.accessModifiedDate = accessLevelInfo.lastModified
     editedApplication.version = (
       1 + Number.parseInt(editedApplication.version)
     ).toString();
@@ -563,8 +565,10 @@ export function CardComponent(props) {
             handleDialog={handlePermissionCancel}
             permissions={application.permissions}
             logo={application.logo.url}
+            application={application}
             handlePermissionChanged={handlePermissionChanged}
             applicationAccessLevel={application.accessLevel}
+            username={username}
           />
           <PermissionDialog
             open={state.isDialogOpen}
