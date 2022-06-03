@@ -145,7 +145,7 @@ const Reports = (props) => {
                                                 variant="text"
                                                 disableRipple
                                                 className={classes.new}
-                                                onClick={() => donwloadReport('admin', "Vendor/App Summary.xlsx")}
+                                                onClick={() => donwloadReport('admin', "Vendor-App Summary.xlsx")}
                                             >
                                                 Download
                                             </Button>
@@ -167,7 +167,7 @@ const Reports = (props) => {
                                                 variant="text"
                                                 disableRipple
                                                 className={classes.new}
-                                                onClick={() => donwloadReport('vendor', "Vendor/App Data Sharing Details.xlsx")}
+                                                onClick={() => donwloadReport('vendor', "Vendor-App Data Sharing Details.xlsx")}
                                             >
                                                 Download
                                             </Button>
@@ -232,6 +232,7 @@ const Reports = (props) => {
                                             <Button
                                                 variant="text"
                                                 disableRipple
+                                                disabled
                                                 className={classes.new}
                                                 onClick={() => donwloadReport('team', "Team Data Sharing Details.xlsx")}
                                             >
