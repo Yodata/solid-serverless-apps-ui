@@ -307,8 +307,9 @@ export function CardComponent(props) {
         state.writeLocalPermissions?.length === 0
       ) {
         enableService({ id: application.id.toLowerCase(), connect: false });
+      } else {
+        enableService({ id: application.id.toLowerCase(), connect: true });
       }
-      enableService({ id: application.id.toLowerCase(), connect: true });
     } else {
       const newUpdateIDs = updatedID.slice();
       const index = newUpdateIDs.indexOf(application.id.toLowerCase());
