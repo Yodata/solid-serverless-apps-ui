@@ -71,9 +71,16 @@ const Reports = (props) => {
     const donwloadReport = async (type, fileName) => {
         console.log('donwloadVendorAppSummary')
         try {
-            const response = await axios.get(`https://lao1mbmhe9.execute-api.us-west-2.amazonaws.com/${type}`, {
-                responseType: "arraybuffer",
-            });
+            let response
+            if (type === 'agent') {
+                response = await axios.get(`https://asokutl5czzlxsqiw7rart6cm40qbwcl.lambda-url.us-west-2.on.aws/`, {
+                    responseType: "arraybuffer",
+                });
+            } else {
+                response = await axios.get(`https://lao1mbmhe9.execute-api.us-west-2.amazonaws.com/${type}`, {
+                    responseType: "arraybuffer",
+                });
+            }
             const blob = new Blob([response.data], {
                 type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             });
@@ -257,7 +264,7 @@ const Reports = (props) => {
                                                 disableRipple
                                                 disabled
                                                 className={classes.new}
-                                                // onClick={() => window.open(process.env.REACT_APP_VENDOR_VOLUME_REPORT, '_blank')}
+                                            // onClick={() => window.open(process.env.REACT_APP_VENDOR_VOLUME_REPORT, '_blank')}
 
                                             >
                                                 Open
@@ -281,7 +288,7 @@ const Reports = (props) => {
                                                 disableRipple
                                                 disabled
                                                 className={classes.new}
-                                                // onClick={() => window.open(process.env.REACT_APP_FRANCHISE_VOLUME_REPORT, '_blank')}
+                                            // onClick={() => window.open(process.env.REACT_APP_FRANCHISE_VOLUME_REPORT, '_blank')}
                                             >
                                                 Open
                                             </Button>
