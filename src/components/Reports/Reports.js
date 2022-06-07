@@ -239,7 +239,6 @@ const Reports = (props) => {
                                             <Button
                                                 variant="text"
                                                 disableRipple
-                                                disabled
                                                 className={classes.new}
                                                 onClick={() => donwloadReport('team', "Team Data Sharing Details.xlsx")}
                                             >
