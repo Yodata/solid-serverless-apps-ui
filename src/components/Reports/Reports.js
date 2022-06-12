@@ -106,6 +106,9 @@ const Reports = (props) => {
                 type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             });
             saveAs(blob, fileName);
+        } catch (err) {
+            console.log(err)
+        } finally {
             switch (type) {
                 case 'admin':
                     setAdminLoading(false)
@@ -123,9 +126,6 @@ const Reports = (props) => {
                     setFranchiseeLoading(false)
                     break;
             }
-
-        } catch (err) {
-            console.log(err)
         }
     }
     return (
