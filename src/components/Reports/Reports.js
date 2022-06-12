@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { Switch, Button, Dialog, Typography } from "@material-ui/core";
+import { Switch, Button, Dialog, Typography, CircularProgress } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -68,16 +68,37 @@ const styles = (theme) => ({
 const Reports = (props) => {
     const { classes, handleDialog, open } =
         props;
+    const [adminLoading, setAdminLoading] = useState(false)
+    const [vendorLoading, setVendorLoading] = useState(false)
+    const [agentLoading, setAgentLoading] = useState(false)
+    const [teamLoading, setTeamLoading] = useState(false)
+    const [franchiseeLoading, setFranchiseeLoading] = useState(false)
     const donwloadReport = async (type, fileName) => {
-        console.log('donwloadVendorAppSummary')
         try {
+            switch (type) {
+                case 'admin':
+                    setAdminLoading(true)
+                    break;
+                case 'vendor':
+                    setVendorLoading(true)
+                    break;
+                case 'agent':
+                    setAgentLoading(true)
+                    break;
+                case 'team':
+                    setTeamLoading(true)
+                    break;
+                case 'franchisee':
+                    setFranchiseeLoading(true)
+                    break;
+            }
             let response
             if (type === 'agent') {
-                response = await axios.get(`https://asokutl5czzlxsqiw7rart6cm40qbwcl.lambda-url.us-west-2.on.aws/`, {
+                response = await axios.get(`https://asokutl5czzlxsqiw7rart6cm40qbwcl.lambda-url.us-west-2.on.aws/?a=${Math.random()}`, {
                     responseType: "arraybuffer",
                 });
             } else {
-                response = await axios.get(`https://lao1mbmhe9.execute-api.us-west-2.amazonaws.com/${type}`, {
+                response = await axios.get(`https://lao1mbmhe9.execute-api.us-west-2.amazonaws.com/${type}?a=${Math.random()}`, {
                     responseType: "arraybuffer",
                 });
             }
@@ -85,6 +106,23 @@ const Reports = (props) => {
                 type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             });
             saveAs(blob, fileName);
+            switch (type) {
+                case 'admin':
+                    setAdminLoading(false)
+                    break;
+                case 'vendor':
+                    setVendorLoading(false)
+                    break;
+                case 'agent':
+                    setAgentLoading(false)
+                    break;
+                case 'team':
+                    setTeamLoading(false)
+                    break;
+                case 'franchisee':
+                    setFranchiseeLoading(false)
+                    break;
+            }
 
         } catch (err) {
             console.log(err)
@@ -154,7 +192,7 @@ const Reports = (props) => {
                                                 className={classes.new}
                                                 onClick={() => donwloadReport('admin', "Vendor-App Summary.xlsx")}
                                             >
-                                                Download
+                                                {adminLoading ? <CircularProgress size={20} /> : 'Download'}
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -176,7 +214,7 @@ const Reports = (props) => {
                                                 className={classes.new}
                                                 onClick={() => donwloadReport('vendor', "Vendor-App Data Sharing Details.xlsx")}
                                             >
-                                                Download
+                                                {vendorLoading ? <CircularProgress size={20} /> : 'Download'}
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -198,7 +236,7 @@ const Reports = (props) => {
                                                 className={classes.new}
                                                 onClick={() => donwloadReport('franchisee', "Franchisee Data Sharing Details.xlsx")}
                                             >
-                                                Download
+                                                {franchiseeLoading ? <CircularProgress size={20} /> : 'Download'}
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -220,7 +258,7 @@ const Reports = (props) => {
                                                 className={classes.new}
                                                 onClick={() => donwloadReport('agent', "Agent Data Sharing Details.xlsx")}
                                             >
-                                                Download
+                                                {agentLoading ? <CircularProgress size={20} /> : 'Download'}
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -242,7 +280,7 @@ const Reports = (props) => {
                                                 className={classes.new}
                                                 onClick={() => donwloadReport('team', "Team Data Sharing Details.xlsx")}
                                             >
-                                                Download
+                                                {teamLoading ? <CircularProgress size={20} /> : 'Download'}
                                             </Button>
                                         </TableCell>
                                     </TableRow>
