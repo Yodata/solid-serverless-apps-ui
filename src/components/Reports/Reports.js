@@ -97,7 +97,13 @@ const Reports = (props) => {
                 response = await axios.get(`https://asokutl5czzlxsqiw7rart6cm40qbwcl.lambda-url.us-west-2.on.aws/?a=${Math.random()}`, {
                     responseType: "arraybuffer",
                 });
-            } else {
+            }
+            if(type === 'franchisee') {
+                response = await axios.get(`https://lelohqnjfkikdoq7jfbyqx2kxy0dapjo.lambda-url.us-west-2.on.aws/?a=${Math.random()}`, {
+                    responseType: "arraybuffer",
+                });
+            }
+            else {
                 response = await axios.get(`https://lao1mbmhe9.execute-api.us-west-2.amazonaws.com/${type}?a=${Math.random()}`, {
                     responseType: "arraybuffer",
                 });
