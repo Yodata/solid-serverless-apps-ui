@@ -36,7 +36,7 @@ function NewApp(props) {
 
     const { classes, isAddNew,
         application: { logo: { url = '' } = {}, name = '', description = '', id = '' },
-        application = {}, editApplication, addNewApp, handleCancel, username='' } = props
+        application = {}, editApplication, addNewApp, handleCancel, username = '' } = props
     const [state, setState] = React.useState({
         newId: id,
         newTitle: name,
@@ -105,7 +105,7 @@ function NewApp(props) {
     const createPermissions = () => {
 
         const topics = ['Award', 'Calendar', 'Contact', 'Franchise Reporting', 'Lead', 'Listing',
-            'Marketing Program', 'Service Area', 'Transaction', 'Website'];
+            'Marketing Program', 'Marketing Preferences', 'Service Area', 'Transaction', 'Website'];
 
         Object.freeze(topics)
         return topics.map(topic => {
