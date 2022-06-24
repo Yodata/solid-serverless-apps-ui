@@ -60,6 +60,7 @@ function HeroUser(props) {
     franchiseList: state.auth.franchiseList,
     success: state.toast.success,
     roleName: state.role.roleName,
+    agentAccess: state.auth.isAgentAcess
   }));
 
   const dispatch = useDispatch();
@@ -123,10 +124,10 @@ function HeroUser(props) {
           {state.userList.some(
             (ele) => ele.contactId === state.id && ele.roleName === "AEA"
           ) && (
-            <Grid item>
-              <Button onClick={switchUI}>Switch to admin UI</Button>
-            </Grid>
-          )}
+              <Grid item>
+                <Button onClick={switchUI}>Switch to admin UI</Button>
+              </Grid>
+            )}
           {state.userList.some(
             (ele) => ele.contactId === state.id && ele.roleName
           ) ? (
@@ -155,7 +156,7 @@ function HeroUser(props) {
               </Grid>
             </>
           ) : (
-            state.franchiseList?.length > 0 && (
+            state.agentAccess && state.franchiseList?.length > 0 && (
               <Grid item className={classes.selectContainer}>
                 <Typography style={{ fontSize: "10px" }}>
                   Select Company/Self/Team ID
@@ -169,24 +170,54 @@ function HeroUser(props) {
                     <Typography>
                       {state.roleName === "self"
                         ? state.franchiseList[
-                            state.franchiseList?.length - 1
-                          ].contactId
-                            .split("//")
-                            .pop()
-                            .split(".")
-                            .shift()
-                            .toUpperCase()
-                        : state.franchiseList[0].contactId
-                            .split("//")
-                            .pop()
-                            .split(".")
-                            .shift()
-                            .toUpperCase()}
+                          state.franchiseList?.length - 1
+                        ].contactId
+                          .split("//")
+                          .pop()
+                          .split(".")
+                          .shift()
+                          .toUpperCase()
+                        : (
+                          state.roleName === "team" ? (
+                            state.franchiseList[
+                              state.franchiseList?.findIndex(x => x.type === 'team')
+                            ].contactId
+                              .split("//")
+                              .pop()
+                              .split(".")
+                              .shift()
+                              .toUpperCase()
+                          )
+                            : (
+                              state.franchiseList[
+                                state.franchiseList?.findIndex(x => x.type === 'organization')
+                              ].contactId
+                                .split("//")
+                                .pop()
+                                .split(".")
+                                .shift()
+                                .toUpperCase()
+                            )
+                        )
+                      }
                     </Typography>
                   </MenuItem>
                   {state.franchiseList.map((ele, index) => {
                     if (state.roleName === "self") {
-                      if (index !== state.franchiseList.length - 1) {
+                      if (ele.type !== "self") {
+                        const value = ele.contactId
+                          .split("//")
+                          .pop()
+                          .split(".")
+                          .shift();
+                        return (
+                          <MenuItem value={value}>
+                            <Typography>{value.toUpperCase()}</Typography>
+                          </MenuItem>
+                        );
+                      }
+                    } else if (state.roleName === "team") {
+                      if (ele.type !== "team") {
                         const value = ele.contactId
                           .split("//")
                           .pop()
@@ -199,7 +230,7 @@ function HeroUser(props) {
                         );
                       }
                     } else {
-                      if (index > 0) {
+                      if (ele.type !== "organization") {
                         const value = ele.contactId
                           .split("//")
                           .pop()
