@@ -86,9 +86,14 @@ function AppCard(props) {
   React.useEffect(() => {
     if (franchiseList?.length > 0) {
       if (roleName === "self") {
-        setProfileId(franchiseList[franchiseList.length - 1].profileId);
+        const findSelfIndex = franchiseList?.findIndex(x => x.type === 'self')
+        setProfileId(franchiseList[findSelfIndex].profileId);
+      } else if (roleName === "team") {
+        const findTeamIndex = franchiseList?.findIndex(x => x.type === 'team')
+        setProfileId(franchiseList[findTeamIndex].profileId);
       } else {
-        setProfileId(franchiseList[0].profileId);
+        const findOragnizationIndex = franchiseList?.findIndex(x => x.type === 'organization')
+        setProfileId(franchiseList[findOragnizationIndex].profileId);
       }
       userSubscriptions();
     } else {

@@ -5,7 +5,8 @@ import {
   LIST_OF_ROLES,
   SET_PROFILE_ID,
   SET_ORGANISATION_ROLE,
-  SET_NAME
+  SET_NAME,
+  SET_AGENT_ACCESS
 } from "../actions/authenticationActions";
 import endpoint from "../../api/endpoints";
 import { convertToFranchiseStore } from "../../utility";
@@ -22,7 +23,8 @@ const defaultState = {
   franchiseList: [],
   isFranchiseUser: false,
   parentOrg: "",
-  name: ""
+  name: "",
+  isAgentAcess: false
 };
 
 const authenticationReducer = (state = defaultState, action) => {
@@ -30,7 +32,7 @@ const authenticationReducer = (state = defaultState, action) => {
     case GET_USER:
       const isUserLoggedIn =
         action.authentication.response &&
-        action.authentication.response.status === 401
+          action.authentication.response.status === 401
           ? false
           : true;
       const currentUserId = isUserLoggedIn
@@ -41,8 +43,8 @@ const authenticationReducer = (state = defaultState, action) => {
         : state.userData;
       const currentUserDomain = isUserLoggedIn
         ? currentUserData?.profile_id
-            .split("/")[2]
-            .replace(currentUserData?.raw.contact_id[0], "")
+          .split("/")[2]
+          .replace(currentUserData?.raw.contact_id[0], "")
         : process.env.REACT_APP_HOSTNAME;
       return {
         ...state,
@@ -76,6 +78,7 @@ const authenticationReducer = (state = defaultState, action) => {
               profileId: value.memberOf?.id ?? value.memberOf,
               contactId: value.memberOf?.id?.split("//").pop().split(".").shift() ?? value.memberOf?.split("//").pop().split(".").shift(),
               roleName: value.roleName,
+              type: value.type === 'OrganizationRole' ? 'organization' : 'team'
             };
           }
         })
@@ -93,6 +96,7 @@ const authenticationReducer = (state = defaultState, action) => {
             contactId: state.userData.contact_id,
             profileId: state.userData.profile_id,
             roleName: "agent",
+            type: "self"
           },
         ],
       };
@@ -107,9 +111,9 @@ const authenticationReducer = (state = defaultState, action) => {
           contact_id: newUserId,
         },
       };
-      case SET_NAME:
+    case SET_NAME:
       let name
-      if(state.name.length > 0){
+      if (state.name.length > 0) {
         name = state.name
       } else {
         name = action.name
@@ -131,6 +135,12 @@ const authenticationReducer = (state = defaultState, action) => {
         isFranchiseUser: role === "RealEstateOrganization" ? true : false,
         parentOrg,
       };
+    case SET_AGENT_ACCESS:
+      const access = action.access ? true : false
+      return {
+        ...state,
+        isAgentAcess: access
+      }
     case LOGOUT_USER:
       return {
         ...state,
