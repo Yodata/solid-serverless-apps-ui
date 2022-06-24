@@ -82,7 +82,7 @@ function AppCard(props) {
     name
   } = props;
 
-  let count = 0;
+  let count = undefined;
   const dispatch = useDispatch();
 
   React.useEffect(() => {
@@ -189,7 +189,7 @@ function AppCard(props) {
               />
             </Grid>
           )}
-          {sortApplications().map((application) => {
+          {sortApplications().map((application, index) => {
             if (
               application.isVisible &&
               (isFranchiseUser ||
@@ -198,7 +198,7 @@ function AppCard(props) {
                   localStore.find((x) => x.id === application.id)
                     ?.isFranchiseVisible))
             ) {
-              count++;
+              count = index + 1;
               return (
                 <Grid className={classes.app} item key={application.name}>
                   <Card
@@ -209,6 +209,7 @@ function AppCard(props) {
                 </Grid>
               );
             } else {
+              count = sortApplications.length - 1 === index ? count ?? 0 : undefined;
               return (
                 isAdmin && (
                   <Grid className={classes.app} item key={application.name}>
@@ -250,7 +251,7 @@ function AppCard(props) {
             //   </>
             // );
           })}
-          {count === 0 && (
+          {!isAdmin && count === 0 && (
             <Typography className={classes.noAppsText}>
               Oh no, your broker hasn't selected any apps yet for the App
               Exchange. Please contact your Office Manager for assistance.

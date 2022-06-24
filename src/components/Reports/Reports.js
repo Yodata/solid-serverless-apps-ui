@@ -290,53 +290,6 @@ const Reports = (props) => {
                                             </Button>
                                         </TableCell>
                                     </TableRow>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Button
-                                                variant="text"
-                                                disabled
-                                                disableRipple
-                                                className={classes.new}
-                                            >
-                                                Data Volume By Vendor
-                                            </Button>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Button
-                                                variant="text"
-                                                disableRipple
-                                                disabled
-                                                className={classes.new}
-                                            // onClick={() => window.open(process.env.REACT_APP_VENDOR_VOLUME_REPORT, '_blank')}
-
-                                            >
-                                                Open
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Button
-                                                variant="text"
-                                                disabled
-                                                disableRipple
-                                                className={classes.new}
-                                            >
-                                                Data Volume By Franchisee
-                                            </Button>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Button
-                                                variant="text"
-                                                disableRipple
-                                                disabled
-                                                className={classes.new}
-                                            // onClick={() => window.open(process.env.REACT_APP_FRANCHISE_VOLUME_REPORT, '_blank')}
-                                            >
-                                                Open
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
                                 </TableBody>
                             </Table>
                         </TableContainer>

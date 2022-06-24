@@ -95,8 +95,7 @@ function HeroUser(props) {
 
   const handleSelect = (e) => {
     const value =
-      e.target.value === "" ? state.franchiseList[0].contactId : e.target.value;
-      console.log(value)
+      e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === (state.roleName ?? 'organization'))].contactId : e.target.value.toLowerCase();
     setFranchiseUser(e.target.value);
     dispatch(
       setProfileId(
