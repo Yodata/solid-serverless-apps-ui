@@ -8,11 +8,12 @@ import NewApp from "../NewApp";
 import { updateApp } from "../../redux/actions/applicationActions";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { userSubscriptions } from "../../redux/actions/subscriptionAction";
-import { setProfileId } from "../../redux/actions/authenticationActions";
+import { setProfileId, getOrganizationData } from "../../redux/actions/authenticationActions";
 import {
   serviceEnabled,
   serviceUpdated,
 } from "../../redux/slices/servicesSlice";
+import { useDispatch } from "react-redux";
 import ManageTopics from "../manageTopics";
 import Reports from "../Reports";
 import { Typography } from "@material-ui/core";
@@ -82,6 +83,7 @@ function AppCard(props) {
   } = props;
 
   let count = 0;
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (franchiseList?.length > 0) {
@@ -96,6 +98,7 @@ function AppCard(props) {
         setProfileId(franchiseList[findOragnizationIndex].profileId);
       }
       userSubscriptions();
+      dispatch(getOrganizationData());
     } else {
       userSubscriptions();
     }

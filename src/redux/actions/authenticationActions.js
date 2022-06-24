@@ -102,9 +102,6 @@ export const getParentOrgandRole = () => {
             const response = await API.get(getState().auth.userData.profile_id)
             // console.log(response.data)
             dispatch(setOrganisationRole(response.data))
-            if(response.data.type === 'RealEstateOrganization'){
-                dispatch(setAgentAccess(response.data?.additionalProperty?.appExchangeAgentAccess))
-            }
             let name
             if(response.data.familyName || response.data.givenName){
                 name = `${response.data.familyName}, ${response.data.givenName}`
@@ -112,6 +109,18 @@ export const getParentOrgandRole = () => {
                 name = getState()?.auth?.userData?.contact_id
             }
             dispatch(setName(name))
+        } catch (err) {
+            console.log(err)
+        }
+    }
+}
+
+export const getOrganizationData = () => {
+    return async (dispatch, getState) => {
+        try {
+            const orgID = getState()?.auth?.franchiseList?.find(x => x.type === "organization")?.profileId
+            const response = await API.get(orgID)
+            dispatch(setAgentAccess(response.data?.additionalProperty?.appExchangeAgentAccess))
         } catch (err) {
             console.log(err)
         }
