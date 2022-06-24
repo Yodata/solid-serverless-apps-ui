@@ -42,6 +42,9 @@ const styles = (theme) => ({
     paddingLeft: 20,
     paddingRight: 20,
   },
+  bottomContainer: {
+    flexWrap: "nowrap",
+  },
   table: {
     minWidth: "57vw",
     maxWidth: "57vw",
@@ -52,15 +55,15 @@ const styles = (theme) => ({
       props.type === "Authorize"
         ? theme.palette.purple.main
         : props.type === "Update"
-        ? theme.palette.update.main
-        : theme.palette.purple.main,
+          ? theme.palette.update.main
+          : theme.palette.purple.main,
     "&:hover": {
       backgroundColor: (props) =>
         props.type === "Authorize"
           ? theme.palette.purple.main
           : props.type === "Update"
-          ? theme.palette.update.main
-          : theme.palette.purple.main,
+            ? theme.palette.update.main
+            : theme.palette.purple.main,
     },
     marginBottom: 20,
   },
@@ -104,6 +107,9 @@ const styles = (theme) => ({
     alignSelf: "flex-end",
     left: 25,
   },
+  marginBottom: {
+    marginBottom: 20
+  }
 });
 
 const TopicSwitch = withStyles((theme) => ({
@@ -194,32 +200,32 @@ function DialogBox(props) {
   const getConnectedApps = (type, topic) => {
     return userSubs && userSubs.items
       ? userSubs.items
-          .map((value) => {
-            if (
-              value[type].map((value) => value.split("/")[1]).includes(topic)
-            ) {
-              const selectedApp = allApplications.find(
-                (x) => x.id === value.agent
-              );
-              return (
-                selectedApp && {
-                  //remove any app which is not in the store
-                  id: selectedApp.id,
-                  name: selectedApp.name
-                    ? selectedApp.name
-                    : value.agent.split("/")[2].split(".").shift(),
-                  image: selectedApp.logo?.url,
-                }
-              );
-            }
-          })
-          .filter(Boolean)
-          .filter(
-            (s) => s.id !== application.id //remove self
-          )
-          .filter(
-            (v, i, a) => a.findIndex((x) => x.name === v.name) === i //remove same name and duplicates
-          )
+        .map((value) => {
+          if (
+            value[type].map((value) => value.split("/")[1]).includes(topic)
+          ) {
+            const selectedApp = allApplications.find(
+              (x) => x.id === value.agent
+            );
+            return (
+              selectedApp && {
+                //remove any app which is not in the store
+                id: selectedApp.id,
+                name: selectedApp.name
+                  ? selectedApp.name
+                  : value.agent.split("/")[2].split(".").shift(),
+                image: selectedApp.logo?.url,
+              }
+            );
+          }
+        })
+        .filter(Boolean)
+        .filter(
+          (s) => s.id !== application.id //remove self
+        )
+        .filter(
+          (v, i, a) => a.findIndex((x) => x.name === v.name) === i //remove same name and duplicates
+        )
       : [];
   };
 
@@ -473,17 +479,35 @@ function DialogBox(props) {
             )}
           </Grid>
           <Grid
-            className={classes.textSpacing}
+            className={[classes.textSpacing, classes.bottomContainer]}
             item
             container
             direction="row"
             justify="space-between"
             alignItems="flex-start"
           >
-            <Grid item>
-              <Button name="cancel" variant="outlined" onClick={handleClose}>
-                cancel
-              </Button>
+            <Grid
+              className={classes.typeButton}
+              container
+              item
+              direction="column"
+              justify="space-evenly"
+              alignItems="flex-start"
+            >
+              <Grid item>
+                <Button name="cancel" variant="outlined" onClick={handleClose} className={classes.marginBottom} >
+                  cancel
+                </Button>
+              </Grid>
+              <Grid item>
+                <Typography
+                  className={classes.secondMsg}
+                  align="left"
+                  variant="subtitle2"
+                >
+                  {`Core Services include the Berkshire Hathaway HomeServices website, SAGE CRM, Marketing REsource, Lead Admin, ALP/ATM, and MAR/SAR.`}
+                </Typography>
+              </Grid>
             </Grid>
             <Grid
               className={classes.typeButton}
@@ -494,38 +518,6 @@ function DialogBox(props) {
               alignItems="flex-end"
             >
               <Grid item>
-                {/* {userId === userData.contact_id ||
-                franchiseList.some(
-                  (ele) =>
-                    ele.contactId === userData.contact_id &&
-                    ele.roleName.toLowerCase() === "app exchange admin"
-                ) 
-                ||
-                !(
-                  adminList.some(
-                    (ele) =>
-                      ele.contactId === userId &&
-                      onlyReadRole.includes(ele.roleName.toLowerCase())
-                  ) ||
-                  franchiseList.some(
-                    (ele) =>
-                      ele.contactId === userData.contact_id &&
-                      onlyReadRole.includes(ele.roleName.toLowerCase())
-                  )
-                ) 
-                ? (
-                  
-                ) : (
-                  <Button
-                    disabled
-                    className={classes.actionButton}
-                    name="readOnlySubmit"
-                    variant="contained"
-                    disableElevation
-                  >
-                    Save
-                  </Button>
-                )} */}
                 <Button
                   className={classes.actionButton}
                   name="submit"
@@ -542,9 +534,8 @@ function DialogBox(props) {
                   align="right"
                   variant="subtitle2"
                 >
-                  {`${
-                    isFranchiseUser ? "Franchisee" : "Your"
-                  } data will be shared (or not shared) between this vendor and connected applications per the selection above`}
+                  {`${isFranchiseUser ? "Franchisee" : "Your"
+                    } data will be shared (or not shared) between this vendor and connected applications per the selection above`}
                 </Typography>
               </Grid>
             </Grid>
@@ -574,13 +565,11 @@ function DialogBox(props) {
               </Paper>
             </Grid>
             <Grid item>
-              {`${
-                state?.connectedAppContent?.type === "write"
-                  ? "Send"
-                  : "Receive"
-              } ${state.connectedAppContent?.label} ${
-                state?.connectedAppContent?.type === "write" ? "to:" : "from:"
-              }`}
+              {`${state?.connectedAppContent?.type === "write"
+                ? "Send"
+                : "Receive"
+                } ${state.connectedAppContent?.label} ${state?.connectedAppContent?.type === "write" ? "to:" : "from:"
+                }`}
             </Grid>
             {state?.connectedAppContent?.connectedApps
               .sort((a, b) =>
