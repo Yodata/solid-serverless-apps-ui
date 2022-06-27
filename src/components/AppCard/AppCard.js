@@ -189,7 +189,7 @@ function AppCard(props) {
               />
             </Grid>
           )}
-          {sortApplications().map((application, index) => {
+          {sortApplications().map((application, index, array) => {
             if (
               application.isVisible &&
               (isFranchiseUser ||
@@ -209,7 +209,7 @@ function AppCard(props) {
                 </Grid>
               );
             } else {
-              count = sortApplications.length - 1 === index ? count ?? 0 : undefined;
+              count = array?.length - 1 === index ? count ?? 0 : undefined;
               return (
                 isAdmin && (
                   <Grid className={classes.app} item key={application.name}>

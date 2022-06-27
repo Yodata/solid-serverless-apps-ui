@@ -150,6 +150,10 @@ function DialogBox(props) {
     handleUpdateLocalStore,
     topicLabels,
     subscribedPermissions,
+    userId,
+    userData,
+    adminList,
+    franchiseList
   } = props;
 
   const onlyReadRole = [
@@ -375,7 +379,13 @@ function DialogBox(props) {
                           <TableCell align="right">
                             <TopicSwitch
                               size="small"
-                              disabled={!read.enabled}
+                              disabled={!read.enabled || !(userId === userData.contact_id ||
+                                franchiseList.some(ele => ele.contactId === userData.contact_id &&
+                                  ele.roleName.toLowerCase() === 'app exchange admin') ||
+                                !(adminList.some(ele => ele.contactId === userId &&
+                                  onlyReadRole.includes(ele.roleName.toLowerCase())) ||
+                                  franchiseList.some(ele => ele.contactId === userData.contact_id &&
+                                    onlyReadRole.includes(ele.roleName.toLowerCase()))))}
                               checked={
                                 read.topics.some((x) =>
                                   readLocalPermissions?.includes(
@@ -422,7 +432,13 @@ function DialogBox(props) {
                           <TableCell align="right">
                             <TopicSwitch
                               size="small"
-                              disabled={!write.enabled}
+                              disabled={!write.enabled || !(userId === userData.contact_id ||
+                                franchiseList.some(ele => ele.contactId === userData.contact_id &&
+                                  ele.roleName.toLowerCase() === 'app exchange admin') ||
+                                !(adminList.some(ele => ele.contactId === userId &&
+                                  onlyReadRole.includes(ele.roleName.toLowerCase())) ||
+                                  franchiseList.some(ele => ele.contactId === userData.contact_id &&
+                                    onlyReadRole.includes(ele.roleName.toLowerCase()))))}
                               checked={
                                 write.topics.some((x) =>
                                   writeLocalPermissions?.includes(
@@ -472,6 +488,13 @@ function DialogBox(props) {
                         ?.isFranchiseVisible ?? false
                     }
                     name={"show"}
+                    disabled={!(userId === userData.contact_id ||
+                      franchiseList.some(ele => ele.contactId === userData.contact_id &&
+                        ele.roleName.toLowerCase() === 'app exchange admin') ||
+                      !(adminList.some(ele => ele.contactId === userId &&
+                        onlyReadRole.includes(ele.roleName.toLowerCase())) ||
+                        franchiseList.some(ele => ele.contactId === userData.contact_id &&
+                          onlyReadRole.includes(ele.roleName.toLowerCase()))))}
                     onChange={() => handleUpdateLocalStore(application.id)}
                   />
                 </Grid>
@@ -522,6 +545,13 @@ function DialogBox(props) {
                   className={classes.actionButton}
                   name="submit"
                   variant="contained"
+                  disabled={!(userId === userData.contact_id ||
+                    franchiseList.some(ele => ele.contactId === userData.contact_id &&
+                      ele.roleName.toLowerCase() === 'app exchange admin') ||
+                    !(adminList.some(ele => ele.contactId === userId &&
+                      onlyReadRole.includes(ele.roleName.toLowerCase())) ||
+                      franchiseList.some(ele => ele.contactId === userData.contact_id &&
+                        onlyReadRole.includes(ele.roleName.toLowerCase()))))}
                   onClick={handleType}
                   disableElevation
                 >
