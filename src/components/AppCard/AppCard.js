@@ -251,12 +251,12 @@ function AppCard(props) {
             //   </>
             // );
           })}
-          {!isAdmin && count === 0 && (
+          {(!isAdmin && count === 0) ? (
             <Typography className={classes.noAppsText}>
               Oh no, your broker hasn't selected any apps yet for the App
               Exchange. Please contact your Office Manager for assistance.
             </Typography>
-          )}
+          ) : <></>}
         </Grid>
       </Grid>
       <ManageTopics
