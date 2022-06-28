@@ -350,10 +350,10 @@ export function CardComponent(props) {
           host: `https://${userData.contact_id}${userData.userDomain}`,
           subscribes: state.readLocalPermissions.filter(
             (x) => !disabledTopics.read.includes(x)
-          ),
+          ).map(x => x.split(' ').join('')),
           publishes: state.writeLocalPermissions.filter(
             (x) => !disabledTopics.write.includes(x)
-          ),
+          ).map(x => x.split(' ').join('')),
         },
       },
     };
