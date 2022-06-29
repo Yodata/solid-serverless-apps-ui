@@ -80,7 +80,7 @@ export const authorisedUserList = () => {
             console.log(err)
         } finally {
             !getState().auth.userList.some(ele => ele.contactId === getState().auth.userId) &&
-            dispatch(franchiseUserList())
+                dispatch(franchiseUserList())
         }
     }
 }
@@ -97,19 +97,21 @@ export const franchiseUserList = () => {
 }
 
 export const getParentOrgandRole = () => {
+    let name
     return async (dispatch, getState) => {
         try {
             const response = await API.get(getState().auth.userData.profile_id)
             // console.log(response.data)
             dispatch(setOrganisationRole(response.data))
-            let name
-            if(response.data.familyName || response.data.givenName){
+            if (response.data.familyName || response.data.givenName) {
                 name = `${response.data.familyName}, ${response.data.givenName}`
             } else {
                 name = getState()?.auth?.userData?.contact_id
             }
             dispatch(setName(name))
         } catch (err) {
+            name = getState()?.auth?.userData?.contact_id
+            dispatch(setName(name))
             console.log(err)
         }
     }
