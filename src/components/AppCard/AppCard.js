@@ -90,13 +90,13 @@ function AppCard(props) {
     if (franchiseList?.length > 0) {
       if (roleName === "self") {
         const findSelfIndex = franchiseList?.findIndex(x => x.type === 'self')
-        setProfileId(franchiseList[findSelfIndex].profileId);
+        setProfileId(franchiseList[findSelfIndex]?.profileId);
       } else if (roleName === "team") {
         const findTeamIndex = franchiseList?.findIndex(x => x.type === 'team')
-        setProfileId(franchiseList[findTeamIndex].profileId);
+        setProfileId(franchiseList[findTeamIndex]?.profileId);
       } else {
         const findOragnizationIndex = franchiseList?.findIndex(x => x.type === 'organization')
-        setProfileId(franchiseList[findOragnizationIndex].profileId);
+        setProfileId(franchiseList[findOragnizationIndex]?.profileId);
       }
       userSubscriptions();
       dispatch(getOrganizationData());

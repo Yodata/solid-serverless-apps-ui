@@ -99,8 +99,8 @@ function HeroUser(props) {
     setFranchiseUser(e.target.value);
     dispatch(
       setProfileId(
-        state.franchiseList.find((franchise) => value === franchise.contactId)
-          .profileId
+        state?.franchiseList?.find((franchise) => value === franchise.contactId)
+          ?.profileId
       )
     );
     dispatch(getParentOrgandRole());
