@@ -102,7 +102,8 @@ const authenticationReducer = (state = defaultState, action) => {
       };
     case SET_PROFILE_ID:
       const profileId = action.profileId;
-      const newUserId = profileId.split("//").pop().split(".").shift();
+      console.log({profileId: profileId})
+      const newUserId = profileId?.split("//")?.pop()?.split(".")?.shift();
       return {
         ...state,
         userData: {
