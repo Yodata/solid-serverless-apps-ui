@@ -95,7 +95,7 @@ function HeroUser(props) {
 
   const handleSelect = (e) => {
     const value =
-      e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === (state.roleName ?? 'organization'))].contactId : e.target.value.toLowerCase();
+      e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === (state.roleName ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
     setFranchiseUser(e.target.value);
     dispatch(
       setProfileId(
@@ -188,15 +188,23 @@ function HeroUser(props) {
                               .shift()
                               .toUpperCase()
                           )
-                            : (
+                            : (state.franchiseList?.findIndex(x => x.type === 'organization') !== -1 ?
                               state.franchiseList[
                                 state.franchiseList?.findIndex(x => x.type === 'organization')
-                              ].contactId
-                                .split("//")
-                                .pop()
-                                .split(".")
-                                .shift()
-                                .toUpperCase()
+                              ]?.contactId
+                                ?.split("//")
+                                ?.pop()
+                                ?.split(".")
+                                ?.shift()
+                                ?.toUpperCase()
+                              : state.franchiseList[
+                                state.franchiseList?.findIndex(x => x.type === 'team')
+                              ]?.contactId
+                                ?.split("//")
+                                ?.pop()
+                                ?.split(".")
+                                ?.shift()
+                                ?.toUpperCase()
                             )
                         )
                       }
@@ -230,7 +238,7 @@ function HeroUser(props) {
                         );
                       }
                     } else {
-                      if (ele.type !== "organization") {
+                      if (state.franchiseList?.findIndex(x => x.type === 'organization') !== -1 ? ele.type !== "organization" : ele.type !== "team") {
                         const value = ele.contactId
                           .split("//")
                           .pop()

@@ -24,7 +24,8 @@ const defaultState = {
   isFranchiseUser: false,
   parentOrg: "",
   name: "",
-  isAgentAcess: false
+  isAgentAcess: false,
+  orgID: ""
 };
 
 const authenticationReducer = (state = defaultState, action) => {
@@ -64,6 +65,7 @@ const authenticationReducer = (state = defaultState, action) => {
       };
     case LIST_OF_ROLES:
       const profile = action.profile;
+      const orgID = action.profile.parentOrganization[0]
       const listOfRoles = profile.memberOf
         ?.map((value) => {
           if (
@@ -99,10 +101,11 @@ const authenticationReducer = (state = defaultState, action) => {
             type: "self"
           },
         ],
+        orgID
       };
     case SET_PROFILE_ID:
       const profileId = action.profileId;
-      console.log({profileId: profileId})
+      console.log({ profileId: profileId })
       const newUserId = profileId?.split("//")?.pop()?.split(".")?.shift();
       return {
         ...state,

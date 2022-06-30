@@ -95,7 +95,7 @@ function AppCard(props) {
         const findTeamIndex = franchiseList?.findIndex(x => x.type === 'team')
         setProfileId(franchiseList[findTeamIndex]?.profileId);
       } else {
-        const findOragnizationIndex = franchiseList?.findIndex(x => x.type === 'organization')
+        const findOragnizationIndex = franchiseList?.findIndex(x => x.type === 'organization') !== -1 ? franchiseList?.findIndex(x => x.type === 'organization') : franchiseList?.findIndex(x => x.type === 'team')
         setProfileId(franchiseList[findOragnizationIndex]?.profileId);
       }
       userSubscriptions();

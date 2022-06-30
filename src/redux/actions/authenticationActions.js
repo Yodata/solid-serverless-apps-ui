@@ -3,6 +3,7 @@ import { API, APIBase } from '../../api/apiRequest';
 import endpoint from '../../api/endpoints';
 import { history } from '../../components/Authentication/history';
 import { globalSubscription } from '../../redux/actions/subscriptionAction'
+import { convertToFranchiseStore } from "../../utility";
 
 /**
 *   Constants
@@ -120,8 +121,8 @@ export const getParentOrgandRole = () => {
 export const getOrganizationData = () => {
     return async (dispatch, getState) => {
         try {
-            const orgID = getState()?.auth?.franchiseList?.find(x => x.type === "organization")?.profileId
-            const response = await API.get(orgID)
+            const orgID = convertToFranchiseStore(getState()?.auth?.orgID)
+            const response = await API.get(`https://${orgID}.${process.env.REACT_APP_HOSTNAME}/${endpoint.profile}`)
             dispatch(setAgentAccess(response.data?.additionalProperty?.appExchangeAgentAccess))
         } catch (err) {
             console.log(err)
