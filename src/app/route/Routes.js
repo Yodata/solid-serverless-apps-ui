@@ -2,7 +2,7 @@ import React from 'react';
 import Client from '../../views/Client';
 import Admin from '../../views/Admin';
 import Login from '../../views/Login';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import PrivateRoute from '../../components/Authentication/PrivateRoute';
 import { useSelector } from 'react-redux'
 
