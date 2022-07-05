@@ -72,7 +72,11 @@ export const currentUser = (props) => {
         } catch (err) {
             dispatch(getUser(err));
             if (!getState().auth.isLoggedIn) {
-                window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}`;
+                if (props) {
+                    window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`;
+                } else {
+                    window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}`;
+                }
             }
         }
     }
