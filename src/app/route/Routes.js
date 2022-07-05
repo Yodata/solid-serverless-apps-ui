@@ -4,12 +4,16 @@ import Admin from '../../views/Admin';
 import Login from '../../views/Login';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import PrivateRoute from '../../components/Authentication/PrivateRoute';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 function Routes() {
     const state = useSelector(state => ({ id: state.auth.userId, userList: state.auth.userList }))
+  const dispatch = useDispatch();
     let location = useLocation();
   console.log({routes: location.search})
+  useEffect(() => {
+    dispatch(setRoleName(location.search?.split("=")[1]));
+  }, []);
     return (
         <React.Fragment>
             <Switch>
