@@ -15,16 +15,16 @@ import { setRoleName } from "../../redux/slices/roleSlice";
 function Client() {
   let location = useLocation();
   const dispatch = useDispatch();
-  console.log(location.search)
+  console.log({ client: location.search })
   useEffect(() => {
     dispatch(setRoleName(location.search?.split("=")[1]));
   }, []);
   return (
     <React.Fragment>
       <Paper>
-        <HeroUser role={location.search?.split("=")[1]}/>
+        <HeroUser role={location.search?.split("=")[1]} />
         {/* <Group /> */}
-        <AppCard role={location.search?.split("=")[1]}/>
+        <AppCard role={location.search?.split("=")[1]} />
       </Paper>
     </React.Fragment>
   );
