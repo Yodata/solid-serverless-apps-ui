@@ -36,7 +36,7 @@ function NewApp(props) {
 
     const { classes, isAddNew,
         application: { logo: { url = '' } = {}, name = '', description = '', id = '' },
-        application = {}, editApplication, addNewApp, handleCancel } = props
+        application = {}, editApplication, addNewApp, handleCancel, username = '' } = props
     const [state, setState] = React.useState({
         newId: id,
         newTitle: name,
@@ -66,7 +66,6 @@ function NewApp(props) {
 
     const handleEdit = () => {
         const editedApplication = JSON.parse(JSON.stringify(application));
-        editedApplication.id = state.newId.trim();
         editedApplication.name = state.newTitle.trim();
         editedApplication.description = state.newDescription.trim();
         editedApplication.logo.url = state.newLogo;
@@ -95,6 +94,10 @@ function NewApp(props) {
         editedApplication.description = state.newDescription.trim();
         editedApplication.logo.url = state.newLogo;
         editedApplication.permissions = createPermissions()
+        editedApplication.createdBy = username
+        editedApplication.creationDate = Date.now()
+        editedApplication.modifiedBy = username
+        editedApplication.modifiedDate = Date.now()
         addNewApp(editedApplication);
         handleCancel();
     }
@@ -102,7 +105,7 @@ function NewApp(props) {
     const createPermissions = () => {
 
         const topics = ['Award', 'Calendar', 'Contact', 'Franchise Reporting', 'Lead', 'Listing',
-            'Marketing Program', 'Service Area', 'Transaction', 'Website'];
+            'Marketing Program', 'Marketing Preferences', 'Service Area', 'Transaction', 'Website'];
 
         Object.freeze(topics)
         return topics.map(topic => {
@@ -176,7 +179,6 @@ function NewApp(props) {
                                         input: classes.resize,
                                     },
                                 }}
-                                onChange={handleAppIdChange}
                             />
                         </>
                     }

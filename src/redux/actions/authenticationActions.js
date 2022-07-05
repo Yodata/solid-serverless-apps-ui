@@ -3,6 +3,7 @@ import { API, APIBase } from '../../api/apiRequest';
 import endpoint from '../../api/endpoints';
 import { history } from '../../components/Authentication/history';
 import { globalSubscription } from '../../redux/actions/subscriptionAction'
+import { convertToFranchiseStore } from "../../utility";
 
 /**
 *   Constants
@@ -13,6 +14,9 @@ export const LOGOUT_USER = 'LOGOUT_USER';
 export const AUTHORISED_USER = 'AUTHORISED_USER'
 export const LIST_OF_ROLES = 'LIST_OF_ROLES'
 export const SET_PROFILE_ID = 'SET_PROFILE_ID'
+export const SET_ORGANISATION_ROLE = 'SET_ORGANISATION_ROLE'
+export const SET_NAME = 'SET_NAME'
+export const SET_AGENT_ACCESS = 'SET_AGENT_ACCESS'
 
 
 /**
@@ -35,29 +39,29 @@ const listOfRoles = payload => {
     return ({ type: LIST_OF_ROLES, profile: payload })
 }
 
+const setOrganisationRole = payload => {
+    return ({ type: SET_ORGANISATION_ROLE, profile: payload })
+}
+
 export const setProfileId = payload => {
     return ({ type: SET_PROFILE_ID, profileId: payload })
+}
+
+export const setName = payload => {
+    return ({ type: SET_NAME, name: payload })
+}
+
+export const setAgentAccess = payload => {
+    return ({ type: SET_AGENT_ACCESS, access: payload })
 }
 
 export const currentUser = () => {
     return async (dispatch, getState) => {
         try {
             const response = await APIBase.get(endpoint.userAuth);
-            // const urlParams = new URLSearchParams(document.location.search)
-            // const queryString = urlParams.toString()
-            // console.log(queryString)
-            // let response
-            // if (queryString) {
-            //     const bodyFormData = new FormData()
-            //     bodyFormData.append('signed_request', queryString.split('=')[1])
-            //     response = await APIFormData.post(endpoint.userAuth, bodyFormData)
-            // } else {
-            //     response = await APIBase.get(endpoint.userAuth)
-            // }
             dispatch(getUser(response));
             if (getState().auth.isLoggedIn) {
                 dispatch(globalSubscription())
-                // dispatch(userSubscriptions(getState().auth.userId))
             }
         } catch (err) {
             dispatch(getUser(err));
@@ -68,14 +72,6 @@ export const currentUser = () => {
     }
 }
 
-// export const currentUser = () => {
-//     return async (dispatch, getState) => {
-//         dispatch(globalSubscription())
-//         const response = await APIAuth.get(endpoint.userAuth);
-//         dispatch(getUser(response));
-//     }
-// }
-
 export const authorisedUserList = () => {
     return async (dispatch, getState) => {
         try {
@@ -85,7 +81,7 @@ export const authorisedUserList = () => {
             console.log(err)
         } finally {
             !getState().auth.userList.some(ele => ele.contactId === getState().auth.userId) &&
-            dispatch(franchiseUserList())
+                dispatch(franchiseUserList())
         }
     }
 }
@@ -95,6 +91,39 @@ export const franchiseUserList = () => {
         try {
             const response = await API.get(getState().auth.userData.profile_id)
             dispatch(listOfRoles(response.data))
+        } catch (err) {
+            console.log(err)
+        }
+    }
+}
+
+export const getParentOrgandRole = () => {
+    let name
+    return async (dispatch, getState) => {
+        try {
+            const response = await API.get(getState().auth.userData.profile_id)
+            // console.log(response.data)
+            dispatch(setOrganisationRole(response.data))
+            if (response.data.familyName || response.data.givenName) {
+                name = `${response.data.familyName}, ${response.data.givenName}`
+            } else {
+                name = getState()?.auth?.userData?.contact_id
+            }
+            dispatch(setName(name))
+        } catch (err) {
+            name = getState()?.auth?.userData?.contact_id
+            dispatch(setName(name))
+            console.log(err)
+        }
+    }
+}
+
+export const getOrganizationData = () => {
+    return async (dispatch, getState) => {
+        try {
+            const orgID = convertToFranchiseStore(getState()?.auth?.orgID)
+            const response = await API.get(`https://${orgID}.${process.env.REACT_APP_HOSTNAME}/${endpoint.profile}`)
+            dispatch(setAgentAccess(response.data?.additionalProperty?.appExchangeAgentAccess))
         } catch (err) {
             console.log(err)
         }
