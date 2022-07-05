@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Client from '../../views/Client';
 import Admin from '../../views/Admin';
 import Login from '../../views/Login';
@@ -8,25 +8,25 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setRoleName } from "../../redux/slices/roleSlice";
 
 function Routes() {
-    const state = useSelector(state => ({ id: state.auth.userId, userList: state.auth.userList }))
+  const state = useSelector(state => ({ id: state.auth.userId, userList: state.auth.userList }))
   const dispatch = useDispatch();
-    let location = useLocation();
-  console.log({routes: location.search})
+  let location = useLocation();
+  console.log({ routes: location.search })
   useEffect(() => {
     dispatch(setRoleName(location.search?.split("=")[1]));
   }, []);
-    return (
-        <React.Fragment>
-            <Switch>
-                <PrivateRoute exact path="/" component={Client} />
-                <Route path="/login" component={Login} />
-                {state.userList.some(ele => ele.contactId === state.id) &&
-                    (<PrivateRoute exact path="/admin" component={Admin} />)
-                }
-                <Redirect from="*" to="/" />
-            </Switch>
-        </React.Fragment>
-    );
+  return (
+    <React.Fragment>
+      <Switch>
+        <PrivateRoute exact path="/" component={Client} />
+        <Route path="/login" component={Login} />
+        {state.userList.some(ele => ele.contactId === state.id) &&
+          (<PrivateRoute exact path="/admin" component={Admin} />)
+        }
+        <Redirect from="*" to="/" />
+      </Switch>
+    </React.Fragment>
+  );
 };
 
 export default Routes;
