@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux'
 
 function Routes() {
     const state = useSelector(state => ({ id: state.auth.userId, userList: state.auth.userList }))
+    let location = useLocation();
+  console.log({routes: location.search})
     return (
         <React.Fragment>
             <Switch>
