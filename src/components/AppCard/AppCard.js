@@ -79,7 +79,8 @@ function AppCard(props) {
     localStore,
     isFranchiseUser,
     roleName,
-    name
+    name,
+    role
   } = props;
 
   let count = 0;
@@ -88,10 +89,10 @@ function AppCard(props) {
 
   React.useEffect(() => {
     if (franchiseList?.length > 0) {
-      if (roleName === "self") {
+      if (roleName === "self" || role === "self") {
         const findSelfIndex = franchiseList?.findIndex(x => x.type === 'self')
         setProfileId(franchiseList[findSelfIndex]?.profileId);
-      } else if (roleName === "team") {
+      } else if (roleName === "team" || role === "team") {
         const findTeamIndex = franchiseList?.findIndex(x => x.type === 'team')
         setProfileId(franchiseList[findTeamIndex]?.profileId);
       } else {

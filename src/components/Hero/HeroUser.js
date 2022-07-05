@@ -52,7 +52,7 @@ const styles = (theme) => ({
 });
 
 function HeroUser(props) {
-  const { classes } = props;
+  const { classes, role } = props;
   const state = useSelector((state) => ({
     id: state.auth.userId,
     userData: state.auth.userData,
@@ -95,7 +95,7 @@ function HeroUser(props) {
 
   const handleSelect = (e) => {
     const value =
-      e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === (state.roleName ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
+      e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ((state.roleName || role) ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
     setFranchiseUser(e.target.value);
     dispatch(
       setProfileId(
@@ -168,7 +168,7 @@ function HeroUser(props) {
                 >
                   <MenuItem value="">
                     <Typography>
-                      {state.roleName === "self"
+                      {(state.roleName === "self" || role === "self")
                         ? state.franchiseList[
                           state.franchiseList?.length - 1
                         ].contactId
@@ -178,7 +178,7 @@ function HeroUser(props) {
                           .shift()
                           .toUpperCase()
                         : (
-                          state.roleName === "team" ? (
+                          (state.roleName === "team" || role === "team") ? (
                             state.franchiseList[
                               state.franchiseList?.findIndex(x => x.type === 'team')
                             ].contactId
@@ -211,7 +211,7 @@ function HeroUser(props) {
                     </Typography>
                   </MenuItem>
                   {state.franchiseList.map((ele, index) => {
-                    if (state.roleName === "self") {
+                    if (state.roleName === "self" || role === "self") {
                       if (ele.type !== "self") {
                         const value = ele.contactId
                           .split("//")
@@ -224,7 +224,7 @@ function HeroUser(props) {
                           </MenuItem>
                         );
                       }
-                    } else if (state.roleName === "team") {
+                    } else if (state.roleName === "team" || role === "team") {
                       if (ele.type !== "team") {
                         const value = ele.contactId
                           .split("//")

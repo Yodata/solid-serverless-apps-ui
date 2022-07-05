@@ -22,9 +22,9 @@ function Client() {
   return (
     <React.Fragment>
       <Paper>
-        <HeroUser />
+        <HeroUser role={location.search?.split("=")[1]}/>
         {/* <Group /> */}
-        <AppCard />
+        <AppCard role={location.search?.split("=")[1]}/>
       </Paper>
     </React.Fragment>
   );
