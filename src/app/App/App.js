@@ -2,7 +2,7 @@ import React from 'react';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../../theme';
-import { Router, useLocation } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import Routes from '../route';
 import { history } from '../../components/Authentication/history';
 import queryString from 'query-string'
@@ -13,8 +13,8 @@ import queryString from 'query-string'
  */
 
 function App() {
-  let location = useLocation();
-  console.log({app: location.search})
+  // let location = useLocation();
+  // console.log({app: location.search})
   return (
     <React.Fragment>
       <ThemeProvider theme={theme}>
