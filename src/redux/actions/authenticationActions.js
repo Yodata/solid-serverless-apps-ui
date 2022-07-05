@@ -55,10 +55,16 @@ export const setAgentAccess = payload => {
     return ({ type: SET_AGENT_ACCESS, access: payload })
 }
 
-export const currentUser = () => {
+export const currentUser = (props) => {
+    console.log(props)
     return async (dispatch, getState) => {
         try {
-            const response = await APIBase.get(endpoint.userAuth);
+            let response
+            if (props) {
+                response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
+            } else {
+                response = await APIBase.get(endpoint.userAuth);
+            }
             dispatch(getUser(response));
             if (getState().auth.isLoggedIn) {
                 dispatch(globalSubscription())
