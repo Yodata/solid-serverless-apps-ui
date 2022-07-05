@@ -5,6 +5,7 @@ import Login from '../../views/Login';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import PrivateRoute from '../../components/Authentication/PrivateRoute';
 import { useSelector, useDispatch } from 'react-redux'
+import { setRoleName } from "../../redux/slices/roleSlice";
 
 function Routes() {
     const state = useSelector(state => ({ id: state.auth.userId, userList: state.auth.userList }))
