@@ -15,7 +15,7 @@ import { setRoleName } from "../../redux/slices/roleSlice";
 function Client() {
   let location = useLocation();
   const dispatch = useDispatch();
-
+  console.log(location.search)
   useEffect(() => {
     dispatch(setRoleName(location.search?.split("=")[1]));
   }, []);
