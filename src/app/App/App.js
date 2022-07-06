@@ -13,7 +13,6 @@ import queryString from 'query-string'
  */
 
 function App() {
-
   return (
     <React.Fragment>
       <ThemeProvider theme={theme}>

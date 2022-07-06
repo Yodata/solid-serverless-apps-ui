@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const roleNameSlice = createSlice({
     name: 'roleName',
     initialState: {
-        roleName: 'admin'
+        roleName: ''
     },
     reducers: {
         setRoleName: (state, action) => {

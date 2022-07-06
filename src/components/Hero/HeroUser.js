@@ -95,7 +95,7 @@ function HeroUser(props) {
 
   const handleSelect = (e) => {
     const value =
-      e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === (state.roleName ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
+      e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ((state.roleName) ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
     setFranchiseUser(e.target.value);
     dispatch(
       setProfileId(
@@ -168,7 +168,7 @@ function HeroUser(props) {
                 >
                   <MenuItem value="">
                     <Typography>
-                      {state.roleName === "self"
+                      {(state.roleName === "self")
                         ? state.franchiseList[
                           state.franchiseList?.length - 1
                         ].contactId
@@ -178,7 +178,7 @@ function HeroUser(props) {
                           .shift()
                           .toUpperCase()
                         : (
-                          state.roleName === "team" ? (
+                          (state.roleName === "team") ? (
                             state.franchiseList[
                               state.franchiseList?.findIndex(x => x.type === 'team')
                             ].contactId

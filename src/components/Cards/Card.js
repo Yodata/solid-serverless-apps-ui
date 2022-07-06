@@ -329,7 +329,7 @@ export function CardComponent(props) {
         : "update"
         }`,
       recipient: `${userData.profile_id}`,
-      source: 'https://subscription-data-agg.bhhs.dev.yodata.io/profile/card#me',
+      source: `https://subscription-data-agg.${process.env.REACT_APP_HOSTNAME}/profile/card#me`,
       data: {
         type: `${type !== "Update"
           ? state.readLocalPermissions?.length === 0 &&

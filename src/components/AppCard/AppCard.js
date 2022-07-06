@@ -79,7 +79,8 @@ function AppCard(props) {
     localStore,
     isFranchiseUser,
     roleName,
-    name
+    name,
+    // role
   } = props;
 
   let count = 0;
