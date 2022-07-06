@@ -5,6 +5,7 @@ import theme from '../../theme';
 import { Router } from 'react-router-dom';
 import Routes from '../route';
 import { history } from '../../components/Authentication/history';
+import queryString from 'query-string'
 
 /**
  * @Component App
