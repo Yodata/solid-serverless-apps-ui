@@ -13,8 +13,6 @@ import queryString from 'query-string'
  */
 
 function App() {
-  // let location = useLocation();
-  // console.log({app: location.search})
   return (
     <React.Fragment>
       <ThemeProvider theme={theme}>

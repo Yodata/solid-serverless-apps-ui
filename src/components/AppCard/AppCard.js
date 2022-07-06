@@ -88,7 +88,6 @@ function AppCard(props) {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    console.log({ roleName })
     if (franchiseList?.length > 0) {
       if (roleName === "self") {
         const findSelfIndex = franchiseList?.findIndex(x => x.type === 'self')
@@ -97,7 +96,6 @@ function AppCard(props) {
         const findTeamIndex = franchiseList?.findIndex(x => x.type === 'team')
         setProfileId(franchiseList[findTeamIndex]?.profileId);
       } else {
-        console.log({ roleName })
         const findOragnizationIndex = franchiseList?.findIndex(x => x.type === 'organization') !== -1 ? franchiseList?.findIndex(x => x.type === 'organization') : franchiseList?.findIndex(x => x.type === 'team')
         setProfileId(franchiseList[findOragnizationIndex]?.profileId);
       }
