@@ -100,17 +100,17 @@ const Reports = (props) => {
             }
             let response
             if (type === 'agent') {
-                response = await axios.get(`https://asokutl5czzlxsqiw7rart6cm40qbwcl.lambda-url.us-west-2.on.aws/?a=${Math.random()}&id=${agentFranchiseeId}`, {
+                response = await axios.get(`https://gozjjs7dgayxsyg36rko35qti40eawff.lambda-url.us-west-2.on.aws/?a=${Math.random()}&id=${agentFranchiseeId}`, {
                     responseType: "arraybuffer",
                 });
             }
             if (type === 'franchisee') {
-                response = await axios.get(`https://lelohqnjfkikdoq7jfbyqx2kxy0dapjo.lambda-url.us-west-2.on.aws/?a=${Math.random()}`, {
+                response = await axios.get(`https://may6zko24dmwfuly4khqnls2ti0kpeyt.lambda-url.us-west-2.on.aws/?a=${Math.random()}`, {
                     responseType: "arraybuffer",
                 });
             }
             if ((type === 'vendor' || type === 'team' || type === 'admin')) {
-                response = await axios.get(`https://lao1mbmhe9.execute-api.us-west-2.amazonaws.com/${type}?a=${Math.random()}`, {
+                response = await axios.get(`https://37ts43rl75.execute-api.us-west-2.amazonaws.com/${type}?a=${Math.random()}`, {
                     responseType: "arraybuffer",
                 });
             }
