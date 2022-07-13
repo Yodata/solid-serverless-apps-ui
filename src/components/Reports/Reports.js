@@ -57,13 +57,16 @@ const styles = (theme) => ({
         },
     },
     label: {
-        width: 96,
+        width: 108,
         hieght: 24,
         marginLeft: 24
     },
     title: {
         fontSize: 40,
         padding: 20
+    },
+    resize: {
+        fontSize: 14
     }
 });
 
@@ -264,6 +267,11 @@ const Reports = (props) => {
                                                 size="small"
                                                 variant="outlined"
                                                 style={{ paddingTop: 0 }}
+                                                InputProps={{
+                                                    classes: {
+                                                        input: classes.resize,
+                                                    },
+                                                }}
                                                 onChange={(e) => setAgentFranchiseeId(e.target.value)}
                                                 value={agentFranchiseeId}
                                             />
