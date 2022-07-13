@@ -10,7 +10,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow"
 import axios from 'axios';
 import { saveAs } from "file-saver";
-
+import TextField from "@material-ui/core/TextField";
 
 
 const styles = (theme) => ({
@@ -57,7 +57,9 @@ const styles = (theme) => ({
         },
     },
     label: {
-        width: 150,
+        width: 96,
+        hieght: 24,
+        marginLeft: 24
     },
     title: {
         fontSize: 40,
@@ -73,6 +75,7 @@ const Reports = (props) => {
     const [agentLoading, setAgentLoading] = useState(false)
     const [teamLoading, setTeamLoading] = useState(false)
     const [franchiseeLoading, setFranchiseeLoading] = useState(false)
+    const [agentFranchiseeId, setAgentFranchiseeId] = useState('')
     const donwloadReport = async (type, fileName) => {
         try {
             switch (type) {
@@ -94,16 +97,16 @@ const Reports = (props) => {
             }
             let response
             if (type === 'agent') {
-                response = await axios.get(`https://asokutl5czzlxsqiw7rart6cm40qbwcl.lambda-url.us-west-2.on.aws/?a=${Math.random()}`, {
+                response = await axios.get(`https://asokutl5czzlxsqiw7rart6cm40qbwcl.lambda-url.us-west-2.on.aws/?a=${Math.random()}&id=${agentFranchiseeId}`, {
                     responseType: "arraybuffer",
                 });
             }
-            if(type === 'franchisee') {
+            if (type === 'franchisee') {
                 response = await axios.get(`https://lelohqnjfkikdoq7jfbyqx2kxy0dapjo.lambda-url.us-west-2.on.aws/?a=${Math.random()}`, {
                     responseType: "arraybuffer",
                 });
             }
-            else {
+            if ((type === 'vendor' || type === 'team' || type === 'admin')) {
                 response = await axios.get(`https://lao1mbmhe9.execute-api.us-west-2.amazonaws.com/${type}?a=${Math.random()}`, {
                     responseType: "arraybuffer",
                 });
@@ -247,7 +250,7 @@ const Reports = (props) => {
                                         </TableCell>
                                     </TableRow>
                                     <TableRow>
-                                        <TableCell>
+                                        <TableCell style={{ display: 'flex' }}>
                                             <Button
                                                 variant="text"
                                                 disabled
@@ -256,7 +259,26 @@ const Reports = (props) => {
                                             >
                                                 Agent Data Sharing Details
                                             </Button>
+                                            <TextField
+                                                className={[classes.new, classes.label]}
+                                                size="small"
+                                                variant="outlined"
+                                                style={{ paddingTop: 0 }}
+                                                onChange={(e) => setAgentFranchiseeId(e.target.value)}
+                                                value={agentFranchiseeId}
+                                            />
                                         </TableCell>
+                                        {/* <TableCell>
+                                            <TextField
+                                                className={[classes.new, classes.label]}
+                                                size="small"
+                                                variant="outlined"
+                                                hiddenLabel
+                                                style={{ paddingTop: 0 }}
+                                                onChange={(e) => setAgentFranchiseeId(e.target.value)}
+                                                value={agentFranchiseeId}
+                                            />
+                                        </TableCell> */}
                                         <TableCell align="center">
                                             <Button
                                                 variant="text"
