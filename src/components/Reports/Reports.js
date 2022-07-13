@@ -253,7 +253,7 @@ const Reports = (props) => {
                                         </TableCell>
                                     </TableRow>
                                     <TableRow>
-                                        <TableCell style={{ display: 'flex' }}>
+                                        <TableCell style={{ display: 'flex', alignItems: 'center'}}>
                                             <Button
                                                 variant="text"
                                                 disabled
@@ -272,7 +272,7 @@ const Reports = (props) => {
                                                         input: classes.resize,
                                                     },
                                                 }}
-                                                onChange={(e) => setAgentFranchiseeId(e.target.value)}
+                                                onChange={(e) => setAgentFranchiseeId(e.target.value.toUpperCase())}
                                                 value={agentFranchiseeId}
                                             />
                                         </TableCell>
@@ -291,6 +291,7 @@ const Reports = (props) => {
                                             <Button
                                                 variant="text"
                                                 disableRipple
+                                                disabled={agentFranchiseeId === ''}
                                                 className={classes.new}
                                                 onClick={() => donwloadReport('agent', "Agent Data Sharing Details.xlsx")}
                                             >
