@@ -11,7 +11,6 @@ function Routes() {
   const state = useSelector(state => ({ id: state.auth.userId, userList: state.auth.userList }))
   const dispatch = useDispatch();
   let location = useLocation();
-  console.log({ routes: location.search })
   useEffect(() => {
     dispatch(setRoleName(location.search?.split("=")[1]));
   }, []);
