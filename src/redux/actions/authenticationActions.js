@@ -56,7 +56,6 @@ export const setAgentAccess = payload => {
 }
 
 export const currentUser = (props) => {
-    console.log(props)
     return async (dispatch, getState) => {
         try {
             let response

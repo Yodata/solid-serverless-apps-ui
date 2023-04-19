@@ -85,15 +85,16 @@ const authenticationReducer = (state = defaultState, action) => {
           }
         })
         .filter(Boolean);
-      const removeDuplicates = Array.from(
-        new Set(listOfRoles.map((a) => a.contactId))
-      ).map((id) => {
-        return listOfRoles.find((a) => a.contactId === id);
-      });
+      //commenting, this seems unnecessary
+      // const removeDuplicates = Array.from(
+      //   new Set(listOfRoles.map((a) => a.contactId))
+      // ).map((id) => {
+      //   return listOfRoles.find((a) => a.contactId === id);
+      // });
       return {
         ...state,
         franchiseList: [
-          ...removeDuplicates,
+          ...listOfRoles,
           {
             contactId: state.userData.contact_id,
             profileId: state.userData.profile_id,
@@ -105,7 +106,6 @@ const authenticationReducer = (state = defaultState, action) => {
       };
     case SET_PROFILE_ID:
       const profileId = action.profileId;
-      console.log({ profileId: profileId })
       const newUserId = profileId?.split("//")?.pop()?.split(".")?.shift();
       return {
         ...state,
