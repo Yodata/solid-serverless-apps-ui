@@ -19,7 +19,7 @@ function Routes() {
       role = 'team'
     };
     dispatch(setRoleName(role));
-  }, []);
+  }, [location, dispatch]);
   return (
     <React.Fragment>
       <Switch>
