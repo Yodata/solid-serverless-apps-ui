@@ -9,14 +9,15 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     let location = useLocation();
     let role = null;
     try {
-        const parentParams = new URLSearchParams(window.parent.location.search);
-        role = parentParams.get('runAs');
+        const referrerUrl = new URL(document.referrer);
+        const referrerParams = new URLSearchParams(referrerUrl.search);
+        role = referrerParams.get('runAs');
     } catch (e) {
-        // Fallback to iframe params
-        const params = new URLSearchParams(location.search);
-        role = params.get('runAs');
+        // Fallback
+        role = null;
     }
     console.log("Full URL:", window.location.href);
+    console.log("Referrer:", document.referrer);
     console.log("Role in PrivateRoute:", role);
     React.useEffect(() => {
       dispatch(currentUser(role));
