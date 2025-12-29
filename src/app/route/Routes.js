@@ -11,16 +11,20 @@ function Routes() {
   const state = useSelector(state => ({ id: state.auth.userId, userList: state.auth.userList }))
   const dispatch = useDispatch();
   let location = useLocation();
-  let role = undefined
-  // useEffect(() => {
-  //   if (location?.search.includes('self')){
-  //     role = 'self'
-  //   }else if (location?.search.includes('team')){
-  //     role = 'team'
-  //   };
-  //   dispatch(setRoleName(role));
-  // }, [location, dispatch]);
-  // console.log("Routes rendering - location:", location, "role:", role);
+  useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const runAsFromUrl = params.get("runAs");
+  const runAsFromStorage = sessionStorage.getItem("runAs");
+
+  const runAs = runAsFromUrl || runAsFromStorage;
+
+  if (runAs) {
+    dispatch(setRoleName(runAs));
+    sessionStorage.setItem("runAs", runAs);
+  }
+
+  dispatch(currentUser());
+}, [dispatch]);
   return (
     <React.Fragment>
       <Switch>
@@ -29,7 +33,7 @@ function Routes() {
         {state.userList.some(ele => ele.contactId === state.id) &&
           (<PrivateRoute exact path="/admin" component={Admin} />)
         }
-        <Redirect from="*" to={{ pathname: "/", search: location.search }} />
+        <Redirect from="*" to="/" />
       </Switch>
     </React.Fragment>
   );
