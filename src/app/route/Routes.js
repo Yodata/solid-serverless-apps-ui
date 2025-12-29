@@ -6,6 +6,7 @@ import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import PrivateRoute from '../../components/Authentication/PrivateRoute';
 import { useSelector, useDispatch } from 'react-redux'
 import { setRoleName } from "../../redux/slices/roleSlice";
+import { currentUser } from '../../redux/actions/authenticationActions';
 
 function Routes() {
   const state = useSelector(state => ({ id: state.auth.userId, userList: state.auth.userList }))
@@ -13,8 +14,27 @@ function Routes() {
   let location = useLocation();
   console.log("location in Routes:", location);
   useEffect(() => {
-    dispatch(setRoleName(location.search?.split("=")[1]));
-  }, []);
+    const params = new URLSearchParams(location.search);
+    const runAsFromUrl = params.get("runAs");
+
+    const isEmbedded = window.self !== window.top;
+
+    let runAs = null;
+
+    // Case 1: Explicit URL override
+    if (runAsFromUrl === "self" || runAsFromUrl === "team") {
+      runAs = runAsFromUrl;
+      sessionStorage.setItem("runAs", runAs);
+    }
+    // Case 2: Salesforce iframe rewrote URL (same session)
+    else if (isEmbedded) {
+      runAs = sessionStorage.getItem("runAs");
+    }
+    // Case 3: Clean entry → runAs remains null
+
+    dispatch(setRoleName(runAs));
+    dispatch(currentUser(runAs));
+  }, [dispatch, location.search]);
   return (
     <React.Fragment>
       <Switch>

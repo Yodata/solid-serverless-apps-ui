@@ -10,9 +10,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     console.log("location in PrivateRoute:", location);
     const role = location.search?.split("=")[1]
 
-    React.useEffect(() => {
-      dispatch(currentUser(role));
-    }, []);
+    // React.useEffect(() => {
+    //   dispatch(currentUser(role));
+    // }, []);
 
     return (
         // <Route {...rest} render={props => (
