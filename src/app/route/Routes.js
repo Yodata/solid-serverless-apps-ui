@@ -4,6 +4,7 @@ import Admin from '../../views/Admin';
 import Login from '../../views/Login';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import PrivateRoute from '../../components/Authentication/PrivateRoute';
+import { currentUser } from '../../redux/actions/authenticationActions';
 import { useSelector, useDispatch } from 'react-redux'
 import { setRoleName } from "../../redux/slices/roleSlice";
 
