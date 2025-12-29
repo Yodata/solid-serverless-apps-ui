@@ -15,14 +15,18 @@ function Routes() {
   useEffect(() => {
   const params = new URLSearchParams(window.location.search);
   const runAsFromUrl = params.get("runAs");
-  const runAsFromStorage = sessionStorage.getItem("runAs");
 
-  const runAs = runAsFromUrl || runAsFromStorage;
+  let runAs = null;
 
-  if (runAs) {
-    dispatch(setRoleName(runAs));
+  if (runAsFromUrl === "self" || runAsFromUrl === "team") {
+    runAs = runAsFromUrl;
     sessionStorage.setItem("runAs", runAs);
+  } else {
+    // Only reuse session value if URL was rewritten (same session)
+    runAs = sessionStorage.getItem("runAs");
   }
+
+  dispatch(setRoleName(runAs));
 
   dispatch(currentUser());
 }, [dispatch]);
