@@ -2,6 +2,7 @@ import React from "react";
 import { Route, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { currentUser } from "../../redux/actions/authenticationActions";
+import { setRoleName } from "../../redux/slices/roleSlice";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
   React.useEffect(() => {
     dispatch(currentUser(role));
+    dispatch(setRoleName(role));
   }, [role]);
 
   return (
