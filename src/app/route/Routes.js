@@ -16,26 +16,43 @@ function Routes() {
   const dispatch = useDispatch();
   let location = useLocation();
   console.log("location in Routes:", location);
- useEffect(() => {
-  const handler = (event) => {
-    if (!event.origin.includes("bhhsresource.com")) return;
+// ✅ ALWAYS bootstrap auth once
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const runAs = params.get("runAs");
 
-    if (event.data?.clearRunAs) {
+    if (runAs === "self" || runAs === "team") {
+      sessionStorage.setItem("runAs", runAs);
+      dispatch(setRoleName(runAs));
+      dispatch(currentUser(runAs));
+    } else {
       sessionStorage.removeItem("runAs");
       dispatch(setRoleName(null));
       dispatch(currentUser());
     }
+  }, [dispatch]);
 
-    if (event.data?.runAs === "self" || event.data?.runAs === "team") {
-      sessionStorage.setItem("runAs", event.data.runAs);
-      dispatch(setRoleName(event.data.runAs));
-      dispatch(currentUser(event.data.runAs));
-    }
-  };
+  // ✅ OPTIONAL listener (harmless if Salesforce never sends messages)
+  useEffect(() => {
+    const handler = (event) => {
+      if (!event.origin.includes("bhhsresource.com")) return;
 
-  window.addEventListener("message", handler);
-  return () => window.removeEventListener("message", handler);
-}, [dispatch]);
+      if (event.data?.clearRunAs) {
+        sessionStorage.removeItem("runAs");
+        dispatch(setRoleName(null));
+        dispatch(currentUser());
+      }
+
+      if (event.data?.runAs === "self" || event.data?.runAs === "team") {
+        sessionStorage.setItem("runAs", event.data.runAs);
+        dispatch(setRoleName(event.data.runAs));
+        dispatch(currentUser(event.data.runAs));
+      }
+    };
+
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [dispatch]);
 
 
   return (
