@@ -172,8 +172,8 @@ function HeroUser(props) {
                     <Typography>
                       {(state.roleName === "self")
                         ? state.franchiseList[
-                          state.franchiseList?.findIndex(x => x.type === 'self')
-                        ]?.contactId
+                          state.franchiseList?.length - 1
+                        ].contactId
                           .split("//")
                           .pop()
                           .split(".")
@@ -183,7 +183,7 @@ function HeroUser(props) {
                           (state.roleName === "team") ? (
                             state.franchiseList[
                               state.franchiseList?.findIndex(x => x.type === 'team')
-                            ]?.contactId
+                            ].contactId
                               .split("//")
                               .pop()
                               .split(".")
