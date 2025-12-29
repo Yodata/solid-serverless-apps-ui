@@ -9,9 +9,14 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     let location = useLocation();
     const role = location.search?.split("=")[1]
 
-    // React.useEffect(() => {
-    //   dispatch(currentUser(role));
-    // }, []);
+    React.useEffect(() => {
+        if(role?.includes("self")){
+            dispatch(currentUser("self"));
+        };
+        if(role?.includes("team")){
+            dispatch(currentUser("team"));
+        }
+    }, []);
 
     return (
         // <Route {...rest} render={props => (

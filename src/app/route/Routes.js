@@ -4,7 +4,6 @@ import Admin from '../../views/Admin';
 import Login from '../../views/Login';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import PrivateRoute from '../../components/Authentication/PrivateRoute';
-import { currentUser } from '../../redux/actions/authenticationActions';
 import { useSelector, useDispatch } from 'react-redux'
 import { setRoleName } from "../../redux/slices/roleSlice";
 
@@ -13,23 +12,8 @@ function Routes() {
   const dispatch = useDispatch();
   let location = useLocation();
   useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-  const runAsFromUrl = params.get("runAs");
-
-  let runAs = null;
-
-  if (runAsFromUrl === "self" || runAsFromUrl === "team") {
-    runAs = runAsFromUrl;
-    sessionStorage.setItem("runAs", runAs);
-  } else {
-    // Only reuse session value if URL was rewritten (same session)
-    runAs = sessionStorage.getItem("runAs");
-  }
-
-  dispatch(setRoleName(runAs));
-
-  dispatch(currentUser());
-}, [dispatch]);
+    dispatch(setRoleName(location.search?.split("=")[1]));
+  }, []);
   return (
     <React.Fragment>
       <Switch>
