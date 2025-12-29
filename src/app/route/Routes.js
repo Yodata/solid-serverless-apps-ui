@@ -34,6 +34,9 @@ function Routes() {
 
     dispatch(setRoleName(runAs));
     dispatch(currentUser(runAs));
+    return () =>{
+      sessionStorage.setItem("runAs", "");
+    }
   }, [dispatch, location.search]);
   return (
     <React.Fragment>
