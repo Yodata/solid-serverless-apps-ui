@@ -12,15 +12,15 @@ function Routes() {
   const dispatch = useDispatch();
   let location = useLocation();
   let role = undefined
-  useEffect(() => {
-    if (location?.search.includes('self')){
-      role = 'self'
-    }else if (location?.search.includes('team')){
-      role = 'team'
-    };
-    dispatch(setRoleName(role));
-  }, [location, dispatch]);
-  console.log("Routes rendering - location:", location, "role:", role);
+  // useEffect(() => {
+  //   if (location?.search.includes('self')){
+  //     role = 'self'
+  //   }else if (location?.search.includes('team')){
+  //     role = 'team'
+  //   };
+  //   dispatch(setRoleName(role));
+  // }, [location, dispatch]);
+  // console.log("Routes rendering - location:", location, "role:", role);
   return (
     <React.Fragment>
       <Switch>
