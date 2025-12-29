@@ -9,6 +9,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     let location = useLocation();
     const params = new URLSearchParams(location.search);
     const role = params.get('runAs');
+    console.log("Full URL:", window.location.href);
     console.log("Role in PrivateRoute:", role);
     React.useEffect(() => {
       dispatch(currentUser(role));
