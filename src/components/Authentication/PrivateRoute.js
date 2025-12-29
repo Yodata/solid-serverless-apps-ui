@@ -14,8 +14,8 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     location
   );
   let role = null;
-  if (location.search?.includes("/self")) role = "self";
-  else if (location.search?.includes("/team")) role = "team";
+  if (location.search?.includes("self")) role = "self";
+  else if (location.search?.includes("team")) role = "team";
   console.log("PrivateRoute role from URL:", role);
 
   React.useEffect(() => {
