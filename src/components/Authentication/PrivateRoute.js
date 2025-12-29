@@ -7,7 +7,8 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     const dispatch = useDispatch();
     const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
     let location = useLocation();
-    const role = location.search?.split("=")[1]
+    const params = new URLSearchParams(location.search);
+    const role = params.get('runAs');
     console.log("Role in PrivateRoute:", role);
     React.useEffect(() => {
       dispatch(currentUser(role));

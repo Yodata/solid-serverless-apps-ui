@@ -68,6 +68,8 @@ function HeroUser(props) {
   const [franchiseUser, setFranchiseUser] = React.useState("");
   const [toastOpen, setToastOpen] = React.useState(false);
 
+  console.log("HeroUser rendering - agentAccess:", state.agentAccess, "franchiseList length:", state.franchiseList?.length, "roleName:", state.roleName);
+
   React.useEffect(() => {
     dispatch(authorisedUserList());
   }, []);
@@ -170,8 +172,8 @@ function HeroUser(props) {
                     <Typography>
                       {(state.roleName === "self")
                         ? state.franchiseList[
-                          state.franchiseList?.length - 1
-                        ].contactId
+                          state.franchiseList?.findIndex(x => x.type === 'self')
+                        ]?.contactId
                           .split("//")
                           .pop()
                           .split(".")
@@ -181,7 +183,7 @@ function HeroUser(props) {
                           (state.roleName === "team") ? (
                             state.franchiseList[
                               state.franchiseList?.findIndex(x => x.type === 'team')
-                            ].contactId
+                            ]?.contactId
                               .split("//")
                               .pop()
                               .split(".")

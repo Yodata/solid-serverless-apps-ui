@@ -12,7 +12,9 @@ function Routes() {
   const dispatch = useDispatch();
   let location = useLocation();
   useEffect(() => {
-    dispatch(setRoleName(location.search?.split("=")[1]));
+    const params = new URLSearchParams(location.search);
+    const role = params.get('runAs');
+    dispatch(setRoleName(role));
   }, []);
   return (
     <React.Fragment>
