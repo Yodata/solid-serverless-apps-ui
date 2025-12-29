@@ -16,29 +16,33 @@ function Routes() {
   const dispatch = useDispatch();
   let location = useLocation();
   console.log("location in Routes:", location);
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const runAsFromUrl = params.get("runAs");
-    const isEmbedded = window.self !== window.top;
+ useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  const runAsFromUrl = params.get("runAs");
 
-    let runAs = null;
+  const referrer = document.referrer || "";
+  const cameFromOuterPage =
+    referrer.includes("bhhsresource.com/resourcecenter");
 
-    if (runAsFromUrl === "self" || runAsFromUrl === "team") {
-      // Explicit override
-      runAs = runAsFromUrl;
-      sessionStorage.setItem("runAs", runAs);
-    } else if (isEmbedded) {
-      // iframe rewrite → reuse
-      runAs = sessionStorage.getItem("runAs");
-    } else {
-      // clean top-level entry → clear
-      sessionStorage.removeItem("runAs");
-      runAs = null;
-    }
+  let runAs = null;
 
-    dispatch(setRoleName(runAs));
-    dispatch(currentUser(runAs));
-  }, [dispatch, location.search]);
+  if (runAsFromUrl === "self" || runAsFromUrl === "team") {
+    // Explicit override
+    runAs = runAsFromUrl;
+    sessionStorage.setItem("runAs", runAs);
+  } else if (!cameFromOuterPage) {
+    // iframe rewrite → reuse
+    runAs = sessionStorage.getItem("runAs");
+  } else {
+    // clean entry from outer page → CLEAR
+    sessionStorage.removeItem("runAs");
+    runAs = null;
+  }
+
+  dispatch(setRoleName(runAs));
+  dispatch(currentUser(runAs));
+}, [dispatch, location.search]);
+
 
   return (
     <React.Fragment>
