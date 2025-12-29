@@ -7,15 +7,11 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     const dispatch = useDispatch();
     const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
     let location = useLocation();
+    console.log("location in PrivateRoute:", location);
     const role = location.search?.split("=")[1]
 
     React.useEffect(() => {
-        if(role?.includes("self")){
-            dispatch(currentUser("self"));
-        };
-        if(role?.includes("team")){
-            dispatch(currentUser("team"));
-        }
+      dispatch(currentUser(role));
     }, []);
 
     return (

@@ -68,8 +68,6 @@ function HeroUser(props) {
   const [franchiseUser, setFranchiseUser] = React.useState("");
   const [toastOpen, setToastOpen] = React.useState(false);
 
-  console.log("HeroUser rendering - agentAccess:", state.agentAccess, "franchiseList length:", state.franchiseList?.length, "roleName:", state.roleName);
-
   React.useEffect(() => {
     dispatch(authorisedUserList());
   }, []);
