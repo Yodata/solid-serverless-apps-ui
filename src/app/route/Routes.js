@@ -17,31 +17,25 @@ function Routes() {
   let location = useLocation();
   console.log("location in Routes:", location);
  useEffect(() => {
-  const params = new URLSearchParams(location.search);
-  const runAsFromUrl = params.get("runAs");
+  const handler = (event) => {
+    if (!event.origin.includes("bhhsresource.com")) return;
 
-  const referrer = document.referrer || "";
-  const cameFromOuterPage =
-    referrer.includes("bhhsresource.com/resourcecenter");
+    if (event.data?.clearRunAs) {
+      sessionStorage.removeItem("runAs");
+      dispatch(setRoleName(null));
+      dispatch(currentUser());
+    }
 
-  let runAs = null;
+    if (event.data?.runAs === "self" || event.data?.runAs === "team") {
+      sessionStorage.setItem("runAs", event.data.runAs);
+      dispatch(setRoleName(event.data.runAs));
+      dispatch(currentUser(event.data.runAs));
+    }
+  };
 
-  if (runAsFromUrl === "self" || runAsFromUrl === "team") {
-    // Explicit override
-    runAs = runAsFromUrl;
-    sessionStorage.setItem("runAs", runAs);
-  } else if (!cameFromOuterPage) {
-    // iframe rewrite → reuse
-    runAs = sessionStorage.getItem("runAs");
-  } else {
-    // clean entry from outer page → CLEAR
-    sessionStorage.removeItem("runAs");
-    runAs = null;
-  }
-
-  dispatch(setRoleName(runAs));
-  dispatch(currentUser(runAs));
-}, [dispatch, location.search]);
+  window.addEventListener("message", handler);
+  return () => window.removeEventListener("message", handler);
+}, [dispatch]);
 
 
   return (
