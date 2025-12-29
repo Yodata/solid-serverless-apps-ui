@@ -7,8 +7,15 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     const dispatch = useDispatch();
     const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
     let location = useLocation();
-    const params = new URLSearchParams(location.search);
-    const role = params.get('runAs');
+    let role = null;
+    try {
+        const parentParams = new URLSearchParams(window.parent.location.search);
+        role = parentParams.get('runAs');
+    } catch (e) {
+        // Fallback to iframe params
+        const params = new URLSearchParams(location.search);
+        role = params.get('runAs');
+    }
     console.log("Full URL:", window.location.href);
     console.log("Role in PrivateRoute:", role);
     React.useEffect(() => {
