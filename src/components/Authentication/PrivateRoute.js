@@ -20,8 +20,11 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   console.log("PrivateRoute role from URL:", role);
 
   React.useEffect(() => {
-    dispatch(currentUser(role));
-    dispatch(setRoleName(role));
+    if(role!==null || role!==undefined){
+
+        dispatch(currentUser(role));
+        dispatch(setRoleName(role));
+    }
   }, [role]);
 
   return (
