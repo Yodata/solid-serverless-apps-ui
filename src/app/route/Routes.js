@@ -12,7 +12,13 @@ function Routes() {
   const dispatch = useDispatch();
   let location = useLocation();
   useEffect(() => {
-    dispatch(setRoleName(location.search?.split("=")[1]));
+    let role = undefined
+    if (location?.search.includes('self')){
+      role = 'self'
+    }else if (location?.search.includes('team')){
+      role = 'team'
+    };
+    dispatch(setRoleName(role));
   }, []);
   return (
     <React.Fragment>
