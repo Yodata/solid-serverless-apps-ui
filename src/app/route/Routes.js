@@ -29,7 +29,7 @@ function Routes() {
         {state.userList.some(ele => ele.contactId === state.id) &&
           (<PrivateRoute exact path="/admin" component={Admin} />)
         }
-        <Redirect from="*" to="/" />
+        <Redirect from="*" to={{ pathname: "/", search: location.search }} />
       </Switch>
     </React.Fragment>
   );
