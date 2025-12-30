@@ -14,7 +14,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
       setTimeout(() => {
         dispatch(currentUser(role));
       }, 1000);
-    }, []);
+    }, [location]);
 
     return (
         // <Route {...rest} render={props => (
