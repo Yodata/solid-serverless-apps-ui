@@ -59,11 +59,11 @@ export const currentUser = (props) => {
     return async (dispatch, getState) => {
         try {
             let response
-            // if (props) {
-            //     response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
-            // } else {
+            if (props) {
+                response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
+            } else {
                 response = await APIBase.get(endpoint.userAuth);
-            // }
+            }
             dispatch(getUser(response));
             if (getState().auth.isLoggedIn) {
                 dispatch(globalSubscription())
