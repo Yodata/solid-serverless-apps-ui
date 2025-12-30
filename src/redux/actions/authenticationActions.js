@@ -73,7 +73,7 @@ export const currentUser = (props) => {
         } catch (err) {
           attempts -= 1;
           if (attempts === 0) throw err;
-          await wait(500); // wait before retry
+          await wait(5000); // wait before retry
         }
       }
       // try {
