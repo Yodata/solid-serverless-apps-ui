@@ -60,7 +60,7 @@ export const currentUser = (props) => {
         try {
             let response
             if (props) {
-                response = await APIBase.get(`${endpoint.userAuth}`);
+                response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
             } else {
                 response = await APIBase.get(endpoint.userAuth);
             }
