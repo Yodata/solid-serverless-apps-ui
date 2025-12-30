@@ -57,6 +57,8 @@ export const setAgentAccess = payload => {
 
 export const currentUser = (props) => {
     return async (dispatch, getState) => {
+        const search = window.location.search;
+        console.log("search.", search);
         try {
             let response
             if (props) {
@@ -72,8 +74,10 @@ export const currentUser = (props) => {
             dispatch(getUser(err));
             if (!getState().auth.isLoggedIn) {
                 if (props) {
+                    console.log("search..", search, props);
                     window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`;
                 } else {
+                    console.log("search....", search);
                     window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}`;
                 }
             }

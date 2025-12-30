@@ -1,35 +1,29 @@
-import React from "react";
-import { Route, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { currentUser } from "../../redux/actions/authenticationActions";
+import React from 'react';
+import { Route, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { currentUser } from '../../redux/actions/authenticationActions';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  let location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const runAs = searchParams.get("runAs");
-  console.log("PrivateRoute runAs", runAs);
-  const role = location.search?.split("=")[1];
-  console.log("PrivateRoute location", location);
-  console.log("PrivateRoute role", role);
-  React.useEffect(() => {
-    setTimeout(() => {
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+    let location = useLocation();
+    const role = location.search?.split("=")[1]
+
+    React.useEffect(() => {
       dispatch(currentUser(role));
-    }, 1000);
-  }, [location]);
+    }, []);
 
-  return (
-    // <Route {...rest} render={props => (
-    //     isLoggedIn
-    //         ? <Component {...props} />
-    //         : <Redirect to={{ pathname: '/login' }} />
-    // )} />
-    <Route
-      {...rest}
-      render={(props) => isLoggedIn && <Component {...props} />}
-    />
-  );
-};
+    return (
+        // <Route {...rest} render={props => (
+        //     isLoggedIn
+        //         ? <Component {...props} />
+        //         : <Redirect to={{ pathname: '/login' }} />
+        // )} />
+        <Route {...rest} render={props => (
+            isLoggedIn &&
+                <Component {...props} />
+        )} />
+    )
+}
 
-export default PrivateRoute;
+export default PrivateRoute
