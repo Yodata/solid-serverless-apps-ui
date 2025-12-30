@@ -11,7 +11,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     console.log("PrivateRoute location", location);
     console.log("PrivateRoute role", role);
     React.useEffect(() => {
-      dispatch(currentUser(role));
+      setTimeout(() => {
+        dispatch(currentUser(role));
+      }, 1000);
     }, []);
 
     return (
