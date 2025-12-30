@@ -72,6 +72,7 @@ export const currentUser = (props) => {
             dispatch(getUser(err));
             if (!getState().auth.isLoggedIn) {
                 console.log('Not logged in, redirecting to login page', !getState().auth.isLoggedIn);
+                console.log("href link",`https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`)
                 if (props) {
                     console.log('redirecting with runAs');
                     window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`;

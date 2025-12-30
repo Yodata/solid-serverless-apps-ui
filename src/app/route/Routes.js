@@ -14,6 +14,7 @@ function Routes() {
   useEffect(() => {
     dispatch(setRoleName(location.search?.split("=")[1]));
   }, []);
+  console.log("Current Role in Routes:", location.search?.split("=")[1]);
   return (
     <React.Fragment>
       <Switch>
