@@ -55,35 +55,91 @@ export const setAgentAccess = payload => {
     return ({ type: SET_AGENT_ACCESS, access: payload })
 }
 
+// export const currentUser = (props) => {
+//     return async (dispatch, getState) => {
+//         try {
+//             let response
+//             if (props) {
+//                 response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
+//             } else {
+//                 response = await APIBase.get(endpoint.userAuth);
+//             }
+//             dispatch(getUser(response));
+//             if (getState().auth.isLoggedIn) {
+//                 dispatch(globalSubscription())
+//             }
+//         } catch (err) {
+//             dispatch(getUser(err));
+//             if (!getState().auth.isLoggedIn) {
+//                 console.log('Not logged in, redirecting to login page', !getState().auth.isLoggedIn);
+//                 console.log("href link",`https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`)
+//                 if (props) {
+//                     console.log('redirecting with runAs');
+//                     window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`;
+//                 } else {
+//                     console.log('redirecting without runAs');
+//                     window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}`;
+//                 }
+//             }
+//         }
+//     }
+// }
+
 export const currentUser = (props) => {
-    return async (dispatch, getState) => {
-        try {
-            let response
-            if (props) {
-                response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
-            } else {
-                response = await APIBase.get(endpoint.userAuth);
-            }
-            dispatch(getUser(response));
-            if (getState().auth.isLoggedIn) {
-                dispatch(globalSubscription())
-            }
-        } catch (err) {
-            dispatch(getUser(err));
-            if (!getState().auth.isLoggedIn) {
-                console.log('Not logged in, redirecting to login page', !getState().auth.isLoggedIn);
-                console.log("href link",`https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`)
-                if (props) {
-                    console.log('redirecting with runAs');
-                    window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`;
-                } else {
-                    console.log('redirecting without runAs');
-                    window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}`;
-                }
-            }
+  return async (dispatch, getState) => {
+    try {
+      let response;
+
+      if (props) {
+        response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
+      } else {
+        response = await APIBase.get(endpoint.userAuth);
+      }
+
+      // ✅ success path
+      sessionStorage.removeItem('whoami_reload_attempted');
+      dispatch(getUser(response));
+
+      if (getState().auth.isLoggedIn) {
+        dispatch(globalSubscription());
+      }
+
+    } catch (err) {
+      const status = err?.response?.status;
+
+      // ✅ FIRST-FAIL RELOAD LOGIC
+      if (status === 401) {
+        const alreadyReloaded = sessionStorage.getItem('whoami_reload_attempted');
+
+        if (!alreadyReloaded) {
+          console.log('401 on first load — reloading once to allow cookies');
+
+          sessionStorage.setItem('whoami_reload_attempted', 'true');
+
+          // small delay improves stability in iframe context
+          setTimeout(() => {
+            window.location.reload();
+          }, 300);
+
+          return; // ⛔ stop execution here
         }
+      }
+
+      // ❌ normal failure path (after reload or non-401)
+      dispatch(getUser(err));
+
+      if (!getState().auth.isLoggedIn) {
+        console.log('Not logged in, redirecting to login page');
+
+        const redirectUrl = props
+          ? `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`
+          : `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}`;
+
+        window.location.href = redirectUrl;
+      }
     }
-}
+  };
+};
 
 export const authorisedUserList = () => {
     return async (dispatch, getState) => {
