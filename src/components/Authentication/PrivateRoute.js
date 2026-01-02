@@ -20,9 +20,6 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     if (param !== undefined) {
       dispatch(currentUser(param));
     }
-    setTimeout(() => {
-      sessionStorage.removeItem("role");
-    }, 3000);
   }, [param]);
   return (
     // <Route {...rest} render={props => (
