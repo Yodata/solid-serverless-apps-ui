@@ -59,7 +59,7 @@ export const currentUser = (props) => {
     return async (dispatch, getState) => {
         try {
             let response
-            if(parseInt(sessionStorage.getItem('noOfAttempts') > 1)){
+            if(parseInt(sessionStorage.getItem('noOfAttempts') || '0', 10) > 1){
                 sessionStorage.removeItem('role');
             }
             if (props) {
