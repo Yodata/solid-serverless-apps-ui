@@ -95,6 +95,7 @@ function HeroUser(props) {
   };
 
   const handleSelect = (e) => {
+    sessionStorage.removeItem("role");
     const value =
       e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ((state.roleName) ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
     setFranchiseUser(e.target.value);
