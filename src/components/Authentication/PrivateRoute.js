@@ -18,7 +18,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   console.log("PrivateRoute sessionStorage role param:", param);
   React.useEffect(() => {
     if (param !== undefined) {
-      dispatch(currentUser(role));
+      dispatch(currentUser(param));
     }
     setTimeout(() => {
       sessionStorage.removeItem("role");
