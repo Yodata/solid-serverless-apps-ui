@@ -12,30 +12,35 @@ function Routes() {
   const dispatch = useDispatch();
   let location = useLocation();
 
-  // 🔍 capture-once logic (LOGGING ONLY)
-  const runAsRef = useRef(null);
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const runAsFromUrl = params.get('runAs');
 
-    if (runAsRef.current === null && runAsFromUrl) {
-      runAsRef.current = runAsFromUrl;
+    if (
+      runAsFromUrl !== null &&
+      sessionStorage.getItem('runAs') === null
+    ) {
+      sessionStorage.setItem('runAs', runAsFromUrl);
+      console.log('[Routes] captured runAs:', runAsFromUrl);
     }
 
-    console.group('🧭 [Routes DEBUG]');
-    console.log('pathname:', location.pathname);
-    console.log('search:', location.search);
-    console.log('runAs from URL:', runAsFromUrl);
-    console.log('runAs stored in ref:', runAsRef.current);
-    console.log('auth snapshot:', state.auth);
-    console.groupEnd();
-  }, [location.pathname, location.search, state.auth]);
+    if (
+      runAsFromUrl === null &&
+      sessionStorage.getItem('runAs') === null
+    ) {
+      console.log('[Routes] runAs is undefined (no param provided)');
+    }
+  }, [location.search]);
 
+  /**
+   * STEP 2: Use ONLY the stable value for Redux
+   */
   useEffect(() => {
-    dispatch(setRoleName(location.search?.split("=")[1]));
-  }, []);
-  console.log("Current Role in Routes:", location.search?.split("=")[1]);
+    const stableRunAs = sessionStorage.getItem('runAs'); // string | null
+    console.log('[Routes] setting role from stable runAs:', stableRunAs);
+    dispatch(setRoleName(stableRunAs));
+  }, [dispatch]);
+
   return (
     <React.Fragment>
       <Switch>
