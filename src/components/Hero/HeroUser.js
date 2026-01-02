@@ -62,7 +62,7 @@ function HeroUser(props) {
     roleName: state.role.roleName,
     agentAccess: state.auth.isAgentAcess
   }));
-
+  console.log("State.franchiseList in HeroUser:", state.franchiseList);
   const dispatch = useDispatch();
   const [user, setUser] = React.useState(state.userData.contact_id);
   const [franchiseUser, setFranchiseUser] = React.useState("");
