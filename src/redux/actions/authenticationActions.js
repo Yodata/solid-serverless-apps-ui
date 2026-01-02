@@ -60,8 +60,10 @@ export const currentUser = (props) => {
         try {
             let response
             if (props) {
+                console.log("Current Role Called with props:", props);
                 response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
             } else {
+                console.log("Current Role Called without props");
                 response = await APIBase.get(endpoint.userAuth);
             }
             dispatch(getUser(response));
