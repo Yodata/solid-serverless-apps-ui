@@ -16,11 +16,6 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
   const param = sessionStorage.getItem("role");
   console.log("PrivateRoute sessionStorage role param:", param);
-  React.useEffect(() => {
-    setTimeout(() => {
-      sessionStorage.removeItem("role");
-    }, 3000);
-  }, []);
   return (
     // <Route {...rest} render={props => (
     //     isLoggedIn
