@@ -45,6 +45,7 @@ export const getAllApps = () => {
       const response = await API.get(
         `https://forevercloudstore.${process.env.REACT_APP_HOSTNAME}/${endpoint.allApps}`
       );
+      console.log("Fetched all apps:", response.data);
       dispatch(getApps(response.data));
       dispatch(setTopicLabel(response.data));
       const subs = getState().subs?.userSubs?.items;
