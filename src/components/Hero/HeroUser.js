@@ -67,6 +67,7 @@ function HeroUser(props) {
   const [user, setUser] = React.useState(state.userData.contact_id);
   const [franchiseUser, setFranchiseUser] = React.useState("");
   const [toastOpen, setToastOpen] = React.useState(false);
+  const [param, setParam] = React.useState("");
 
   React.useEffect(() => {
     dispatch(authorisedUserList());
@@ -112,6 +113,14 @@ function HeroUser(props) {
   const handleToastClose = () => {
     setToastOpen(false);
   };
+  const roleParam = sessionStorage.getItem("role");
+  
+  React.useEffect(() => {
+    if(roleParam){
+      setParam(roleParam);
+    }
+  }, [roleParam]);
+
   return (
     <>
       <Paper elevation={0}>
@@ -168,7 +177,7 @@ function HeroUser(props) {
                 >
                   <MenuItem value="">
                     <Typography>
-                      {(state.roleName === "self")
+                      {(state.roleName === "self" || sessionStorage.getItem("role") === "self") 
                         ? state.franchiseList[
                           state.franchiseList?.length - 1
                         ].contactId
