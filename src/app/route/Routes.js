@@ -11,6 +11,27 @@ function Routes() {
   const state = useSelector(state => ({ id: state.auth.userId, userList: state.auth.userList }))
   const dispatch = useDispatch();
   let location = useLocation();
+
+  // 🔍 capture-once logic (LOGGING ONLY)
+  const runAsRef = useRef(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const runAsFromUrl = params.get('runAs');
+
+    if (runAsRef.current === null && runAsFromUrl) {
+      runAsRef.current = runAsFromUrl;
+    }
+
+    console.group('🧭 [Routes DEBUG]');
+    console.log('pathname:', location.pathname);
+    console.log('search:', location.search);
+    console.log('runAs from URL:', runAsFromUrl);
+    console.log('runAs stored in ref:', runAsRef.current);
+    console.log('auth snapshot:', state.auth);
+    console.groupEnd();
+  }, [location.pathname, location.search, state.auth]);
+  
   useEffect(() => {
     dispatch(setRoleName(location.search?.split("=")[1]));
   }, []);
