@@ -65,9 +65,11 @@ export const currentUser = (props) => {
             if (props) {
                 console.log("Current Role Called with props:", props);
                 response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
+                sessionStorage.setItem('noOfAttempts', sessionStorage.getItem('noOfAttempts') ? parseInt(sessionStorage.getItem('noOfAttempts')) + 1 : 1);
             } else {
                 console.log("Current Role Called without props");
                 response = await APIBase.get(endpoint.userAuth);
+                sessionStorage.setItem('noOfAttempts', sessionStorage.getItem('noOfAttempts') ? parseInt(sessionStorage.getItem('noOfAttempts')) + 1 : 1);
             }
             dispatch(getUser(response));
             if (getState().auth.isLoggedIn) {
