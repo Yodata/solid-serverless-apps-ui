@@ -71,6 +71,7 @@ export const currentUser = (props) => {
         } catch (err) {
             dispatch(getUser(err));
             if (!getState().auth.isLoggedIn) {
+                sessionStorage.setItem('role', props);
                 console.log('Not logged in, redirecting to login page', !getState().auth.isLoggedIn);
                 console.log("href link",`https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`)
                 if (props) {
