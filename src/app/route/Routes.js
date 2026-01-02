@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect , useRef} from 'react';
 import Client from '../../views/Client';
 import Admin from '../../views/Admin';
 import Login from '../../views/Login';
@@ -31,7 +31,7 @@ function Routes() {
     console.log('auth snapshot:', state.auth);
     console.groupEnd();
   }, [location.pathname, location.search, state.auth]);
-  
+
   useEffect(() => {
     dispatch(setRoleName(location.search?.split("=")[1]));
   }, []);
