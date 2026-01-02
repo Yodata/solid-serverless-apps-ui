@@ -114,7 +114,7 @@ function HeroUser(props) {
     setToastOpen(false);
   };
   const roleParam = sessionStorage.getItem("role");
-  
+
   React.useEffect(() => {
     if(roleParam){
       setParam(roleParam);
@@ -177,7 +177,7 @@ function HeroUser(props) {
                 >
                   <MenuItem value="">
                     <Typography>
-                      {(state.roleName === "self" || sessionStorage.getItem("role") === "self") 
+                      {(state.roleName === "self" || param === "self") 
                         ? state.franchiseList[
                           state.franchiseList?.length - 1
                         ].contactId
@@ -220,7 +220,7 @@ function HeroUser(props) {
                     </Typography>
                   </MenuItem>
                   {state.franchiseList.map((ele, index) => {
-                    if (state.roleName === "self") {
+                    if (state.roleName === "self" || param === "self") {
                       if (ele.type !== "self") {
                         const value = ele.contactId
                           .split("//")
@@ -233,7 +233,7 @@ function HeroUser(props) {
                           </MenuItem>
                         );
                       }
-                    } else if (state.roleName === "team") {
+                    } else if (state.roleName === "team" || param === "team") {
                       if (ele.type !== "team") {
                         const value = ele.contactId
                           .split("//")
