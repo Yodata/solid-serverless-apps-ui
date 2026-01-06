@@ -61,13 +61,12 @@ export const currentUser = (props) => {
             let response
             if(parseInt(sessionStorage.getItem('noOfAttempts') || '0', 10) > 1){
                 sessionStorage.removeItem('role');
+                sessionStorage.removeItem('noOfAttempts');
             }
             if (props) {
-                console.log("Current Role Called with props:", props);
                 response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
                 sessionStorage.setItem('noOfAttempts', sessionStorage.getItem('noOfAttempts') ? parseInt(sessionStorage.getItem('noOfAttempts')) + 1 : 1);
             } else {
-                console.log("Current Role Called without props");
                 response = await APIBase.get(endpoint.userAuth);
                 sessionStorage.setItem('noOfAttempts', sessionStorage.getItem('noOfAttempts') ? parseInt(sessionStorage.getItem('noOfAttempts')) + 1 : 1);
             }
@@ -80,13 +79,9 @@ export const currentUser = (props) => {
             if (!getState().auth.isLoggedIn) {
                 sessionStorage.setItem('role', props);
                 sessionStorage.setItem('noOfAttempts', sessionStorage.getItem('noOfAttempts') ? parseInt(sessionStorage.getItem('noOfAttempts')) + 1 : 1);
-                console.log('Not logged in, redirecting to login page', !getState().auth.isLoggedIn);
-                console.log("href link",`https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`)
                 if (props) {
-                    console.log('redirecting with runAs');
                     window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`;
                 } else {
-                    console.log('redirecting without runAs');
                     window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}`;
                 }
             }

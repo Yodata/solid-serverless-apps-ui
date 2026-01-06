@@ -111,7 +111,6 @@ function AppCard(props) {
   const [openReports, setOpenReports] = React.useState(false);
 
   const sortApplications = () => {
-    console.log("Applications before sorting:", applications);
     return [...applications].sort((a, b) => {
       return a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1;
     });
