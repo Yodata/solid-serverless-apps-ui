@@ -189,7 +189,7 @@ function HeroUser(props) {
                           .shift()
                           .toUpperCase()
                         : (
-                          (state.roleName === "team") ? (
+                          (state.roleName === "team" || param === "team") ? (
                             state.franchiseList[
                               state.franchiseList?.findIndex(x => x.type === 'team')
                             ].contactId
