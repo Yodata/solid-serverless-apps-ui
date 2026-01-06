@@ -93,43 +93,29 @@ function HeroUser(props) {
     dispatch(userSubscriptions(user));
     setToastOpen(true);
   };
-const toShortId = (contactId = "") =>
-  contactId.split("//").pop().split(".").shift().toLowerCase();
+
   const handleSelect = (e) => {
-    console.log("Selected value:", e.target.value);
     sessionStorage.removeItem("role");
-    // setParam("");
     const value =
       e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ((state.roleName) ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
-    console.log("Derived value:", value);
-const resolvedShortId =
-  e.target.value !== ""
-    ? e.target.value.toLowerCase()
-    : toShortId(value);
-
-setFranchiseUser(resolvedShortId);
-    // dispatch(
-    //   setProfileId(
-    //     state?.franchiseList?.find((franchise) => value === franchise.contactId)
-    //       ?.profileId
-    //   )
-    // );
-    const selectedFranchise = state.franchiseList.find(
-  (f) => toShortId(f.contactId) === resolvedShortId
-);
-
-dispatch(setProfileId(selectedFranchise?.profileId));
+    setFranchiseUser(e.target.value);
+    dispatch(
+      setProfileId(
+        state?.franchiseList?.find((franchise) => value === franchise.contactId)
+          ?.profileId
+      )
+    );
     dispatch(getParentOrgandRole());
     dispatch(serviceEnabled(false));
     dispatch(serviceUpdated());
     dispatch(userSubscriptions());
   };
-  console.log("franchiseUser:", franchiseUser);
+
   const handleToastClose = () => {
     setToastOpen(false);
   };
   const roleParam = sessionStorage.getItem("role");
-  console.log("roleParam:", roleParam);
+
   React.useEffect(() => {
     if(roleParam){
       setParam(roleParam);
@@ -202,7 +188,7 @@ dispatch(setProfileId(selectedFranchise?.profileId));
                           .shift()
                           .toUpperCase()
                         : (
-                          (state.roleName === "team" || param === "team") ? (
+                          (state.roleName === "team") ? (
                             state.franchiseList[
                               state.franchiseList?.findIndex(x => x.type === 'team')
                             ].contactId
@@ -241,9 +227,9 @@ dispatch(setProfileId(selectedFranchise?.profileId));
                           .split("//")
                           .pop()
                           .split(".")
-                          .shift().toLowerCase();
+                          .shift();
                         return (
-                          <MenuItem value={value} key={ele.contactId} >
+                          <MenuItem value={value}>
                             <Typography>{value.toUpperCase()}</Typography>
                           </MenuItem>
                         );
@@ -254,9 +240,9 @@ dispatch(setProfileId(selectedFranchise?.profileId));
                           .split("//")
                           .pop()
                           .split(".")
-                          .shift().toLowerCase();
+                          .shift();
                         return (
-                          <MenuItem value={value} key={ele.contactId} v>
+                          <MenuItem value={value}>
                             <Typography>{value.toUpperCase()}</Typography>
                           </MenuItem>
                         );
@@ -267,9 +253,9 @@ dispatch(setProfileId(selectedFranchise?.profileId));
                           .split("//")
                           .pop()
                           .split(".")
-                          .shift().toLowerCase();
+                          .shift();
                         return (
-                          <MenuItem value={value} key={ele.contactId} >
+                          <MenuItem value={value}>
                             <Typography>{value.toUpperCase()}</Typography>
                           </MenuItem>
                         );
