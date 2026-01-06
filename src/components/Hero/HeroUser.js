@@ -60,7 +60,7 @@ function HeroUser(props) {
     franchiseList: state.auth.franchiseList,
     success: state.toast.success,
     roleName: state.role.roleName,
-    agentAccess: state.auth.isAgentAcess
+    agentAccess: state.auth.isAgentAcess,
   }));
   console.log("State.franchiseList in HeroUser:", state.franchiseList);
   const dispatch = useDispatch();
@@ -99,7 +99,16 @@ function HeroUser(props) {
     sessionStorage.removeItem("role");
     setParam("");
     const value =
-      e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ((state.roleName) ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
+      e.target.value === ""
+        ? state.franchiseList[
+            state.franchiseList?.findIndex(
+              (x) => x.type === (state.roleName ?? "organization")
+            )
+          ]?.contactId ??
+          state.franchiseList[
+            state.franchiseList?.findIndex((x) => x.type === "team")
+          ]?.contactId
+        : e.target.value.toLowerCase();
     setFranchiseUser(e.target.value);
     dispatch(
       setProfileId(
@@ -119,7 +128,7 @@ function HeroUser(props) {
   const roleParam = sessionStorage.getItem("role");
   console.log("roleParam:", roleParam);
   React.useEffect(() => {
-    if(roleParam){
+    if (roleParam) {
       setParam(roleParam);
     }
   }, [roleParam]);
@@ -136,10 +145,10 @@ function HeroUser(props) {
           {state.userList.some(
             (ele) => ele.contactId === state.id && ele.roleName === "AEA"
           ) && (
-              <Grid item>
-                <Button onClick={switchUI}>Switch to admin UI</Button>
-              </Grid>
-            )}
+            <Grid item>
+              <Button onClick={switchUI}>Switch to admin UI</Button>
+            </Grid>
+          )}
           {state.userList.some(
             (ele) => ele.contactId === state.id && ele.roleName
           ) ? (
@@ -168,7 +177,8 @@ function HeroUser(props) {
               </Grid>
             </>
           ) : (
-            state.agentAccess && state.franchiseList?.length > 0 && (
+            state.agentAccess &&
+            state.franchiseList?.length > 0 && (
               <Grid item className={classes.selectContainer}>
                 <Typography style={{ fontSize: "10px" }}>
                   Select Company/Self/Team ID
@@ -177,49 +187,67 @@ function HeroUser(props) {
                   value={franchiseUser}
                   onChange={handleSelect}
                   displayEmpty
-                >
-                  <MenuItem value="">
-                    <Typography>
-                      {(state.roleName === "self" || param === "self") 
-                        ? state.franchiseList[
-                          state.franchiseList?.length - 1
-                        ].contactId
+                  renderValue={(selected) => {
+                    if (!selected) return "";
+
+                    const match = state.franchiseList.find(
+                      (f) =>
+                        f.contactId
                           .split("//")
                           .pop()
                           .split(".")
                           .shift()
-                          .toUpperCase()
-                        : (
-                          (state.roleName === "team" || param === "team") ? (
-                            state.franchiseList[
-                              state.franchiseList?.findIndex(x => x.type === 'team')
-                            ].contactId
-                              .split("//")
-                              .pop()
-                              .split(".")
-                              .shift()
-                              .toUpperCase()
-                          )
-                            : (state.franchiseList?.findIndex(x => x.type === 'organization') !== -1 ?
-                              state.franchiseList[
-                                state.franchiseList?.findIndex(x => x.type === 'organization')
-                              ]?.contactId
-                                ?.split("//")
-                                ?.pop()
-                                ?.split(".")
-                                ?.shift()
-                                ?.toUpperCase()
-                              : state.franchiseList[
-                                state.franchiseList?.findIndex(x => x.type === 'team')
-                              ]?.contactId
-                                ?.split("//")
-                                ?.pop()
-                                ?.split(".")
-                                ?.shift()
-                                ?.toUpperCase()
+                          .toLowerCase() === selected
+                    );
+
+                    return match ? selected.toUpperCase() : "";
+                  }}
+                >
+                  <MenuItem value="">
+                    <Typography>
+                      {state.roleName === "self" || param === "self"
+                        ? state.franchiseList[
+                            state.franchiseList?.length - 1
+                          ].contactId
+                            .split("//")
+                            .pop()
+                            .split(".")
+                            .shift()
+                            .toUpperCase()
+                        : state.roleName === "team" || param === "team"
+                        ? state.franchiseList[
+                            state.franchiseList?.findIndex(
+                              (x) => x.type === "team"
                             )
-                        )
-                      }
+                          ].contactId
+                            .split("//")
+                            .pop()
+                            .split(".")
+                            .shift()
+                            .toUpperCase()
+                        : state.franchiseList?.findIndex(
+                            (x) => x.type === "organization"
+                          ) !== -1
+                        ? state.franchiseList[
+                            state.franchiseList?.findIndex(
+                              (x) => x.type === "organization"
+                            )
+                          ]?.contactId
+                            ?.split("//")
+                            ?.pop()
+                            ?.split(".")
+                            ?.shift()
+                            ?.toUpperCase()
+                        : state.franchiseList[
+                            state.franchiseList?.findIndex(
+                              (x) => x.type === "team"
+                            )
+                          ]?.contactId
+                            ?.split("//")
+                            ?.pop()
+                            ?.split(".")
+                            ?.shift()
+                            ?.toUpperCase()}
                     </Typography>
                   </MenuItem>
                   {state.franchiseList.map((ele, index) => {
@@ -231,7 +259,7 @@ function HeroUser(props) {
                           .split(".")
                           .shift();
                         return (
-                          <MenuItem value={value} key={ele.contactId} v>
+                          <MenuItem value={value} key={ele.contactId}>
                             <Typography>{value.toUpperCase()}</Typography>
                           </MenuItem>
                         );
@@ -250,14 +278,20 @@ function HeroUser(props) {
                         );
                       }
                     } else {
-                      if (state.franchiseList?.findIndex(x => x.type === 'organization') !== -1 ? ele.type !== "organization" : ele.type !== "team") {
+                      if (
+                        state.franchiseList?.findIndex(
+                          (x) => x.type === "organization"
+                        ) !== -1
+                          ? ele.type !== "organization"
+                          : ele.type !== "team"
+                      ) {
                         const value = ele.contactId
                           .split("//")
                           .pop()
                           .split(".")
                           .shift();
                         return (
-                          <MenuItem value={value} key={ele.contactId} >
+                          <MenuItem value={value} key={ele.contactId}>
                             <Typography>{value.toUpperCase()}</Typography>
                           </MenuItem>
                         );
