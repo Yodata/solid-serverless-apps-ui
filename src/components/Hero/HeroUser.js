@@ -133,6 +133,19 @@ function HeroUser(props) {
     }
   }, [roleParam]);
 
+  const getTopFranchiseDisplay = () => {
+    if (!state.franchiseList?.length) return "";
+
+    const top =
+      state.franchiseList.find((x) => x.type === "organization") ??
+      state.franchiseList.find((x) => x.type === "team") ??
+      state.franchiseList.find((x) => x.type === "self");
+
+    if (!top) return "";
+
+    return top.contactId.split("//").pop().split(".").shift().toUpperCase();
+  };
+
   return (
     <>
       <Paper elevation={0}>
@@ -188,19 +201,13 @@ function HeroUser(props) {
                   onChange={handleSelect}
                   displayEmpty
                   renderValue={(selected) => {
-                    if (!selected) return "";
+                    // No real selection yet → show top menu item
+                    if (!selected) {
+                      return getTopFranchiseDisplay();
+                    }
 
-                    const match = state.franchiseList.find(
-                      (f) =>
-                        f.contactId
-                          .split("//")
-                          .pop()
-                          .split(".")
-                          .shift()
-                          .toLowerCase() === selected
-                    );
-
-                    return match ? selected.toUpperCase() : "";
+                    // Real selection → show selected value
+                    return selected.toUpperCase();
                   }}
                 >
                   <MenuItem value="">
