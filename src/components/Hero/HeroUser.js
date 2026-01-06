@@ -100,7 +100,8 @@ function HeroUser(props) {
     // setParam("");
     const value =
       e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ((state.roleName) ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
-    setFranchiseUser(e.target.value);
+    console.log("Derived value:", value);
+      setFranchiseUser(e.target.value);
     dispatch(
       setProfileId(
         state?.franchiseList?.find((franchise) => value === franchise.contactId)
@@ -178,7 +179,7 @@ function HeroUser(props) {
                   onChange={handleSelect}
                   displayEmpty
                 >
-                  {/* <MenuItem value="">
+                  <MenuItem value="">
                     <Typography>
                       {(state.roleName === "self" || param === "self") 
                         ? state.franchiseList[
@@ -221,7 +222,7 @@ function HeroUser(props) {
                         )
                       }
                     </Typography>
-                  </MenuItem> */}
+                  </MenuItem>
                   {state.franchiseList.map((ele, index) => {
                     if (state.roleName === "self" || param === "self") {
                       if (ele.type !== "self") {
