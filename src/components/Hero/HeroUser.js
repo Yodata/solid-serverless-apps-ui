@@ -1,4 +1,4 @@
-import React from "react";
+import React,  { useEffect } from "react";
 import Paper from "@material-ui/core/Paper";
 import { HeaderUser } from "../Header";
 import { withStyles, Button, Grid, Typography } from "@material-ui/core";
@@ -60,7 +60,7 @@ function HeroUser(props) {
     franchiseList: state.auth.franchiseList,
     success: state.toast.success,
     roleName: state.role.roleName,
-    agentAccess: state.auth.isAgentAcess
+    agentAccess: state.auth.isAgentAcess,
   }));
   console.log("State.franchiseList in HeroUser:", state.franchiseList);
   const dispatch = useDispatch();
@@ -72,6 +72,33 @@ function HeroUser(props) {
   React.useEffect(() => {
     dispatch(authorisedUserList());
   }, []);
+
+const hasInitializedDefault = React.useRef(false);
+const toShortId = (contactId = "") =>
+  contactId.split("//").pop().split(".").shift().toLowerCase();
+useEffect(() => {
+  if (!state.franchiseList.length) return;
+  if (hasInitializedDefault.current) return;
+
+  const sessionRole = sessionStorage.getItem("role");
+  const effectiveRole = sessionRole ?? state.roleName;
+
+  const targetType =
+    effectiveRole === "self"
+      ? "self"
+      : effectiveRole === "team"
+      ? "team"
+      : "organization";
+
+  const match =
+    state.franchiseList.find((f) => f.type === targetType) ??
+    state.franchiseList[0];
+
+  setFranchiseUser(toShortId(match.contactId));
+  hasInitializedDefault.current = true;
+  sessionStorage.removeItem("role");
+}, [state.franchiseList, state.roleName]);
+
 
   const switchUI = () => {
     history.push("/admin");
@@ -93,36 +120,59 @@ function HeroUser(props) {
     dispatch(userSubscriptions(user));
     setToastOpen(true);
   };
+const handleSelect = (e) => {
+  const shortId = e.target.value;
+  if (!shortId) return;
 
-  const handleSelect = (e) => {
-    sessionStorage.removeItem("role");
-    const value =
-      e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ((state.roleName) ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
-     console.log("Value:", value);
-      setFranchiseUser(e.target.value);
-    dispatch(
-      setProfileId(
-        state?.franchiseList?.find((franchise) => value === franchise.contactId)
-          ?.profileId
-      )
-    );
-    dispatch(getParentOrgandRole());
-    dispatch(serviceEnabled(false));
-    dispatch(serviceUpdated());
-    dispatch(userSubscriptions());
-  };
+  setFranchiseUser(shortId);
+  sessionStorage.removeItem("role");
+
+  const selectedFranchise = state.franchiseList.find(
+    (f) => toShortId(f.contactId) === shortId
+  );
+
+  if (!selectedFranchise) return;
+
+  dispatch(setProfileId(selectedFranchise.profileId));
+  dispatch(getParentOrgandRole());
+  dispatch(serviceEnabled(false));
+  dispatch(serviceUpdated());
+  dispatch(userSubscriptions());
+};
+
+
+
+  // const handleSelect = (e) => {
+  //   sessionStorage.removeItem("role");
+  //   const value =
+  //     e.target.value === ""
+  //       ? state.franchiseList[
+  //           state.franchiseList?.findIndex(
+  //             (x) => x.type === (state.roleName ?? "organization")
+  //           )
+  //         ]?.contactId ??
+  //         state.franchiseList[
+  //           state.franchiseList?.findIndex((x) => x.type === "team")
+  //         ]?.contactId
+  //       : e.target.value.toLowerCase();
+  //   console.log("Value:", value);
+  //   setFranchiseUser(e.target.value);
+  //   dispatch(
+  //     setProfileId(
+  //       state?.franchiseList?.find((franchise) => value === franchise.contactId)
+  //         ?.profileId
+  //     )
+  //   );
+  //   dispatch(getParentOrgandRole());
+  //   dispatch(serviceEnabled(false));
+  //   dispatch(serviceUpdated());
+  //   dispatch(userSubscriptions());
+  // };
 
   const handleToastClose = () => {
     setToastOpen(false);
   };
-  const roleParam = sessionStorage.getItem("role");
 
-  React.useEffect(() => {
-    if(roleParam){
-      setParam(roleParam);
-    }
-  }, [roleParam]);
-  console.log("Param in HeroUser:", param);
   return (
     <>
       <Paper elevation={0}>
@@ -135,10 +185,10 @@ function HeroUser(props) {
           {state.userList.some(
             (ele) => ele.contactId === state.id && ele.roleName === "AEA"
           ) && (
-              <Grid item>
-                <Button onClick={switchUI}>Switch to admin UI</Button>
-              </Grid>
-            )}
+            <Grid item>
+              <Button onClick={switchUI}>Switch to admin UI</Button>
+            </Grid>
+          )}
           {state.userList.some(
             (ele) => ele.contactId === state.id && ele.roleName
           ) ? (
@@ -167,12 +217,24 @@ function HeroUser(props) {
               </Grid>
             </>
           ) : (
-            state.agentAccess && state.franchiseList?.length > 0 && (
+            state.agentAccess &&
+            state.franchiseList?.length > 0 && (
               <Grid item className={classes.selectContainer}>
                 <Typography style={{ fontSize: "10px" }}>
                   Select Company/Self/Team ID
                 </Typography>
-                <Select
+                <Select value={franchiseUser} onChange={handleSelect}>
+                  {state.franchiseList.map((ele) => {
+                    const value = toShortId(ele.contactId);
+
+                    return (
+                      <MenuItem key={ele.contactId} value={value}>
+                        <Typography>{value.toUpperCase()}</Typography>
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+                {/* <Select
                   value={franchiseUser}
                   onChange={handleSelect}
                   displayEmpty
@@ -263,7 +325,7 @@ function HeroUser(props) {
                       }
                     }
                   })}
-                </Select>
+                </Select> */}
               </Grid>
             )
           )}
