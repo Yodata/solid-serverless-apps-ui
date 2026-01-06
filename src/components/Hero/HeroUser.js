@@ -115,7 +115,7 @@ function HeroUser(props) {
     setToastOpen(false);
   };
   const roleParam = sessionStorage.getItem("role");
-
+  console.log("roleParam:", roleParam);
   React.useEffect(() => {
     if(roleParam){
       setParam(roleParam);
@@ -229,7 +229,7 @@ function HeroUser(props) {
                           .split(".")
                           .shift();
                         return (
-                          <MenuItem value={value}>
+                          <MenuItem value={value} key={ele.contactId} v>
                             <Typography>{value.toUpperCase()}</Typography>
                           </MenuItem>
                         );
@@ -242,7 +242,7 @@ function HeroUser(props) {
                           .split(".")
                           .shift();
                         return (
-                          <MenuItem value={value}>
+                          <MenuItem value={value} key={ele.contactId} v>
                             <Typography>{value.toUpperCase()}</Typography>
                           </MenuItem>
                         );
@@ -255,7 +255,7 @@ function HeroUser(props) {
                           .split(".")
                           .shift();
                         return (
-                          <MenuItem value={value}>
+                          <MenuItem value={value} key={ele.contactId} >
                             <Typography>{value.toUpperCase()}</Typography>
                           </MenuItem>
                         );
