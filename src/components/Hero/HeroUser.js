@@ -101,7 +101,7 @@ function HeroUser(props) {
     const value =
       e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ((state.roleName) ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
     console.log("Derived value:", value);
-      setFranchiseUser(e.target.value);
+      setFranchiseUser(e.target.value?e.target.value:value);
     dispatch(
       setProfileId(
         state?.franchiseList?.find((franchise) => value === franchise.contactId)
