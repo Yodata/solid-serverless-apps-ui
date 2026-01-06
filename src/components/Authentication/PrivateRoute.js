@@ -10,8 +10,6 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   let location = useLocation();
   const role = location.search?.split("=")[1];
   const [count, setCount] = React.useState(0);
-  console.log("PrivateRoute location", location, "role:", role);
-  console.log("isLoggedIn in PrivateRoute:", isLoggedIn);
   React.useEffect(() => {
     dispatch(currentUser(role));
   }, []);

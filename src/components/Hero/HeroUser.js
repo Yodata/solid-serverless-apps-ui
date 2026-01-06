@@ -179,7 +179,7 @@ function HeroUser(props) {
                 >
                   <MenuItem value="">
                     <Typography>
-                      {(state.roleName === "self" || sessionStorage.getItem("role") == "self") 
+                      {(state.roleName === "self") 
                         ? state.franchiseList[
                           state.franchiseList?.length - 1
                         ].contactId
@@ -189,7 +189,7 @@ function HeroUser(props) {
                           .shift()
                           .toUpperCase()
                         : (
-                          (state.roleName === "team" || sessionStorage.getItem("role") == "team") ? (
+                          (state.roleName === "team") ? (
                             state.franchiseList[
                               state.franchiseList?.findIndex(x => x.type === 'team')
                             ].contactId
