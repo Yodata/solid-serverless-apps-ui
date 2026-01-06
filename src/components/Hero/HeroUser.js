@@ -178,7 +178,7 @@ function HeroUser(props) {
                   onChange={handleSelect}
                   displayEmpty
                 >
-                  <MenuItem value="">
+                  {/* <MenuItem value="">
                     <Typography>
                       {(state.roleName === "self" || param === "self") 
                         ? state.franchiseList[
@@ -221,7 +221,7 @@ function HeroUser(props) {
                         )
                       }
                     </Typography>
-                  </MenuItem>
+                  </MenuItem> */}
                   {state.franchiseList.map((ele, index) => {
                     if (state.roleName === "self" || param === "self") {
                       if (ele.type !== "self") {
