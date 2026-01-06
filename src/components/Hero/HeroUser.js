@@ -108,12 +108,17 @@ const resolvedShortId =
     : toShortId(value);
 
 setFranchiseUser(resolvedShortId);
-    dispatch(
-      setProfileId(
-        state?.franchiseList?.find((franchise) => value === franchise.contactId)
-          ?.profileId
-      )
-    );
+    // dispatch(
+    //   setProfileId(
+    //     state?.franchiseList?.find((franchise) => value === franchise.contactId)
+    //       ?.profileId
+    //   )
+    // );
+    const selectedFranchise = state.franchiseList.find(
+  (f) => toShortId(f.contactId) === resolvedShortId
+);
+
+dispatch(setProfileId(selectedFranchise?.profileId));
     dispatch(getParentOrgandRole());
     dispatch(serviceEnabled(false));
     dispatch(serviceUpdated());
@@ -236,7 +241,7 @@ setFranchiseUser(resolvedShortId);
                           .split("//")
                           .pop()
                           .split(".")
-                          .shift();
+                          .shift().toLowerCase();
                         return (
                           <MenuItem value={value} key={ele.contactId} >
                             <Typography>{value.toUpperCase()}</Typography>
@@ -249,7 +254,7 @@ setFranchiseUser(resolvedShortId);
                           .split("//")
                           .pop()
                           .split(".")
-                          .shift();
+                          .shift().toLowerCase();
                         return (
                           <MenuItem value={value} key={ele.contactId} v>
                             <Typography>{value.toUpperCase()}</Typography>
@@ -262,7 +267,7 @@ setFranchiseUser(resolvedShortId);
                           .split("//")
                           .pop()
                           .split(".")
-                          .shift();
+                          .shift().toLowerCase();
                         return (
                           <MenuItem value={value} key={ele.contactId} >
                             <Typography>{value.toUpperCase()}</Typography>
