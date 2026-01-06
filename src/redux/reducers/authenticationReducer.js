@@ -85,16 +85,13 @@ const authenticationReducer = (state = defaultState, action) => {
           }
         })
         .filter(Boolean);
-      //commenting, this seems unnecessary
-      // const removeDuplicates = Array.from(
-      //   new Set(listOfRoles.map((a) => a.contactId))
-      // ).map((id) => {
-      //   return listOfRoles.find((a) => a.contactId === id);
-      // });
+      const dedupedRoles = Array.from(
+  new Map(listOfRoles.map(role => [role.contactId, role])).values()
+);
       return {
         ...state,
         franchiseList: [
-          ...listOfRoles,
+          ...dedupedRoles,
           {
             contactId: state.userData.contact_id,
             profileId: state.userData.profile_id,
