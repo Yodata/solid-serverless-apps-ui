@@ -93,7 +93,8 @@ function HeroUser(props) {
     dispatch(userSubscriptions(user));
     setToastOpen(true);
   };
-
+const toShortId = (contactId = "") =>
+  contactId.split("//").pop().split(".").shift().toLowerCase();
   const handleSelect = (e) => {
     console.log("Selected value:", e.target.value);
     sessionStorage.removeItem("role");
@@ -101,7 +102,12 @@ function HeroUser(props) {
     const value =
       e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ((state.roleName) ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
     console.log("Derived value:", value);
-      setFranchiseUser(e.target.value?e.target.value:value);
+const resolvedShortId =
+  e.target.value !== ""
+    ? e.target.value.toLowerCase()
+    : toShortId(value);
+
+setFranchiseUser(resolvedShortId);
     dispatch(
       setProfileId(
         state?.franchiseList?.find((franchise) => value === franchise.contactId)
