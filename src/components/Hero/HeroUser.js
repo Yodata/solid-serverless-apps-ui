@@ -95,11 +95,11 @@ function HeroUser(props) {
   };
 
   const handleSelect = (e) => {
-    console.log("Selected franchise user:", e.target.value);
     sessionStorage.removeItem("role");
     const value =
       e.target.value === "" ? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ((state.roleName) ?? 'organization'))]?.contactId ?? state.franchiseList[state.franchiseList?.findIndex(x => x.type === ('team'))]?.contactId : e.target.value.toLowerCase();
-    setFranchiseUser(e.target.value);
+     console.log("Value:", value);
+      setFranchiseUser(e.target.value);
     dispatch(
       setProfileId(
         state?.franchiseList?.find((franchise) => value === franchise.contactId)
@@ -122,7 +122,7 @@ function HeroUser(props) {
       setParam(roleParam);
     }
   }, [roleParam]);
-
+  console.log("Param in HeroUser:", param);
   return (
     <>
       <Paper elevation={0}>
@@ -179,7 +179,7 @@ function HeroUser(props) {
                 >
                   <MenuItem value="">
                     <Typography>
-                      {(state.roleName === "self") 
+                      {(state.roleName === "self" || param === "self") 
                         ? state.franchiseList[
                           state.franchiseList?.length - 1
                         ].contactId
@@ -189,7 +189,7 @@ function HeroUser(props) {
                           .shift()
                           .toUpperCase()
                         : (
-                          (state.roleName === "team") ? (
+                          (state.roleName === "team" || param === "team") ? (
                             state.franchiseList[
                               state.franchiseList?.findIndex(x => x.type === 'team')
                             ].contactId
@@ -222,7 +222,7 @@ function HeroUser(props) {
                     </Typography>
                   </MenuItem>
                   {state.franchiseList.map((ele, index) => {
-                    if (state.roleName === "self" || sessionStorage.getItem("role") == "self") {
+                    if (state.roleName === "self" || param === "self") {
                       if (ele.type !== "self") {
                         const value = ele.contactId
                           .split("//")
@@ -235,7 +235,7 @@ function HeroUser(props) {
                           </MenuItem>
                         );
                       }
-                    } else if (state.roleName === "team" || sessionStorage.getItem("role") == "team") {
+                    } else if (state.roleName === "team" || param === "team") {
                       if (ele.type !== "team") {
                         const value = ele.contactId
                           .split("//")

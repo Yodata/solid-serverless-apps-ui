@@ -6,7 +6,7 @@ import {
   SET_PROFILE_ID,
   SET_ORGANISATION_ROLE,
   SET_NAME,
-  SET_AGENT_ACCESS
+  SET_AGENT_ACCESS,
 } from "../actions/authenticationActions";
 import endpoint from "../../api/endpoints";
 import { convertToFranchiseStore } from "../../utility";
@@ -25,7 +25,7 @@ const defaultState = {
   parentOrg: "",
   name: "",
   isAgentAcess: false,
-  orgID: ""
+  orgID: "",
 };
 
 const authenticationReducer = (state = defaultState, action) => {
@@ -33,7 +33,7 @@ const authenticationReducer = (state = defaultState, action) => {
     case GET_USER:
       const isUserLoggedIn =
         action.authentication.response &&
-          action.authentication.response.status === 401
+        action.authentication.response.status === 401
           ? false
           : true;
       const currentUserId = isUserLoggedIn
@@ -44,8 +44,8 @@ const authenticationReducer = (state = defaultState, action) => {
         : state.userData;
       const currentUserDomain = isUserLoggedIn
         ? currentUserData?.profile_id
-          .split("/")[2]
-          .replace(currentUserData?.raw.contact_id[0], "")
+            .split("/")[2]
+            .replace(currentUserData?.raw.contact_id[0], "")
         : process.env.REACT_APP_HOSTNAME;
       return {
         ...state,
@@ -65,7 +65,7 @@ const authenticationReducer = (state = defaultState, action) => {
       };
     case LIST_OF_ROLES:
       const profile = action.profile;
-      const orgID = action.profile.parentOrganization[0]
+      const orgID = action.profile.parentOrganization[0];
       const listOfRoles = profile.memberOf
         ?.map((value) => {
           if (
@@ -78,28 +78,39 @@ const authenticationReducer = (state = defaultState, action) => {
           ) {
             return {
               profileId: value.memberOf?.id ?? value.memberOf,
-              contactId: value.memberOf?.id?.split("//").pop().split(".").shift() ?? value.memberOf?.split("//").pop().split(".").shift(),
+              contactId:
+                value.memberOf?.id?.split("//").pop().split(".").shift() ??
+                value.memberOf?.split("//").pop().split(".").shift(),
               roleName: value.roleName,
-              type: value.type === 'OrganizationRole' ? 'organization' : 'team'
+              type: value.type === "OrganizationRole" ? "organization" : "team",
             };
           }
         })
         .filter(Boolean);
       const dedupedRoles = Array.from(
-  new Map(listOfRoles.map(role => [role.contactId, role])).values()
-);
+        new Map(listOfRoles.map((role) => [role.contactId, role])).values()
+      );
+      const organization = dedupedRoles.find(
+        (role) => role.type === "organization"
+      );
+
+      const teams = dedupedRoles.filter((role) => role.type === "team");
+
+      const orderedFranchiseList = [
+        ...(organization ? [organization] : []), // ✅ company always first
+        ...teams, // teams after company
+        {
+          contactId: state.userData.contact_id,
+          profileId: state.userData.profile_id,
+          roleName: "agent",
+          type: "self", // self always last
+        },
+      ];
+
       return {
         ...state,
-        franchiseList: [
-          ...dedupedRoles,
-          {
-            contactId: state.userData.contact_id,
-            profileId: state.userData.profile_id,
-            roleName: "agent",
-            type: "self"
-          },
-        ],
-        orgID
+        franchiseList: orderedFranchiseList,
+        orgID,
       };
     case SET_PROFILE_ID:
       const profileId = action.profileId;
@@ -113,15 +124,15 @@ const authenticationReducer = (state = defaultState, action) => {
         },
       };
     case SET_NAME:
-      let name
+      let name;
       if (state.name.length > 0) {
-        name = state.name
+        name = state.name;
       } else {
-        name = action.name
+        name = action.name;
       }
       return {
         ...state,
-        name
+        name,
       };
     case SET_ORGANISATION_ROLE:
       const userProfile = action.profile;
@@ -137,11 +148,11 @@ const authenticationReducer = (state = defaultState, action) => {
         parentOrg,
       };
     case SET_AGENT_ACCESS:
-      const access = action.access ? true : false
+      const access = action.access ? true : false;
       return {
         ...state,
-        isAgentAcess: access
-      }
+        isAgentAcess: access,
+      };
     case LOGOUT_USER:
       return {
         ...state,
