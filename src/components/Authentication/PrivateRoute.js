@@ -10,13 +10,18 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   let location = useLocation();
   const role = location.search?.split("=")[1];
   const [count, setCount] = React.useState(0);
+  console.log("PrivateRoute location", location, "role:", role);
+  console.log("isLoggedIn in PrivateRoute:", isLoggedIn);
   React.useEffect(() => {
     dispatch(currentUser(role));
   }, []);
   const param = sessionStorage.getItem("role");
   React.useEffect(() => {
+    console.log("PrivateRoute useEffect - isLoggedIn changed:", isLoggedIn);
     setCount((prevCount) => prevCount + 1);
   }, [param]);
+  console.log("PrivateRoute sessionStorage role param:", param);
+  console.log("PrivateRoute render - count:", count);
   return (
     // <Route {...rest} render={props => (
     //     isLoggedIn

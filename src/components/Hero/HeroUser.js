@@ -178,7 +178,7 @@ function HeroUser(props) {
                 >
                   <MenuItem value="">
                     <Typography>
-                      {(state.roleName === "self" || param === "self") 
+                      {(state.roleName === "self" || sessionStorage.getItem("role") == "self") 
                         ? state.franchiseList[
                           state.franchiseList?.length - 1
                         ].contactId
@@ -188,7 +188,7 @@ function HeroUser(props) {
                           .shift()
                           .toUpperCase()
                         : (
-                          (state.roleName === "team") ? (
+                          (state.roleName === "team" || sessionStorage.getItem("role") == "team") ? (
                             state.franchiseList[
                               state.franchiseList?.findIndex(x => x.type === 'team')
                             ].contactId
@@ -221,7 +221,7 @@ function HeroUser(props) {
                     </Typography>
                   </MenuItem>
                   {state.franchiseList.map((ele, index) => {
-                    if (state.roleName === "self" || param === "self") {
+                    if (state.roleName === "self" || sessionStorage.getItem("role") == "self") {
                       if (ele.type !== "self") {
                         const value = ele.contactId
                           .split("//")
@@ -234,7 +234,7 @@ function HeroUser(props) {
                           </MenuItem>
                         );
                       }
-                    } else if (state.roleName === "team" || param === "team") {
+                    } else if (state.roleName === "team" || sessionStorage.getItem("role") == "team") {
                       if (ele.type !== "team") {
                         const value = ele.contactId
                           .split("//")
