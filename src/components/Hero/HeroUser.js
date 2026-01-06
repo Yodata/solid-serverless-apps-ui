@@ -95,6 +95,7 @@ function HeroUser(props) {
   };
 
   const handleSelect = (e) => {
+    console.log("Selected value:", e.target.value);
     sessionStorage.removeItem("role");
     setParam("");
     const value =
@@ -111,7 +112,7 @@ function HeroUser(props) {
     dispatch(serviceUpdated());
     dispatch(userSubscriptions());
   };
-
+  console.log("franchiseUser:", franchiseUser);
   const handleToastClose = () => {
     setToastOpen(false);
   };
