@@ -96,7 +96,6 @@ useEffect(() => {
 
   setFranchiseUser(toShortId(match.contactId));
   hasInitializedDefault.current = true;
-  sessionStorage.removeItem("role");
 }, [state.franchiseList, state.roleName]);
 
 
