@@ -49,6 +49,7 @@ const styles = (theme) => ({
     width: 'auto',
     flexShrink: 0,
     marginLeft: 'auto',
+    '& > .MuiGrid-item > .MuiButton-root': { width: '100%' },
     [theme.breakpoints.down('xs')]: {
       marginLeft: 0,
       alignSelf: 'flex-end',
@@ -169,9 +170,11 @@ function AppCard(props) {
     <React.Fragment>
       <Grid container direction="column" alignItems="flex-end">
         <Grid item className={isAdmin ? classes.adminToolbar : undefined}>
-          {isAdmin && <ProfileForm />}
           {isAdmin && (
             <Grid container direction="column" className={classes.adminActions}>
+              <Grid item>
+                <ProfileForm buttonClassName={classes.new} />
+              </Grid>
               <Grid item>
                 <Button
                   variant="contained"

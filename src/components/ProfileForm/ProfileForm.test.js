@@ -1,60 +1,66 @@
 import React from 'react';
 import { render, fireEvent, screen, wait } from '@testing-library/react';
+import axios from 'axios';
 import ProfileForm from './ProfileForm';
-import { APIBase } from '../../api/apiRequest';
 
-jest.mock('../../api/apiRequest', () => ({ APIBase: { post: jest.fn() } }));
-
-const originalEndpoint = process.env.REACT_APP_ADMIN_PROFILE_ENDPOINT;
+jest.mock('axios', () => ({ post: jest.fn() }));
+const oldToken = process.env.REACT_APP_CRAWLER_TOKEN;
+const oldEndpoint = process.env.REACT_APP_ADMIN_PROFILE_ENDPOINT;
 beforeEach(() => {
-    process.env.REACT_APP_ADMIN_PROFILE_ENDPOINT = '/admin/profiles';
-    APIBase.post.mockReset();
+    process.env.REACT_APP_CRAWLER_TOKEN = 'test-token';
+    delete process.env.REACT_APP_ADMIN_PROFILE_ENDPOINT;
+    axios.post.mockReset();
 });
 afterAll(() => {
-    if (originalEndpoint === undefined) delete process.env.REACT_APP_ADMIN_PROFILE_ENDPOINT;
-    else process.env.REACT_APP_ADMIN_PROFILE_ENDPOINT = originalEndpoint;
+    for (const [key, value] of Object.entries({ REACT_APP_CRAWLER_TOKEN: oldToken, REACT_APP_ADMIN_PROFILE_ENDPOINT: oldEndpoint })) {
+        if (value === undefined) delete process.env[key];
+        else process.env[key] = value;
+    }
 });
-
-function fillForm() {
-    fireEvent.change(screen.getByLabelText(/^Profile/), { target: { value: ' profile-value ' } });
-    fireEvent.change(screen.getByLabelText(/^Post profile/), { target: { value: ' post-profile-value ' } });
+function openAndFill() {
+    render(<ProfileForm />);
+    fireEvent.click(screen.getByText('Push profile'));
+    fireEvent.change(screen.getByLabelText(/^Main profile/), { target: { value: 'https://example.com/profile/card#me' } });
+    fireEvent.change(screen.getByLabelText(/^Post endpoint/), { target: { value: 'https://example.com/inbox/' } });
 }
-
-test('submits both trimmed values and prevents duplicate submissions while pending', async () => {
-    let resolveRequest;
-    APIBase.post.mockImplementation(() => new Promise(resolve => { resolveRequest = resolve; }));
+test('opens and closes modal without sending a request', () => {
     render(<ProfileForm />);
-    fillForm();
-    fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
-    expect(APIBase.post).toHaveBeenCalledWith('/admin/profiles', {
-        profile: 'profile-value', postProfile: 'post-profile-value'
-    });
-    expect(screen.getByRole('button')).toBeDisabled();
-    fireEvent.submit(screen.getByRole('button').closest('form'));
-    expect(APIBase.post).toHaveBeenCalledTimes(1);
-    resolveRequest({});
-    await wait(() => expect(screen.getByText('Profiles submitted successfully.')).toBeInTheDocument());
+    expect(screen.queryByLabelText(/^Main profile/)).toBeNull();
+    fireEvent.click(screen.getByText('Push profile'));
+    expect(screen.getByLabelText(/^Main profile/)).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Close'));
+    expect(axios.post).not.toHaveBeenCalled();
 });
-
-test('preserves values and allows retry after failure', async () => {
-    APIBase.post.mockRejectedValue(new Error('Network error'));
-    render(<ProfileForm />);
-    fillForm();
-    fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
-    await wait(() => expect(screen.getByText(/Unable to submit/)).toBeInTheDocument());
-    expect(screen.getByLabelText(/^Profile/)).toHaveValue(' profile-value ');
-    expect(screen.getByRole('button')).not.toBeDisabled();
+test('sends curl payload and bearer authorization; blocks duplicate submissions', async () => {
+    let finish;
+    axios.post.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
+    openAndFill();
+    fireEvent.click(screen.getByText('Submit'));
+    expect(axios.post).toHaveBeenCalledWith('https://hweogixdt5.execute-api.us-west-2.amazonaws.com/crawler', {
+        POST_ENDPOINT: 'https://example.com/inbox/', MAIN_PROFILE: 'https://example.com/profile/card#me',
+        BUCKETS_TO_POST: ['organization', 'office', 'agent'], includeMainProfile: true, dryRun: false
+    }, { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer test-token' } });
+    fireEvent.submit(screen.getByText('Submitting…').closest('form'));
+    expect(axios.post).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Close').closest('button')).toBeDisabled();
+    finish({});
+    await wait(() => expect(screen.getByText('Profile push request accepted.')).toBeInTheDocument());
 });
-
-test('requires configuration and nonblank inputs before sending a request', () => {
-    delete process.env.REACT_APP_ADMIN_PROFILE_ENDPOINT;
-    const { unmount } = render(<ProfileForm />);
-    fillForm();
-    expect(screen.getByRole('button')).toBeDisabled();
-    unmount();
-    process.env.REACT_APP_ADMIN_PROFILE_ENDPOINT = '/admin/profiles';
-    render(<ProfileForm />);
-    fireEvent.change(screen.getByLabelText(/^Profile/), { target: { value: '   ' } });
-    expect(screen.getByRole('button')).toBeDisabled();
-    expect(APIBase.post).not.toHaveBeenCalled();
+test('sends selected options and preserves values after failure for retry', async () => {
+    axios.post.mockRejectedValue(new Error('Network failure'));
+    openAndFill();
+    fireEvent.click(screen.getByLabelText('Office'));
+    fireEvent.click(screen.getByLabelText('Include main profile'));
+    fireEvent.click(screen.getByLabelText('Dry run'));
+    fireEvent.click(screen.getByText('Submit'));
+    await wait(() => expect(screen.getByText(/Unable to push profile/)).toBeInTheDocument());
+    expect(axios.post.mock.calls[0][1]).toMatchObject({ BUCKETS_TO_POST: ['organization', 'agent'], includeMainProfile: false, dryRun: true });
+    expect(screen.getByLabelText(/^Main profile/)).toHaveValue('https://example.com/profile/card#me');
+    expect(screen.getByText('Submit').closest('button')).not.toBeDisabled();
+});
+test('requires authorization configuration', () => {
+    delete process.env.REACT_APP_CRAWLER_TOKEN;
+    openAndFill();
+    expect(screen.getByText('Submit').closest('button')).toBeDisabled();
+    expect(axios.post).not.toHaveBeenCalled();
 });
