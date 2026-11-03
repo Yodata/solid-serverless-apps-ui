@@ -11,11 +11,13 @@ const useStyles = makeStyles(theme => ({
     content: { padding: theme.spacing(1, 4, 2) },
     options: { marginTop: theme.spacing(3) },
     actions: { justifyContent: 'center', padding: theme.spacing(2, 4, 3), gap: theme.spacing(1) },
-    close: { backgroundColor: theme.palette.error.main, color: '#fff',
-        '&:hover': { backgroundColor: theme.palette.error.dark } },
+    close: {
+        backgroundColor: theme.palette.error.main, color: '#fff',
+        '&:hover': { backgroundColor: theme.palette.error.dark }
+    },
 }));
 
-const buckets = ['organization', 'office', 'agent'];
+const buckets = ['organization', 'office', 'team', 'agent'];
 
 export default function ProfileForm({ buttonClassName }) {
     const classes = useStyles();
@@ -48,8 +50,10 @@ export default function ProfileForm({ buttonClassName }) {
                 includeMainProfile,
                 dryRun
             }, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
-            setFeedback({ severity: 'success', message: dryRun ?
-                'Dry run request accepted.' : 'Profile push request accepted.' });
+            setFeedback({
+                severity: 'success', message: dryRun ?
+                    'Dry run request accepted.' : 'Profile push request accepted.'
+            });
         } catch (error) {
             setFeedback({ severity: 'error', message: 'Unable to push profile. Please try again.' });
         } finally {

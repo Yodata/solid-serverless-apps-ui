@@ -38,7 +38,7 @@ test('sends curl payload and bearer authorization; blocks duplicate submissions'
     fireEvent.click(screen.getByText('Submit'));
     expect(axios.post).toHaveBeenCalledWith('https://hweogixdt5.execute-api.us-west-2.amazonaws.com/crawler', {
         POST_ENDPOINT: 'https://example.com/inbox/', MAIN_PROFILE: 'https://example.com/profile/card#me',
-        BUCKETS_TO_POST: ['organization', 'office', 'agent'], includeMainProfile: true, dryRun: false
+        BUCKETS_TO_POST: ['organization', 'office', 'team', 'agent'], includeMainProfile: true, dryRun: false
     }, { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer test-token' } });
     fireEvent.submit(screen.getByText('Submitting…').closest('form'));
     expect(axios.post).toHaveBeenCalledTimes(1);
@@ -54,7 +54,7 @@ test('sends selected options and preserves values after failure for retry', asyn
     fireEvent.click(screen.getByLabelText('Dry run'));
     fireEvent.click(screen.getByText('Submit'));
     await wait(() => expect(screen.getByText(/Unable to push profile/)).toBeInTheDocument());
-    expect(axios.post.mock.calls[0][1]).toMatchObject({ BUCKETS_TO_POST: ['organization', 'agent'], includeMainProfile: false, dryRun: true });
+    expect(axios.post.mock.calls[0][1]).toMatchObject({ BUCKETS_TO_POST: ['organization', 'team', 'agent'], includeMainProfile: false, dryRun: true });
     expect(screen.getByLabelText(/^Main profile/)).toHaveValue('https://example.com/profile/card#me');
     expect(screen.getByText('Submit').closest('button')).not.toBeDisabled();
 });
