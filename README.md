@@ -45,6 +45,12 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 	 	For production express url : [forevercloud.production.yodata.me](http://forevercloud.production.yodata.me/)
 	 
 ## Environment Variable
+ The admin **Push profile** dialog calls the crawler POST API. Configure
+ `REACT_APP_CRAWLER_TOKEN` with its bearer token in `.env`. Optionally set
+ `REACT_APP_ADMIN_PROFILE_ENDPOINT` to override the default crawler URL.
+ Restart the development server after changing these values. React environment
+ variables are included in the browser bundle and are visible to browser users.
+
  1. REACT_APP_GLOBALSUBSKEY
  * It is the hostkey for accessing the global subscriptions
  

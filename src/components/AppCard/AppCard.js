@@ -16,6 +16,7 @@ import {
 import { useDispatch } from "react-redux";
 import ManageTopics from "../manageTopics";
 import Reports from "../Reports";
+import ProfileForm from "../ProfileForm/ProfileForm";
 import { Typography } from "@material-ui/core";
 
 /**
@@ -27,6 +28,32 @@ const styles = (theme) => ({
   root: {
     // paddingTop: 72,
     paddingLeft: "2vw",
+  },
+  adminToolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: theme.spacing(3),
+    paddingLeft: '2vw',
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    width: '100%',
+    boxSizing: 'border-box',
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column',
+      alignItems: 'stretch',
+      paddingRight: '2vw',
+    },
+  },
+  adminActions: {
+    width: 'auto',
+    flexShrink: 0,
+    marginLeft: 'auto',
+    '& > .MuiGrid-item > .MuiButton-root': { width: '100%' },
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: 0,
+      alignSelf: 'flex-end',
+    },
   },
   app: {
     paddingRight: "2vw",
@@ -142,9 +169,12 @@ function AppCard(props) {
   return (
     <React.Fragment>
       <Grid container direction="column" alignItems="flex-end">
-        <Grid item>
+        <Grid item className={isAdmin ? classes.adminToolbar : undefined}>
           {isAdmin && (
-            <Grid container direction="column">
+            <Grid container direction="column" className={classes.adminActions}>
+              <Grid item>
+                <ProfileForm buttonClassName={classes.new} />
+              </Grid>
               <Grid item>
                 <Button
                   variant="contained"
