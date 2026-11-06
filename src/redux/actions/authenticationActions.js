@@ -59,10 +59,16 @@ export const currentUser = (props) => {
     return async (dispatch, getState) => {
         try {
             let response
+            if(parseInt(sessionStorage.getItem('noOfAttempts') || '0', 10) > 1){
+                sessionStorage.removeItem('role');
+                sessionStorage.removeItem('noOfAttempts');
+            }
             if (props) {
                 response = await APIBase.get(`${endpoint.userAuth}?runAs=${props}`);
+                sessionStorage.setItem('noOfAttempts', sessionStorage.getItem('noOfAttempts') ? parseInt(sessionStorage.getItem('noOfAttempts')) + 1 : 1);
             } else {
                 response = await APIBase.get(endpoint.userAuth);
+                sessionStorage.setItem('noOfAttempts', sessionStorage.getItem('noOfAttempts') ? parseInt(sessionStorage.getItem('noOfAttempts')) + 1 : 1);
             }
             dispatch(getUser(response));
             if (getState().auth.isLoggedIn) {
@@ -71,6 +77,8 @@ export const currentUser = (props) => {
         } catch (err) {
             dispatch(getUser(err));
             if (!getState().auth.isLoggedIn) {
+                sessionStorage.setItem('role', props);
+                sessionStorage.setItem('noOfAttempts', sessionStorage.getItem('noOfAttempts') ? parseInt(sessionStorage.getItem('noOfAttempts')) + 1 : 1);
                 if (props) {
                     window.location.href = `https://${process.env.REACT_APP_HOSTNAME}/${endpoint.redirect}?runAs=${props}`;
                 } else {

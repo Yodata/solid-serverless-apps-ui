@@ -13,6 +13,10 @@ function Routes() {
   let location = useLocation();
   useEffect(() => {
     dispatch(setRoleName(location.search?.split("=")[1]));
+    return () => { 
+      sessionStorage.removeItem("role");
+      sessionStorage.removeItem("noOfAttempts");
+    };
   }, []);
   return (
     <React.Fragment>
